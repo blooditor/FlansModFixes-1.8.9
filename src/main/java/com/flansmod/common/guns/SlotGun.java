@@ -63,6 +63,6 @@ public class SlotGun extends Slot {
     }
     AttachmentType attachmentType = ((ItemAttachment) stack.getItem()).type;
     GunType gunType = ((ItemGun) gunSlot.getStack().getItem()).GetType();
-    return gunType.allowAllAttachments || gunType.allowedAttachments.contains(attachmentType) || true; //TODO
+    return gunType.allowAllAttachments || gunType.allowedAttachments.contains(attachmentType);
   }
 }
