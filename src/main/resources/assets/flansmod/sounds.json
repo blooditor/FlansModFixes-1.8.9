@@ -1,0 +1,10 @@
+{
+	"UnlockNotch": {
+		"category" : "player",
+		"sounds" : [ "flansmod:UnlockNotch" ]
+	},
+	"hitmarker": {
+		"category" : "player",
+		"sounds" : [ "flansmod:hitmarker" ]
+	}
+}
