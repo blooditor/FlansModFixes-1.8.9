@@ -202,13 +202,20 @@ public class ClientRenderHooks {
     OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (i & 65535),
         (float) (i >> 16));
 
+    float gunInertia = 0.1f;
+    gunInertia = -0.1573f * FlansModClient.playerErgonomics + 0.18573f;
     //Do hand rotations
     float f5 = entityplayersp.prevRenderArmPitch
         + (entityplayersp.renderArmPitch - entityplayersp.prevRenderArmPitch) * partialTicks;
     float f6 = entityplayersp.prevRenderArmYaw
         + (entityplayersp.renderArmYaw - entityplayersp.prevRenderArmYaw) * partialTicks;
-    GlStateManager.rotate((entityplayersp.rotationPitch - f5) * 0.1F, 1.0F, 0.0F, 0.0F);
-    GlStateManager.rotate((entityplayersp.rotationYaw - f6) * 0.1F, 0.0F, 1.0F, 0.0F);
+    GlStateManager.rotate((entityplayersp.rotationPitch - f5) * gunInertia, 1.0F, 0.0F, 0.0F);
+    GlStateManager.rotate((entityplayersp.rotationYaw - f6) * gunInertia, 0.0F, 1.0F, 0.0F);
+
+    //sprint
+
+    GlStateManager.rotate(25 * (FlansModClient.prevSprintTime + (FlansModClient.sprintTime - FlansModClient.prevSprintTime)*partialTicks), -1.0F, 1.0F, 0.0F);
+
 
     GlStateManager.enableRescaleNormal();
     GlStateManager.pushMatrix();
@@ -621,11 +628,11 @@ public class ClientRenderHooks {
 
     //Remove crosshairs if looking down the sights of a gun
     if (event.type == ElementType.CROSSHAIRS
-        //&& mc.thePlayer.getCurrentEquippedItem() != null && mc.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemGun)
-        && (FlansModClient.currentScope != null
+        && (mc.thePlayer.getCurrentEquippedItem() != null && mc.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemGun
+//        && (FlansModClient.currentScope != null
         || mc.thePlayer.ridingEntity instanceof EntitySeat && GuiDriveableController
         .isHeliGunner((IControllable) mc.thePlayer.ridingEntity))) {
-      event.setCanceled(true);
+  //    event.setCanceled(true);
       return;
     }
     if (event.type == ElementType.HOTBAR && mc.thePlayer.ridingEntity instanceof EntitySeat

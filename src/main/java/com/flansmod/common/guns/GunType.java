@@ -135,6 +135,9 @@ public class GunType extends PaintableType implements IScope {
    */
   public boolean showReloadTime = false;
 
+  AttachmentType defaultSight = null;
+  String defaultSightName = "ironSight2";
+
   //Shields
   //A shield is actually a gun without any shoot functionality (similar to knives or binoculars)
   //and a load of shield code on top. This means that guns can have in built shields (think Nerf Stampede)
@@ -306,6 +309,10 @@ public class GunType extends PaintableType implements IScope {
     if (switchDelay > 8 && moveSpeedModifier == 1) {
       moveSpeedModifier = Math.max(0.4f, 1 - (switchDelay - 8) / 100f);
     }
+
+    if (defaultSightName != null) {
+      defaultSight = AttachmentType.getAttachment(defaultSightName);
+    }
   }
 
   @Override
@@ -324,6 +331,7 @@ public class GunType extends PaintableType implements IScope {
       dropItemOnShoot = Read(split, "DropItemOnShoot", dropItemOnShoot);
       numBurstRounds = Read(split, "NumBurstRounds", numBurstRounds);
       minigunStartSpeed = Read(split, "MinigunStartSpeed", minigunStartSpeed);
+      defaultSightName = Read(split, "defaultSight", defaultSightName);
       if (split[0].equals("MeleeDamage")) {
         meleeDamage = Float.parseFloat(split[1]);
         if (meleeDamage > 0F) {
@@ -595,7 +603,12 @@ public class GunType extends PaintableType implements IScope {
   }
 
   public AttachmentType getScope(ItemStack gun) {
-    return getAttachment(gun, "scope");
+
+    AttachmentType t = getAttachment(gun, "scope");
+    if (t != null) {
+      return t;
+    }
+    return defaultSight;
   }
 
   public AttachmentType getStock(ItemStack gun) {

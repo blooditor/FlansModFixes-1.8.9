@@ -1,6 +1,7 @@
 package com.flansmod.client;
 
 import com.flansmod.api.IControllable;
+import com.flansmod.client.debug.EntityDebugVector;
 import com.flansmod.client.gui.GuiDriveableController;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.client.teams.ClientTeamsData;
@@ -15,8 +16,10 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.network.PacketTeamInfo;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.vector.Vector3f;
 import com.flansmod.common.vector.Vector3i;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import net.minecraft.block.Block;
@@ -25,6 +28,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -38,6 +42,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -62,6 +67,17 @@ public class FlansModClient extends FlansMod {
    */
   public static GunType.GunRecoil playerRecoil = new GunType.GunRecoil(0);
 
+  //the ergonomics modified by guns and armor
+  //1 is perfect
+  //0.1 is very bad
+  //pistol and no armor has 0.99, full jugg and m60 has 0.1
+  public static float playerErgonomics = 1;
+
+  //goes up when player is sprinting to lower the gun
+  //0 = normal
+  //1 = sprinting
+  public static float sprintTime = 0;
+  public static float prevSprintTime = 0;
   //Gun animations
   /**
    * Gun animation variables for each entity holding a gun. Currently only applicable to the player
@@ -131,12 +147,50 @@ public class FlansModClient extends FlansMod {
 
   }
 
+  public static void cancelSprint(){
+    try {
+        Field pressed = ReflectionHelper.findField(KeyBinding.class, "pressed", "field_74513_e");
+        pressed.setAccessible(true);
+        pressed.set(minecraft.gameSettings.keyBindSprint, false);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
   //private static final ResourceLocation zombieSkin = new ResourceLocation("flansmod", "skins/zombie.png");
 
+  public static void tickStart() {
+    if (minecraft.thePlayer == null || minecraft.theWorld == null) {
+      return;
+    }
+    if (minecraft.thePlayer.isSprinting() && currentScope != null) {
+        if (minecraft.gameSettings.keyBindSprint.isKeyDown()) {
+          minecraft.thePlayer.setSprinting(false);
+
+          if (sprintKeyLastTick) {
+            cancelSprint();
+          }
+      }
+      if (!sprintKeyLastTick) {
+        SetScope(null);
+      }
+    }
+    sprintKeyLastTick = minecraft.gameSettings.keyBindSprint.isKeyDown();
+  }
   public static void tick() {
     if (minecraft.thePlayer == null || minecraft.theWorld == null) {
       return;
     }
+
+    playerErgonomics = 1;
+    if (minecraft.thePlayer.getHeldItem() != null) {
+      Item held = minecraft.thePlayer.getHeldItem().getItem();
+      if (held instanceof ItemGun) {
+        float delay = ((ItemGun) held).type.switchDelay;
+        playerErgonomics = -0.0306f * delay + 1.02068f;
+      }
+    }
+
     playedHitMarker = false;
     if (minecraft.thePlayer.ridingEntity instanceof IControllable
         && minecraft.currentScreen == null) {
@@ -150,15 +204,16 @@ public class FlansModClient extends FlansMod {
 
     ClientTeamsData.Tick();
 
-    if (minecraft.thePlayer.isSprinting() && currentScope != null) {
-      if (minecraft.gameSettings.keyBindSprint.isKeyDown()) {
-        minecraft.thePlayer.setSprinting(false);
-      }
-      if (!sprintKeyLastTick) {
-        SetScope(null);
-      }
+    float sprintSpeed = -0.449f * playerErgonomics + 0.845f;
+
+    prevSprintTime = sprintTime;
+    if (minecraft.thePlayer.isSprinting()) {
+      sprintTime = Math.min(1, 1 - (1 - sprintTime) * sprintSpeed);
+    }else{
+      sprintTime *= sprintSpeed;
     }
-    sprintKeyLastTick = minecraft.gameSettings.keyBindSprint.isKeyDown();
+
+
     // Guns
     if (scopeTime > 0) {
       scopeTime--;
@@ -253,15 +308,17 @@ public class FlansModClient extends FlansMod {
       }
     }
 
+    float zoomInSpeed = -0.449f * (playerErgonomics) + 0.845f;
+    //-0.0306f * delay + 1.02068f
     //Calculate new zoom variables
     lastZoomProgress = zoomProgress;
     if (currentScope == null) {
-      zoomProgress *= 0.66F;
+      zoomProgress *= zoomInSpeed;
       if (zoomProgress < 0.001f) {
         zoomProgress = 0;
       }
     } else {
-      zoomProgress = 1F - (1F - zoomProgress) * 0.66F;
+      zoomProgress = 1F - (1F - zoomProgress) * zoomInSpeed;
       if (zoomProgress > 0.999f) {
         zoomProgress = 1;
       }
@@ -322,7 +379,7 @@ public class FlansModClient extends FlansMod {
         gameSettings.fovSetting = originalFOV;
       }
       if (scope != null) {
-        scopeTime = 10;
+        scopeTime = 4;
       }
     }
   }

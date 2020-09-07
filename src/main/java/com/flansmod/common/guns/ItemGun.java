@@ -44,6 +44,7 @@ import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -428,6 +429,14 @@ public class ItemGun extends Item implements IPaintableItem {
           break;
       }
 
+     /* if (shouldShootThisTick) {
+        mc.thePlayer.setSprinting(false);
+        FlansModClient.cancelSprint();
+        if (FlansModClient.sprintTime > 0.1) {
+          return;
+        }
+      }*/
+
       // Do reload if we pressed fire. TODO
       if (needsToReload && data.shootTimeRight <= 0.0f && data.shootTimeLeft <= 0.0f) {
         if (Reload(gunstack, world, player, player.inventory, isOffHand, hasOffHand, false,
@@ -460,6 +469,11 @@ public class ItemGun extends Item implements IPaintableItem {
       }
       // Fire!
       else if (shouldShootThisTick) {
+        mc.thePlayer.setSprinting(false);
+        FlansModClient.cancelSprint();
+        if (FlansModClient.sprintTime > 0.1) {
+          return;
+        }
         GunAnimations animations = FlansModClient.getGunAnimations(player, isOffHand);
         animations.lookAt = LookAtState.NONE;
         float shootTime = data.GetShootTime(isOffHand);
@@ -550,9 +564,9 @@ public class ItemGun extends Item implements IPaintableItem {
 
       Vector3f gunOrigin = FlansModRaytracer.GetPlayerMuzzlePosition(player, isOffHand);
 
-      if (FlansMod.DEBUG) {
-        world.spawnEntityInWorld(new EntityDebugDot(world, gunOrigin, 100, 1.0f, 1.0f, 1.0f));
-      }
+  /*    if (FlansMod.DEBUG) {
+        world.spawnEntityInWorld(new EntityDebugDot(world, gunOrigin, 3, 0, 0, 1));
+      }*/
 
       // Now send shooting data to the server
       if (!shotsFiredClient.isEmpty()
@@ -584,6 +598,7 @@ public class ItemGun extends Item implements IPaintableItem {
     }
   }
 
+  @SideOnly(Side.CLIENT)
   private void shootGunClient(int gunSlot, GunType type, ShootableType bullet, EntityPlayer player,
       ItemStack gunstack, ItemStack bulletStack, boolean offHand) {
     boolean clientBullet = bullet instanceof BulletType && type.bulletSpeed > 3;
@@ -592,6 +607,22 @@ public class ItemGun extends Item implements IPaintableItem {
     World world = player.worldObj;
     int clientBulletId = -1;
     Vector3f direction = new Vector3f(player.getLookVec());
+
+    if (FlansModClient.zoomProgress != 1) {
+      float movementModifier = (float) (player.motionX * player.motionX + player.motionY * player.motionY + player.motionZ * player.motionZ);
+      float ergoModifier = 1-FlansModClient.playerErgonomics;
+      float dirSpread = movementModifier*0.3f + ergoModifier;
+      dirSpread *= 0.1f;
+      dirSpread *= 1-FlansModClient.zoomProgress;
+    //  System.out.println("Spread " + dirSpread + " ergo " + ergoModifier + " movement " + movementModifier);
+
+      Random rand = player.getRNG();
+
+      Vector3f spreadVec = new Vector3f(rand.nextGaussian() * dirSpread, rand.nextGaussian() * dirSpread, rand.nextGaussian() * dirSpread);
+
+      direction = Vector3f.add(direction, spreadVec, direction);
+    }
+
     Vector3f[] directions = new Vector3f[numBullets];
     int[] clientBulletIds = new int[numBullets];
 

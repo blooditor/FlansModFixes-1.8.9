@@ -57,6 +57,7 @@ public class ClientEventHandler {
         //Handle all packets received since last tick
         FlansMod.getPacketHandler().handleClientPackets();
         FlansModClient.UpdateFlashlights(Minecraft.getMinecraft());
+        FlansModClient.tickStart();
         break;
       }
       case END: {

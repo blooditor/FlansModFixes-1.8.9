@@ -852,7 +852,7 @@ public class RenderGun implements IItemRenderer {
     if (scopeAttachment != null) {
       GL11.glPushMatrix();
       {
-        Paintjob scopepaintjob = scopeAttachment.getPaintjob(scopeItemStack.getItemDamage());
+        Paintjob scopepaintjob = scopeAttachment.getPaintjob(scopeItemStack == null? 0 : scopeItemStack.getItemDamage());
         renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(scopepaintjob));
         if (model.scopeIsOnBreakAction) {
           GL11.glTranslatef(model.barrelBreakPoint.x, model.barrelBreakPoint.y,
