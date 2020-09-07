@@ -88,7 +88,7 @@ public class ModelSIGP232 extends ModelGun //Same as Filename
 
     barrelAttachPoint = new Vector3f(9.0F / 16F, 5F / 16F, 0F / 16F);
     stockAttachPoint = new Vector3f(0F / 16F, 0F / 16F, 0F / 16F);
-    scopeAttachPoint = new Vector3f(0F / 16F, 0F / 16F, 0F / 16F);
+    scopeAttachPoint = new Vector3f(5F / 16F, 6F / 16F, 0F);
     gripAttachPoint = new Vector3f(0 / 16F, 0F / 16F, 0F / 16F);
 
     translateAll(0F, 0F, 0F);

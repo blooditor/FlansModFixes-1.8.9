@@ -88,6 +88,7 @@ public class Model1887 extends ModelGun {
     spinningCocking = true;
     spinPoint = new Vector3f(1F / 16F, 2F / 16F, 0F);
 
+    scopeAttachPoint = new Vector3f(5F / 16F, 1F / 16F, 0F);
     numBulletsInReloadAnimation = 5;
     tiltGunTime = 0.159F;
     unloadClipTime = 0.0F;

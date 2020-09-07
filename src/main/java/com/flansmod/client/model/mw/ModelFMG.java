@@ -7,6 +7,7 @@ package com.flansmod.client.model.mw; //Path where the model is located
 import com.flansmod.client.model.EnumAnimationType;
 import com.flansmod.client.model.ModelGun;
 import com.flansmod.client.tmt.ModelRendererTurbo;
+import com.flansmod.common.vector.Vector3f;
 
 public class ModelFMG extends ModelGun //Same as Filename
 {
@@ -128,7 +129,7 @@ public class ModelFMG extends ModelGun //Same as Filename
     ammoModel[0].setRotationPoint(-1F, 0F, -0.5F);
 
     animationType = EnumAnimationType.BOTTOM_CLIP;
-
+    scopeAttachPoint = new Vector3f(5F / 16F, 2F / 16F, 0F);
     translateAll(0F, 0F, 0F);
 
     flipAll();

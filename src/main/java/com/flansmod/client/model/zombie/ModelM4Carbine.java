@@ -73,5 +73,7 @@ public class ModelM4Carbine extends ModelGun {
 
     gunSlideDistance = 0.5F;
     animationType = EnumAnimationType.BOTTOM_CLIP;
+
+    translateAll(-1.5f, 0, 0);
   }
 }

@@ -632,7 +632,7 @@ public class ClientRenderHooks {
 //        && (FlansModClient.currentScope != null
         || mc.thePlayer.ridingEntity instanceof EntitySeat && GuiDriveableController
         .isHeliGunner((IControllable) mc.thePlayer.ridingEntity))) {
-  //    event.setCanceled(true);
+      event.setCanceled(true);
       return;
     }
     if (event.type == ElementType.HOTBAR && mc.thePlayer.ridingEntity instanceof EntitySeat

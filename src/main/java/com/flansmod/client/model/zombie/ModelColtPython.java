@@ -56,7 +56,7 @@ public class ModelColtPython extends ModelGun {
 
     scopeAttachPoint = new Vector3f(4F / 16F, 5F / 16F, 0F);
 
-    translateAll(0F, 1.5F, 0F);
+    translateAll(-2.4F, 2.4F, 0F);
     gunSlideDistance = 0.25F;
     animationType = EnumAnimationType.REVOLVER;
   }

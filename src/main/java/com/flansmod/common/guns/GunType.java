@@ -136,7 +136,7 @@ public class GunType extends PaintableType implements IScope {
   public boolean showReloadTime = false;
 
   AttachmentType defaultSight = null;
-  String defaultSightName = "ironSight2";
+  String defaultSightName = null;
 
   //Shields
   //A shield is actually a gun without any shoot functionality (similar to knives or binoculars)

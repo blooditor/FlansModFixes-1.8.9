@@ -47,7 +47,7 @@ public class ModelR870 extends ModelGun {
     pumpModel[1].addBox(7F, 2.75F, -1F, 4, 2, 2);
 
     //Scope
-    scopeAttachPoint = new Vector3f(5F / 16F, 5F / 16F, 0F);
+    scopeAttachPoint = new Vector3f(5F / 16F, 1F / 16F, 0F);
 
     //Stock
     defaultStockModel = new ModelRendererTurbo[2];
