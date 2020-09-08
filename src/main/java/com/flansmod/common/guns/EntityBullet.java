@@ -118,7 +118,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
   boolean sentHitMarker;
 
-  public int clientBulletId; //serverside: -1 means server controls, int means a client controls. clientside: int means server (or other client) controls, -1 means this client controls
+  public int clientBulletId; //serverside: -1 means server controls, int means a client controls. clientside: -2 means server (or other client) controls, -1 means this client controls
 
   //Object = either Entity or DriveablePart
   public WeakHashMap<Object, Float> appliedDamage = new WeakHashMap<>();
@@ -134,7 +134,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     ignoreFrustumCheck = true;
     ticksInAir = 0;
     setSize(0.5F, 0.5F);
-    clientBulletId = world.isRemote ? 0 : -1;
+    clientBulletId = world.isRemote ? -2 : -1;
   }
 
   /**
