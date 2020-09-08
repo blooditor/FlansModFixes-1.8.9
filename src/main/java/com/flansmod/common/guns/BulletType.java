@@ -176,7 +176,7 @@ public class BulletType extends ShootableType {
 
   public enum AmmoType {
     MM9("9mm", "9mm", 353, 0.8f, 0.9f, 1.1f, 0.95f, 1.3f),
-    ACP45(".45 ACP", "acp", 287, 0.8f, 0.8f, 1.1f, 0.99f, 1.6f),
+    ACP45(".45 ACP", "acp", 274, 0.8f, 0.8f, 1.1f, 0.99f, 1.6f),
     MM556("5.56x45mm NATO", "5.56mm", 811, 0.8f, 1.3f, 1.1f), //m16 first before balance: 911, 0.9f, 1.3f, 1.1f
     MM762("7.62x51mm NATO", "7.62mm", 716, 0.9f, 1.55f, 0.85f), //sniper first before balance: 716, 0.8f, 1.5f, 0.9f
     MM762_39("7.62x39mm","7.62x39mm", 730, 0.77f, 1.35f, 1.1f), // 730, 0.8f, 1.3f, 1f
@@ -184,16 +184,17 @@ public class BulletType extends ShootableType {
     MM57("5.7x28mm", "5.7mm", 716, 0.8f, 1.3f, 1.1f, 0.9f), //p90 ammo
     MM545("5.45x39mm", "5.45mm", 756, 0.85f, 1.2f, 1.1f), //ak47 856, 0.85f, 1.2f, 1.2f
     C50AE(".50 AE", ".50ae", 450, 0.8f, 1.2f, 1.2f, 1, 1.3f), //deagle
-    MM9_39("9x39mm", "9x39mm", 280, 0.7f, 3.5f, 1.05f, 0.3f), //vss
-    GAUGE("12 Gauge", "12gauge", 548, 0.27f, 0.5f, 2f, 1, 1.8f),
-    GAUGESLUG("12 Gauge Slug", "12gaugeslug", 548, 0.54f, 1.4f, 1.1f, 1, 1.8f),
-    GAUGEBUCK("12 Gauge Buckshot", "12gaugebuck", 548, 0.38f, 0.75f, 1.5f, 1, 1.9f),
-    GAUGEFLETCHETTE("12 Gauge Fletchette", "12gaugefletchette", 548, 0.60f, 1.55f, 1f, 1.3f),
+    MM9_39("9x39mm", "9x39mm", 280, 0.85f, 3.5f, 1.05f, 0.3f), //vss
+    C300(".300 AAC Blackout", ".300aac", 420, 0.01f, 3.5f, 1.05f, 0.5f), //vss
+    GAUGE("12 Gauge", "12gauge", 290, 0.27f, 0.5f, 2f, 1, 1.8f),
+    GAUGESLUG("12 Gauge Slug", "12gaugeslug", 350, 0.54f, 1.4f, 1.1f, 1, 1.8f),
+    GAUGEBUCK("12 Gauge Buckshot", "12gaugebuck", 300, 0.38f, 0.75f, 1.5f, 1, 1.9f),
+    GAUGEFLETCHETTE("12 Gauge Fletchette", "12gaugefletchette", 450, 0.60f, 1.55f, 1f, 1.3f),
     C357(".357 Magnum", ".357", 400f, 0.80f, 1f, 1.3f, 1.2f, 1.3f),//jury
     MM30("30mm", "30mm", 1010f, 0.90f, 3f, 1f, 3f),
-    MISSILE("Missile", "missile", 50, 1.015f, 1f, 1f, 3f, 3),
-    MISSILE_SLOW("Missile", "missile_slow", 25, 0.98f, 1f, 1f, 3f, 3),
-    MISSILE_FAST("Missile", "missile_fast", 80, 1.03f, 1f, 1f, 3f, 3),
+    MISSILE("Missile", "missile", 70, 1.015f, 1f, 1f, 3f, 3),
+    MISSILE_SLOW("Missile", "missile_slow", 32, 0.98f, 1f, 1f, 3f, 3),
+    MISSILE_FAST("Missile", "missile_fast", 90, 1.03f, 1f, 1f, 3f, 3),
     SHELL("Shell", "shell", 200, 0.90f, 3f, 1f, 3f, 2),
     //   MM30("30mm", "30mm", 1010f, 0.90f, 3f, 1f, 3f),
     //   MM70("70mm", "70mm", 0, 0.70f, 3f, 1f, 3f, 3),
