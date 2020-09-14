@@ -2,6 +2,7 @@ package com.flansmod.common.teams;
 
 import com.flansmod.apocalypse.common.FlansModApocalypse;
 import com.flansmod.apocalypse.common.entity.EntityFlyByPlane;
+import com.flansmod.apocalypse.common.entity.EntitySurvivor;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.DriveableData;
 import com.flansmod.common.driveables.EntityDriveable;
@@ -9,8 +10,10 @@ import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EnumDriveablePart;
 import com.flansmod.common.driveables.PlaneType;
 import com.flansmod.common.guns.BulletType;
+import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.vector.Vector3f;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -45,6 +48,22 @@ public class CommandTeams extends CommandBase {
       } else {
         sendHelpInformation(sender, 1);
       }
+      return;
+    }
+    if (split[0].equals("stinger")) {
+      EntityPlayer p = getCommandSenderAsPlayer(sender);
+      Vector3f origin = new Vector3f(p.posX, p.posY, p.posZ - 50);
+      EntityBullet b = new EntityBullet(p.worldObj, origin, Vector3f.sub(new Vector3f(p.getPositionVector()), origin, null), new EntitySurvivor(p.worldObj), 0, 0, BulletType.getBullet("stingerAmmo"), 1, PlaneType.getPlane("A10"));
+      //b.lockedOnTo = ((EntitySeat)p.ridingEntity).driveable;
+      p.worldObj.spawnEntityInWorld(b);
+      return;
+    }
+    if (split[0].equals("javelin")) {
+      EntityPlayer p = getCommandSenderAsPlayer(sender);
+      Vector3f origin = new Vector3f(p.posX, p.posY, p.posZ - 50);
+      EntityBullet b = new EntityBullet(p.worldObj, origin, Vector3f.sub(new Vector3f(p.getPositionVector()), origin, null), new EntitySurvivor(p.worldObj), 0, 0, BulletType.getBullet("at4Ammo"), 1, PlaneType.getPlane("A10"));
+      //b.lockedOnTo = ((EntitySeat)p.ridingEntity).driveable;
+      p.worldObj.spawnEntityInWorld(b);
       return;
     }
     if (split[0].equals("plane")) {

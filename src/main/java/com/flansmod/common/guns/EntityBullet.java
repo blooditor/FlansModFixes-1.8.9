@@ -728,10 +728,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     //scale distance
    // dXYZ *= 0.1;
     double angle = (tdir.lengthSquared() == 0 || motion.lengthSquared() == 0)? 1 : Vector3f.angle(tdir, motion);
-    tspeed *= angle;
 
-    double preaim = dXYZ + tspeed*1;
-    preaim *= 0.3f;
+    double preaim = dXYZ * tspeed * angle;
+    preaim *= 0.2f;
 
     //calc pre-aim location locally
       if (tspeed != 0) {
@@ -856,7 +855,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     // Apply homing action
     if (lockedOnTo != null) {
 
-      if (ticksExisted % 4 == 0) {
+      if (ticksExisted % 2 == 0) {
 
         applyHoming(motion, speed);
 
@@ -905,7 +904,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         .abs(((EntityPlane) lockedOnTo).getRealSpeedXYZ()) : Math.sqrt(
         lockedOnTo.motionX * lockedOnTo.motionX + lockedOnTo.motionY * lockedOnTo.motionY
             + lockedOnTo.motionZ * lockedOnTo.motionZ);
-    Vector3f tpos = new Vector3f(lockedOnTo.getPositionVector());
+    Vector3f tpos = new Vector3f(lockedOnTo.posX, lockedOnTo.posY+1, lockedOnTo.posZ);
     Vector3f tdir = new Vector3f(lockedOnTo.motionX, lockedOnTo.motionY, lockedOnTo.motionZ);
 
     double dX = lockedOnTo.posX - posX;
@@ -922,7 +921,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         Math.abs(Vector3f.angle(motion, new Vector3f(nDir.x, nDir.y, nDir.z))));
     double lockOnPull = angle / 2F * type.lockOnForce;
 
-    float speedModifier = 1 + speed;
+    float speedModifier = 1 + speed + 4;
     lockOnPull *= speedModifier;
 
     motion.x += lockOnPull * nDir.x;
