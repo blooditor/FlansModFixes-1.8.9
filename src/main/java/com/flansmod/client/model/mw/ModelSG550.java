@@ -106,7 +106,7 @@ public class ModelSG550 extends ModelGun {
 
     barrelAttachPoint = new Vector3f(24.5F / 16F, 5.3F / 16F, 0F / 16F);
 
-    scopeAttachPoint = new Vector3f(3F / 16F, 6.8F / 16F, 0F / 16F);
+    scopeAttachPoint = new Vector3f(4F / 16F, 6.5F / 16F, 0F / 16F);
 
     flipAll();
     translateAll(0F, 1F, 0F);

@@ -609,6 +609,7 @@ public class GunType extends PaintableType implements IScope {
       return t;
     }
     return defaultSight;
+//    return AttachmentType.getAttachment("ironSight4");
   }
 
   public AttachmentType getStock(ItemStack gun) {

@@ -132,7 +132,7 @@ public class ModelA91 extends ModelGun {
 
     barrelAttachPoint = new Vector3f(0F / 16F, 0F / 16F, 0F / 16F);
     stockAttachPoint = new Vector3f(0F / 16F, 0F / 16F, 0F / 16F);
-    scopeAttachPoint = new Vector3f(0F / 16F, 0F / 16F, 0F / 16F);
+    scopeAttachPoint = new Vector3f(1/16f, 5.1f/16f, 0);
     gripAttachPoint = new Vector3f(0 / 16F, 0F / 16F, 0F / 16F);
 
     gunSlideDistance = 0F;

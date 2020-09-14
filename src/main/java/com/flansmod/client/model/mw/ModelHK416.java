@@ -149,7 +149,7 @@ public class ModelHK416 extends ModelGun //Same as Filename
             0F, -0.2F, -1F, 1F, -0.2F, 0F, 0F, -0.2F, 0F, 0F, -0.2F, -1F, 1F, -0.2F); // Import
     ammoModel[0].setRotationPoint(0F, 0F, 0F);
 
-    scopeAttachPoint = new Vector3f(0, 5F / 16F, 0F);
+    scopeAttachPoint = new Vector3f(2F / 16F, 5F / 16F, 0F);
 
     animationType = EnumAnimationType.BOTTOM_CLIP;
 

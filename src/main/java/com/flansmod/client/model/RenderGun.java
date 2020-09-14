@@ -277,7 +277,10 @@ public class RenderGun implements IItemRenderer {
           if (sc != null) {
             switch (sc.shortName) {
               case "flanMWRedDot":
+              case "ironSight1":
               case "ironSight2":
+              case "ironSight3":
+              case "ironSight4":
                 //		modY = 1.05f;
                 modY = 0.85f;
                 break;
