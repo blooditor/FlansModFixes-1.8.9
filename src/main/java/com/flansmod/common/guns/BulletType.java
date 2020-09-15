@@ -196,6 +196,7 @@ public class BulletType extends ShootableType {
     MISSILE_SLOW("Missile", "missile_slow", 32, 0.98f, 1f, 1f, 3f, 3),
     MISSILE_FAST("Missile", "missile_fast", 90, 1.03f, 1f, 1f, 3f, 3),
     SHELL("Shell", "shell", 200, 0.90f, 3f, 1f, 3f, 2),
+    SHELL_FAST("Shell", "shell_fast", 350, 0.90f, 3f, 1f, 3f, 2),
     //   MM30("30mm", "30mm", 1010f, 0.90f, 3f, 1f, 3f),
     //   MM70("70mm", "70mm", 0, 0.70f, 3f, 1f, 3f, 3),
     DEFAULT("default", "default", 400, 0.8f, 0.9f, 1, 1, 1.2f),

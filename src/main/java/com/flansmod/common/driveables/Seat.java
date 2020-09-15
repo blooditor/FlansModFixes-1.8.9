@@ -50,8 +50,7 @@ public class Seat {
   /**
    * Yaw/Pitch rotation speeds (Yaw/Pitch/z) where Z is ignored
    */
-  public Vector3f aimingSpeed = new Vector3f(1f * DriveableType.AIM_SPEED_MULTIPLIER,
-      1f * DriveableType.AIM_SPEED_MULTIPLIER, 0f);
+  public Vector3f aimingSpeed;
   /**
    * Where the bullets come from
    */
@@ -104,6 +103,13 @@ public class Seat {
       }
     }
     enableDriveBy = split[split.length - 1].equalsIgnoreCase("driveBy");
+    if (id == 0) {
+      aimingSpeed = new Vector3f(1f * DriveableType.AIM_SPEED_MULTIPLIER,
+          1f * DriveableType.AIM_SPEED_MULTIPLIER, 0f);
+    }else{
+      aimingSpeed = new Vector3f(1f * DriveableType.AIM_SPEED_MULTIPLIER_PASSENGER,
+          1f * DriveableType.AIM_SPEED_MULTIPLIER_PASSENGER, 0f);
+    }
   }
 
   /**

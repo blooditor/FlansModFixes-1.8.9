@@ -27,7 +27,8 @@ public abstract class DriveableType extends PaintableType {
   @SideOnly(value = Side.CLIENT)
   /** The plane model */
   public ModelDriveable model;
-  public static float AIM_SPEED_MULTIPLIER = 3f;
+  public static float AIM_SPEED_MULTIPLIER = 4f;
+  public static float AIM_SPEED_MULTIPLIER_PASSENGER = 8f;
 
   //Health and recipe
   /**
@@ -500,8 +501,8 @@ public abstract class DriveableType extends PaintableType {
             / 16F, Integer.parseInt(split[3]) / 16F, Integer.parseInt(split[4]) / 16F);
       } else if (split[0].equals("PassengerAimSpeed")) {
         seats[Integer.parseInt(split[1])].aimingSpeed = new Vector3f(Float.parseFloat(split[2])
-            * AIM_SPEED_MULTIPLIER, Float.parseFloat(split[3]) * AIM_SPEED_MULTIPLIER, Float
-            .parseFloat(split[4]) * AIM_SPEED_MULTIPLIER);
+            * AIM_SPEED_MULTIPLIER_PASSENGER, Float.parseFloat(split[3]) * AIM_SPEED_MULTIPLIER_PASSENGER, Float
+            .parseFloat(split[4]) * AIM_SPEED_MULTIPLIER_PASSENGER);
       } else if (split[0].equals("DriverLegacyAiming")) {
         seats[0].legacyAiming = Boolean.parseBoolean(split[1]);
       } else if (split[0].equals("PassengerLegacyAiming")) {
