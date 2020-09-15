@@ -134,6 +134,7 @@ public class GunType extends PaintableType implements IScope {
    * Show reload time in seconds
    */
   public boolean showReloadTime = false;
+  public boolean hasSingleFire = true;
 
   AttachmentType defaultSight = null;
   String defaultSightName = null;
@@ -338,6 +339,7 @@ public class GunType extends PaintableType implements IScope {
           secondaryFunction = EnumSecondaryFunction.MELEE;
         }
       }
+      hasSingleFire = Read(split, "HasSingleFire", hasSingleFire);
 
       //Information
       showAttachments = Read(split, "ShowAttachments", showAttachments);
@@ -775,6 +777,9 @@ public class GunType extends PaintableType implements IScope {
    * Get the firing mode of a specific gun, taking into account attachments
    */
   public EnumFireMode getFireMode(ItemStack stack) {
+    if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("singleFire")) {
+      return EnumFireMode.SEMIAUTO;
+    }
     for (AttachmentType attachment : getCurrentAttachments(stack)) {
       if (attachment.modeOverride != null) {
         return attachment.modeOverride;

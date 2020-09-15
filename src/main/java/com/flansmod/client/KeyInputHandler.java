@@ -8,16 +8,19 @@ import com.flansmod.client.model.GunAnimations.LookAtState;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketRequestDebug;
+import com.flansmod.common.network.PacketToggleFireMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
@@ -45,6 +48,8 @@ public class KeyInputHandler {
   public static KeyBinding controlSwitchKey = new KeyBinding("Control Switch key", Keyboard.KEY_C,
       "Flan's Mod");
   public static KeyBinding reloadKey = new KeyBinding("Reload key", Keyboard.KEY_R, "Flan's Mod");
+  public static KeyBinding switchFireModeKey = new KeyBinding("Switch Fire Mode Key", Keyboard.KEY_F,
+      "Flan's Mod");
   public static KeyBinding teamsMenuKey = new KeyBinding("Teams Menu Key", Keyboard.KEY_G,
       "Flan's Mod");
   public static KeyBinding teamsScoresKey = new KeyBinding("Teams Scores Key", Keyboard.KEY_H,
@@ -83,6 +88,7 @@ public class KeyInputHandler {
     ClientRegistry.registerKeyBinding(flareKey);
     ClientRegistry.registerKeyBinding(controlSwitchKey);
     ClientRegistry.registerKeyBinding(reloadKey);
+    ClientRegistry.registerKeyBinding(switchFireModeKey);
     ClientRegistry.registerKeyBinding(teamsMenuKey);
     ClientRegistry.registerKeyBinding(teamsScoresKey);
     ClientRegistry.registerKeyBinding(leftRollKey);
@@ -142,6 +148,16 @@ public class KeyInputHandler {
             data.reloadingRight = type.reloadTime;
             data.burstRoundsRemainingRight = 0;
           }
+        }
+      }
+    }
+    if (switchFireModeKey.isPressed()) {
+      ItemStack gunStack = mc.thePlayer.getHeldItem();
+      if (gunStack != null && gunStack.getItem() instanceof ItemGun) {
+        GunType gun = ((ItemGun) gunStack.getItem()).type;
+        if(gun.hasSingleFire && gun.mode == EnumFireMode.FULLAUTO){
+          FlansMod.getPacketHandler().sendToServer(new PacketToggleFireMode());
+          mc.thePlayer.playSound("minecraft:note.hat", 1f, 2);
         }
       }
     }
