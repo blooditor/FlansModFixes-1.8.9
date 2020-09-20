@@ -18,6 +18,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.imageio.ImageIO;
 import net.minecraft.util.ResourceLocation;
 
@@ -31,6 +32,8 @@ public class FlansModResourceHandler {
   private static HashMap<String, ResourceLocation> scopeMap = new HashMap<String, ResourceLocation>();
   private static HashMap<String, ResourceLocation> soundMap = new HashMap<String, ResourceLocation>();
   private static HashMap<String, ResourceLocation> blockMap = new HashMap<String, ResourceLocation>();
+
+  public static HashSet<String> soundsWithDistFile = new HashSet<>();
 
   public static ResourceLocation flag = new ResourceLocation("flansmod",
       "textures/items/flagpole.png");

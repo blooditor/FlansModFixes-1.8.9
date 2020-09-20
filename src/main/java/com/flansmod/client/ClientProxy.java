@@ -456,6 +456,7 @@ public class ClientProxy extends CommonProxy {
    */
   @Override
   public void loadSound(String contentPack, String type, String sound) {
+    super.loadSound(contentPack, type, sound);
     FlansModResourceHandler.getSound(sound);
     //FMLClientHandler.instance().getClient().installResource("sound3/" + type + "/" + sound + ".ogg", new File(FMLClientHandler.instance().getClient().mcDataDir, "/Flan/" + contentPack + "/sounds/" + sound + ".ogg"));
   }

@@ -30,7 +30,7 @@ public class EntitySurvivor extends EntityFlansModShooter {
       ItemStack gunStack = FlansModApocalypse.getLootGenerator().loadAndPaintGun(gun, world.rand);
       this.setCurrentItemOrArmor(0, gunStack);
       //Add random armour
-      FlansModApocalypse.getLootGenerator().dressMeUp(this, world.rand);
+   //   FlansModApocalypse.getLootGenerator().dressMeUp(this, world.rand);
 
       ammoStacks = new ItemStack[5];
       int numAmmo = world.rand.nextInt(4) + 2;

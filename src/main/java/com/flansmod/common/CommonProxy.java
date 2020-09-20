@@ -1,5 +1,6 @@
 package com.flansmod.common;
 
+import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.driveables.ContainerDriveableInventory;
 import com.flansmod.common.driveables.ContainerDriveableMenu;
 import com.flansmod.common.driveables.DriveablePart;
@@ -26,12 +27,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class CommonProxy {
@@ -90,6 +93,12 @@ public class CommonProxy {
   }
 
   public void loadSound(String contentPack, String type, String sound) {
+    //check if there is a distant sound too
+
+    ResourceLocation resLoc = new ResourceLocation("flansmod", sound + "_dist");
+
+ //  if()
+      FlansModResourceHandler.soundsWithDistFile.add(sound);
   }
 
   public boolean isThePlayer(EntityPlayer player) {

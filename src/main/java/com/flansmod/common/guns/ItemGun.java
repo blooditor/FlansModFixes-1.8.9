@@ -1,6 +1,7 @@
 package com.flansmod.common.guns;
 
 import com.flansmod.api.IControllable;
+import com.flansmod.apocalypse.common.entity.EntitySurvivor;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.MovingSoundAtEntity;
@@ -742,6 +743,10 @@ public class ItemGun extends Item implements IPaintableItem {
           // world.playSoundAtEntity(entityplayer, type.shootSound,
           // 10F, type.distortSound ? 1.0F / (world.rand.nextFloat() *
           // 0.4F + 0.8F) : 1.0F);
+/*
+          EntitySurvivor s = new EntitySurvivor(player.worldObj);
+          s.setPosition(0, 4, 0);
+          PacketPlaySound.sendAdvancedSound(s, type, bullet, silenced, false);*/
           PacketPlaySound.sendAdvancedSound(player, type, bullet, silenced, false);
           //soundDelay = type.shootSoundLength;
         }

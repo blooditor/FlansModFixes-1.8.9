@@ -26,7 +26,7 @@ public class RenderBullet extends Render {
   }
 
   public void render(EntityBullet bullet, double d, double d1, double d2, float f, float f1) {
-		if (bullet.owner == Minecraft.getMinecraft().thePlayer && bullet.ticksExisted < 2) {
+		if (bullet.owner == Minecraft.getMinecraft().thePlayer && bullet.ticksExisted < 2 || bullet.type == null) {
 			return;
 		}
     bindEntityTexture(bullet);

@@ -61,20 +61,20 @@ public class PacketPlaySound extends PacketBase {
     sendAdvancedSound(shooter, silenced, type.shootSound, chunkRange, pitch, sendToShooter);
   }
 
-  //for everything else
+  //bombs, shells, detonate sounds, idle sounds
   public static void sendAdvancedSound(Entity shooter, String shootSound, int chunkRange) {
     sendAdvancedSound(shooter, false, shootSound, chunkRange, 1, true);
   }
 
-  //for everything else
+  //explosion
   public static void sendAdvancedSound(Entity shooter, String shootSound, int chunkRange,
       float pitch) {
     sendAdvancedSound(shooter, false, shootSound, chunkRange, pitch, true);
   }
-
   public static void sendAdvancedSound(Entity shooter, boolean silenced, String shootSound,
       float chunkRange, float pitch, boolean sendToShooter) {
 
+    String distShootSound = FlansModResourceHandler.soundsWithDistFile.contains(shootSound) ? shootSound + "-dist" : null;
     if (shootSound == null) {
       return;
     }
@@ -102,16 +102,33 @@ public class PacketPlaySound extends PacketBase {
       float dist = p.getDistanceToEntity(shooter);
 
       if (dist > soundDist) {
-        continue;
+        if(distShootSound == null || dist > soundDist*1.5f)
+          continue;
       }
 
       int delay = (int) (dist / soundSpeed);
+
+      float distVol = volume;
+      float distPitch = 1;
+      if (distShootSound != null) {
+        if (delay > 0) {
+          float relDist = dist / soundDist;
+        //  distVol *= relDist  * 1.5f;
+          distVol = volume*1.5f;
+         // volume *= 1.6f - relDist;
+          distPitch = pitch - (dist / soundDist) * 0.2f;
+        } else {
+          distShootSound = null;
+        }
+      }
+
       //   float vol = volume * Math.min((soundDist / dist * 3  + 0.9f), 1); //TODO better curve to simulate sound distance vol
       float vol = volume; //TODO better curve to simulate sound distance vol
       //float pit = pitch;
       float pit = pitch - (dist / soundDist) * 0.5f;
+   //   System.out.println("Normal " + vol + "   dist: " + (distShootSound == null? 0 : distVol));
       PacketPlaySoundAdvanced soundPacket = new PacketPlaySoundAdvanced(shooter.posX, shooter.posY,
-          shooter.posZ, shootSound, false, vol, pit, delay);
+          shooter.posZ, shootSound,  false, vol, pit, distShootSound, distVol, distPitch, delay);
       FlansMod.getPacketHandler().sendTo(soundPacket, p);
     }
 
@@ -168,11 +185,24 @@ public class PacketPlaySound extends PacketBase {
     float volume;
     float pitch;
     int delay;
+    String distSound;
+    float distVolume;
+    float distPitch;
 
     public PacketPlaySoundAdvanced() {
 
     }
 
+    public PacketPlaySoundAdvanced(double x, double y, double z, String s, boolean distort,
+        float volume, float pitch, String distSound, float distVolume, float distPitch, int delay) {
+      super(x, y, z, s, distort);
+      this.volume = volume;
+      this.pitch = pitch;
+      this.delay = delay;
+      this.distSound = distSound;
+      this.distVolume = distVolume;
+      this.distPitch = distPitch;
+    }
     public PacketPlaySoundAdvanced(double x, double y, double z, String s, boolean distort,
         float volume, float pitch, int delay) {
       super(x, y, z, s, distort);
@@ -187,6 +217,12 @@ public class PacketPlaySound extends PacketBase {
       data.writeFloat(volume);
       data.writeFloat(pitch);
       data.writeInt(delay);
+
+      if (distSound != null) {
+        writeUTF(data, distSound);
+        data.writeFloat(distVolume);
+        data.writeFloat(distPitch);
+      }
     }
 
     @Override
@@ -195,6 +231,12 @@ public class PacketPlaySound extends PacketBase {
       volume = data.readFloat();
       pitch = data.readFloat();
       delay = data.readInt();
+
+      if (data.isReadable()) {
+        distSound = readUTF(data);
+        distVolume = data.readFloat();
+        distPitch = data.readFloat();
+      }
     }
 
     @Override
@@ -209,6 +251,13 @@ public class PacketPlaySound extends PacketBase {
       } else {
         FMLClientHandler.instance().getClient().getSoundHandler().playDelayedSound(
             new PositionedSoundRecord(resourceLocation, volume, pitch, posX, posY, posZ), delay);
+
+        if (distSound != null) {
+          resourceLocation = distSound.startsWith("minecraft:") ? new ResourceLocation(distSound.substring(10))
+                : FlansModResourceHandler.getSound(distSound);
+          FMLClientHandler.instance().getClient().getSoundHandler().playDelayedSound(
+              new PositionedSoundRecord(resourceLocation, distVolume, distPitch, posX, posY, posZ), delay);
+        }
       }
 
     }

@@ -1,5 +1,6 @@
 package com.flansmod.common;
 
+import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
@@ -492,6 +493,15 @@ public class FlansMod {
             }
           }
         }
+        File sounds = new File(contentPack, "/assets/flansmod/sounds/");
+        if (sounds.exists()) {
+          for (File file : sounds.listFiles()) {
+            if (file.isFile() && file.getName().endsWith("-dist.ogg")) {
+              FlansModResourceHandler.soundsWithDistFile.add(file.getName().substring(0, file.getName().length() - "-dist.ogg".length()));
+            }
+          }
+        }
+
       } else {
         try {
           ZipFile zip = new ZipFile(contentPack);
@@ -514,6 +524,12 @@ public class FlansMod {
               }
             }
             if (typeFile == null) {
+              if (zipEntry.getName().startsWith("assets/flansmod/sounds")) {
+                if (zipEntry.getName().endsWith("-dist.ogg")) {
+                  String name = zipEntry.getName().substring(zipEntry.getName().lastIndexOf("/")+1);
+                  FlansModResourceHandler.soundsWithDistFile.add(name.substring(0, name.length() - "-dist.ogg".length()));
+                }
+              }
               continue;
             }
             for (; ; ) {
