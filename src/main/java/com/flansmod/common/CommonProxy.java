@@ -93,12 +93,6 @@ public class CommonProxy {
   }
 
   public void loadSound(String contentPack, String type, String sound) {
-    //check if there is a distant sound too
-
-    ResourceLocation resLoc = new ResourceLocation("flansmod", sound + "_dist");
-
- //  if()
-      FlansModResourceHandler.soundsWithDistFile.add(sound);
   }
 
   public boolean isThePlayer(EntityPlayer player) {

@@ -81,7 +81,7 @@ public class PacketPlaySound extends PacketBase {
 
     float volume = chunkRange; //1 chunk for each vol
     if (silenced) {
-      volume *= 0.25f;
+      volume *= 0.4f;
     }
 
     pitch *= silenced ? 1.75f : 1f;
