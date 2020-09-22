@@ -125,6 +125,7 @@ public class ModelHoneyBadger extends ModelGun //Same as Filename
     gripAttachPoint = new Vector3f(8 / 16F, 1.5F / 16F, 0F / 16F);
 
     animationType = EnumAnimationType.BOTTOM_CLIP;
+    gunSlideDistance = 0.05F;
 
     translateAll(0F, 0F, 0F);
 

@@ -1056,25 +1056,27 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
       }
 
     EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+    Vec3 playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
     Vector3f motion = new Vector3f(motionX, motionY, motionZ);
     motion.normalise();
-    Vector3f v = new Vector3f(player.getPositionVector().subtract(this.getPositionVector()));
+    Vector3f v = new Vector3f(playerPos.subtract(this.getPositionVector()));
     // v.normalise();
     Vector3f pos = new Vector3f(this.getPositionVector());
 
     float t = Vector3f.dot(v, motion);
-      if (t > speed || t < 0) {
-          return;
-      }
-      if (finalHit != null && Vector3f.sub(finalHit, pos, null).length()
-          < new Vector3f(t * motion.x, t * motionY, t * motionZ).length() + 5) {
-          return;
-      }
+    if (t > speed || t < 1) {
+      return;
+    }
+
+    if (finalHit != null && Vector3f.sub(finalHit, pos, null).length()
+        < new Vector3f(t * motion.x, t * motionY, t * motionZ).length() + 5) {
+      return;
+    }
 
     Vector3f p = new Vector3f(posX + t * motion.x, posY + t * motion.y, posZ + t * motion.z);
     log(t + " " + speed + "  p " + p);
 
-    float dist = Vector3f.sub(p, new Vector3f(player.getPositionVector()), null).length();
+    float dist = Vector3f.sub(p, new Vector3f(playerPos), null).length();
 
     float maxDist = 40;
       if (dist > maxDist) {
@@ -1083,7 +1085,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     float soundSpeed = 15 * BulletType.BULLET_SPEED_MODIFIER;
     boolean playCrack = speed > soundSpeed;
-    boolean playFlyby = !(playCrack && speed > soundSpeed * 2.5f);
+    boolean playFlyby = !playCrack || speed*rand.nextFloat() < soundSpeed*0.5f;
 
     float volCrack = maxDist / 16 * speed * 0.1f;
     float volFlyby = playCrack ? maxDist / 16 * speed * 0.02f : maxDist / 16 * speed * 0.15f;
@@ -1103,6 +1105,12 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                   1.0F / (rand.nextFloat() * 0.4F + 0.8F), p.x, p.y, p.z));
 
     }
+    float vignette = dist < 1 ? 5 : dist > 10 ? 0 : 5 / dist;
+    vignette *= 0.5f;
+    if(!playCrack)
+      vignette *= 0.5f;
+    if(vignette > 0.5f)
+      Minecraft.getMinecraft().ingameGUI.prevVignetteBrightness = vignette;
   }
 
   @SideOnly(Side.CLIENT)
