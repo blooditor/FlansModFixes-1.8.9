@@ -309,7 +309,7 @@ public class RenderGun implements IItemRenderer {
             GL11.glRotatef(45F, 0F, 1F, 0F);
             GL11.glRotatef(0F - 5F * adsSwitch, 0F, 0F, 1F);
             GL11.glTranslatef(-1F - adsSwitch * modX, 0.675F + 0.180F * adsSwitch * modY,
-                -1F - 0.395F * adsSwitch);
+                -1F - 0.3978F * adsSwitch);
 						if (gunType.hasScopeOverlay) {
 							GL11.glTranslatef(-0.7F * adsSwitch, -0.12F * adsSwitch, -0.05F * adsSwitch);
 						}
