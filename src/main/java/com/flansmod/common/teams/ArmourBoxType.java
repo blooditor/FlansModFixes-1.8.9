@@ -29,7 +29,7 @@ public class ArmourBoxType extends BoxType {
   }
 
   @Override
-  protected void read(String[] split, TypeFile file) {
+  public void read(String[] split, TypeFile file) {
     super.read(split, file);
     try {
       if (split[0].toLowerCase().equals("addarmour") || split[0].toLowerCase().equals("addarmor")) {

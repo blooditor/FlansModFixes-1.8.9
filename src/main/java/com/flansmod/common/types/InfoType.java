@@ -107,7 +107,7 @@ public class InfoType {
   /**
    * Pack reader
    */
-  protected void read(String[] split, TypeFile file) {
+  public void read(String[] split, TypeFile file) {
     try {
       // Standard line reads
       shortName = Read(split, "ShortName", shortName);

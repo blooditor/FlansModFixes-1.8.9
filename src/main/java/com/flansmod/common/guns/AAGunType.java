@@ -55,7 +55,7 @@ public class AAGunType extends InfoType {
   }
 
   @Override
-  protected void read(String[] split, TypeFile file) {
+  public void read(String[] split, TypeFile file) {
     super.read(split, file);
     try {
       if (FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model")) {

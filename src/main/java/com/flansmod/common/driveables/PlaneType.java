@@ -83,7 +83,7 @@ public class PlaneType extends DriveableType {
   }
 
   @Override
-  protected void read(String[] split, TypeFile file) {
+  public void read(String[] split, TypeFile file) {
     super.read(split, file);
     try {
       //Plane Mode

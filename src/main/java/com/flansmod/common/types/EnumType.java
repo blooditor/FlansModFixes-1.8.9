@@ -1,5 +1,6 @@
 package com.flansmod.common.types;
 
+import com.flansmod.common.FlansModSounds;
 import com.flansmod.common.ItemHolderType;
 import com.flansmod.common.TileEntityItemHolder;
 import com.flansmod.common.driveables.EntityPlane;
@@ -47,7 +48,7 @@ public enum EnumType {
   aa("aaguns"), vehicle("vehicles"), plane("planes"), mechaItem("mechaItems"), mecha("mechas"),
   tool("tools"), armour("armorFiles"), armourBox("armorBoxes"), box("boxes"), playerClass(
       "classes"),
-  team("teams"), itemHolder("itemHolders"), rewardBox("rewardBoxes"), loadout("loadouts");
+  team("teams"), itemHolder("itemHolders"), rewardBox("rewardBoxes"), loadout("loadouts"), sound("sounds");
 
   public String folderName;
 
@@ -104,6 +105,8 @@ public enum EnumType {
         return RewardBox.class;
       case loadout:
         return LoadoutPool.class;
+      case sound:
+        return FlansModSounds.SoundType.class;
       default:
         return InfoType.class;
     }

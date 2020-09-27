@@ -76,7 +76,7 @@ public class PlayerClass extends InfoType implements IPlayerClass {
   }
 
   @Override
-  protected void read(String[] split, TypeFile file) {
+  public void read(String[] split, TypeFile file) {
     super.read(split, file);
     if (split[0].equals("AddItem")) {
       startingItemStrings.add(split);
