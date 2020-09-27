@@ -14,6 +14,7 @@ import com.flansmod.client.model.GunAnimations.LookAtState;
 import com.flansmod.client.model.InstantBulletRenderer;
 import com.flansmod.client.model.InstantBulletRenderer.InstantShotTrail;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.FlansModSounds;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
@@ -654,7 +655,8 @@ public class ItemGun extends Item implements IPaintableItem {
     AttachmentType barrel = type.getBarrel(gunstack);
     boolean silenced = type.silenced || barrel != null && barrel.silencer;
 
-    PacketPlaySound.sendAdvancedSound(player, type, bullet, silenced, false);
+    FlansModSounds.playSound(type.shortName,  15, "local");
+   // PacketPlaySound.sendAdvancedSound(player, type, bullet, silenced, false);
 
     ShotData shotData;
       if (clientBullet) {

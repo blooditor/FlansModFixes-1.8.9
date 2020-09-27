@@ -105,7 +105,7 @@ public class AttachmentType extends PaintableType implements IScope {
   }
 
   @Override
-  protected void read(String[] split, TypeFile file) {
+  public void read(String[] split, TypeFile file) {
     super.read(split, file);
     try {
       if (split[0].equals("AttachmentType")) {

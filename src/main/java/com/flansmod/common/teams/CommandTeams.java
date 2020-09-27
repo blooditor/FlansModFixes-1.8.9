@@ -3,7 +3,10 @@ package com.flansmod.common.teams;
 import com.flansmod.apocalypse.common.FlansModApocalypse;
 import com.flansmod.apocalypse.common.entity.EntityFlyByPlane;
 import com.flansmod.apocalypse.common.entity.EntitySurvivor;
+import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.FlansModSounds;
+import com.flansmod.common.FlansModSounds.SoundType;
 import com.flansmod.common.driveables.DriveableData;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EntitySeat;
@@ -12,9 +15,18 @@ import com.flansmod.common.driveables.PlaneType;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
 import com.mojang.authlib.GameProfile;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.List;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -48,6 +60,70 @@ public class CommandTeams extends CommandBase {
       } else {
         sendHelpInformation(sender, 1);
       }
+      return;
+    }
+
+    if (split[0].equals("sound")) {
+      FlansModSounds.playSound(split[1],  13,"local");
+      return;
+    }
+    if (split[0].equals("reload")) {
+      ClassLoader classloader = (net.minecraft.server.MinecraftServer.class).getClassLoader();
+      Method method = null;
+      try {
+        method = (java.net.URLClassLoader.class).getDeclaredMethod("addURL", java.net.URL.class);
+        method.setAccessible(true);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      List<File> contentPacks = FlansMod.proxy.getContentList(method, classloader);
+      for (File contentPack : contentPacks) {
+        if (contentPack.isDirectory()) {
+          EnumType typeToCheckFor = EnumType.sound;
+            File typesDir = new File(contentPack, "/" + typeToCheckFor.folderName + "/");
+            if (!typesDir.exists()) {
+              continue;
+            }
+            for (File file : typesDir.listFiles()) {
+              try {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String[] splitName = file.getName().split("/");
+                TypeFile typeFile = new TypeFile(contentPack.getName(), typeToCheckFor,
+                    splitName[splitName.length - 1].split("\\.")[0]);
+                new SoundType(typeFile);
+                for (; ; ) {
+                  String line = null;
+                  try {
+                    line = reader.readLine();
+
+                    SoundType.getSound(typeFile.name).read(line.split(" "), typeFile);
+                  } catch (Exception e) {
+                    break;
+                  }
+                  if (line == null) {
+                    break;
+                  }
+                  typeFile.lines.add(line);
+                }
+                reader.close();
+
+              } catch (FileNotFoundException e) {
+                e.printStackTrace();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+            }
+          }
+          File sounds = new File(contentPack, "/assets/flansmod/sounds/");
+          if (sounds.exists()) {
+            for (File file : sounds.listFiles()) {
+              if (file.isFile() && file.getName().endsWith("-dist.ogg")) {
+                FlansModResourceHandler.soundsWithDistFile.add(file.getName().substring(0, file.getName().length() - "-dist.ogg".length()));
+              }
+            }
+          }
+        }
       return;
     }
     if (split[0].equals("stinger")) {

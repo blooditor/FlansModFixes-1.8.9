@@ -59,6 +59,7 @@ public class PlayerHandler {
   }
 
   public void clientTick() {
+    FlansModSounds.inst.tick();
     if (Minecraft.getMinecraft().theWorld != null) {
       for (Object player : Minecraft.getMinecraft().theWorld.playerEntities) {
         getPlayerData((EntityPlayer) player).tick((EntityPlayer) player);

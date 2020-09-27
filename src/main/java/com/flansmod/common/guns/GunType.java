@@ -317,7 +317,7 @@ public class GunType extends PaintableType implements IScope {
   }
 
   @Override
-  protected void read(String[] split, TypeFile file) {
+  public void read(String[] split, TypeFile file) {
     super.read(split, file);
     try {
       damage = Read(split, "Damage", damage);
