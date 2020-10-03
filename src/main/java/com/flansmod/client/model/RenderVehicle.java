@@ -42,6 +42,8 @@ public class RenderVehicle extends Render implements IItemRenderer {
   }
 
   public void render(EntityVehicle vehicle, double d, double d1, double d2, float f, float f1) {
+
+    Minecraft.getMinecraft().entityRenderer.disableLightmap();
     if (Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat && Minecraft
         .getMinecraft().currentScreen instanceof GuiDriveableController && GuiDriveableController
         .isHeliGunner((IControllable) Minecraft.getMinecraft().thePlayer.ridingEntity)) {
@@ -190,6 +192,7 @@ public class RenderVehicle extends Render implements IItemRenderer {
       }
     }
     GL11.glPopMatrix();
+    Minecraft.getMinecraft().entityRenderer.enableLightmap();
   }
 
   @Override
@@ -284,58 +287,59 @@ public class RenderVehicle extends Render implements IItemRenderer {
       return;
     }
 
-    //custom rendering for own vehicle because of invisibility glitches
-    if (FlansMod.ENTITY_RENDER_MODE == 0
-        && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && Minecraft
-        .getMinecraft().thePlayer.ridingEntity instanceof EntitySeat && ((EntitySeat) Minecraft
-        .getMinecraft().thePlayer.ridingEntity).driveable instanceof EntityVehicle) {
-      EntityVehicle vehicle = (EntityVehicle) ((EntitySeat) Minecraft
-          .getMinecraft().thePlayer.ridingEntity).driveable;
+    for (Entity e : world.loadedEntityList) {
+      if (e instanceof EntityVehicle) {
+        EntityVehicle vehicle = (EntityVehicle) e;
 
-      //Get the camera frustrum for clipping
-      Entity camera = Minecraft.getMinecraft().getRenderViewEntity();
-      double x = camera.lastTickPosX + (camera.posX - camera.lastTickPosX) * event.partialTicks;
-      double y = camera.lastTickPosY + (camera.posY - camera.lastTickPosY) * event.partialTicks;
-      double z = camera.lastTickPosZ + (camera.posZ - camera.lastTickPosZ) * event.partialTicks;
+        //custom rendering for own vehicle because of invisibility glitches
+        if (!shouldRender(vehicle, null, 0,0,0)) {
 
-      //fix when war away from spawn
-      x = -x + vehicle.prevPosX + (vehicle.posX - vehicle.prevPosX) * event.partialTicks;
-      y = -y + vehicle.prevPosY + (vehicle.posY - vehicle.prevPosY) * event.partialTicks;
-      z = -z + vehicle.prevPosZ + (vehicle.posZ - vehicle.prevPosZ) * event.partialTicks;
-      //Frustum frustrum = new Frustum();
-      //frustrum.setPosition(x, y, z);
+          //Get the camera frustrum for clipping
+          Entity camera = Minecraft.getMinecraft().getRenderViewEntity();
+          double x = camera.lastTickPosX + (camera.posX - camera.lastTickPosX) * event.partialTicks;
+          double y = camera.lastTickPosY + (camera.posY - camera.lastTickPosY) * event.partialTicks;
+          double z = camera.lastTickPosZ + (camera.posZ - camera.lastTickPosZ) * event.partialTicks;
 
-      //Push
-      GL11.glPushMatrix();
-      //Setup lighting
-      Minecraft.getMinecraft().entityRenderer.enableLightmap();
-      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-      GL11.glEnable(GL11.GL_LIGHTING);
-      GL11.glDisable(GL11.GL_BLEND);
+          //fix when war away from spawn
+          x = -x + vehicle.prevPosX + (vehicle.posX - vehicle.prevPosX) * event.partialTicks;
+          y = -y + vehicle.prevPosY + (vehicle.posY - vehicle.prevPosY) * event.partialTicks;
+          z = -z + vehicle.prevPosZ + (vehicle.posZ - vehicle.prevPosZ) * event.partialTicks;
+          //Frustum frustrum = new Frustum();
+          //frustrum.setPosition(x, y, z);
 
-      RenderHelper.enableStandardItemLighting();
+          //Push
+          GL11.glPushMatrix();
+          //Setup lighting
+          Minecraft.getMinecraft().entityRenderer.enableLightmap();
+          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+          GL11.glEnable(GL11.GL_LIGHTING);
+          GL11.glDisable(GL11.GL_BLEND);
 
-      GlStateManager.translate(x, y, z);
+          RenderHelper.enableStandardItemLighting();
 
-      int i = vehicle.getBrightnessForRender(event.partialTicks);
+          GlStateManager.translate(x, y, z);
 
-      if (vehicle.isBurning()) {
-        i = 15728880;
+          int i = vehicle.getBrightnessForRender(event.partialTicks);
+
+          if (vehicle.isBurning()) {
+            i = 15728880;
+          }
+
+          int j = i % 65536;
+          int k = i / 65536;
+          OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F,
+              (float) k / 1.0F);
+          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+          render(vehicle, 0, 0, 0, 0F, event.partialTicks);
+
+          //Reset Lighting
+          Minecraft.getMinecraft().entityRenderer.disableLightmap();
+          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+          GL11.glDisable(GL11.GL_LIGHTING);
+          //Pop
+          GL11.glPopMatrix();
+        }
       }
-
-      int j = i % 65536;
-      int k = i / 65536;
-      OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F,
-          (float) k / 1.0F);
-      GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-      render(vehicle, 0, 0, 0, 0F, event.partialTicks);
-
-      //Reset Lighting
-      Minecraft.getMinecraft().entityRenderer.disableLightmap();
-      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-      GL11.glDisable(GL11.GL_LIGHTING);
-      //Pop
-      GL11.glPopMatrix();
     }
   }
 }

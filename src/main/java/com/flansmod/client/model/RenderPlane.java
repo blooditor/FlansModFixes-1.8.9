@@ -42,6 +42,7 @@ public class RenderPlane extends Render implements IItemRenderer {
   }
 
   public void render(EntityPlane entityPlane, double d, double d1, double d2, float f, float f1) {
+    Minecraft.getMinecraft().entityRenderer.disableLightmap();
     if (GuiDriveableController.isHeliGunner(entityPlane) && Minecraft
         .getMinecraft().currentScreen instanceof GuiDriveableController) {
       return;
@@ -160,6 +161,7 @@ public class RenderPlane extends Render implements IItemRenderer {
       GL11.glColor4f(1F, 1F, 1F, 1F);
     }
     GL11.glPopMatrix();
+    Minecraft.getMinecraft().entityRenderer.enableLightmap();
   }
 
 

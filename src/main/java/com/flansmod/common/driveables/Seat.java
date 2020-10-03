@@ -50,7 +50,7 @@ public class Seat {
   /**
    * Yaw/Pitch rotation speeds (Yaw/Pitch/z) where Z is ignored
    */
-  public Vector3f aimingSpeed;
+  public Vector3f aimingSpeed = new Vector3f(1,1,1);
   /**
    * Where the bullets come from
    */
