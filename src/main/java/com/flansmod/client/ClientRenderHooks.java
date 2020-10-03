@@ -109,9 +109,7 @@ public class ClientRenderHooks {
     EntityPlayer player = mc.thePlayer;
 
     if (mc.thePlayer.ridingEntity instanceof EntitySeat && Minecraft
-        .getMinecraft().currentScreen instanceof GuiDriveableController && (
-        GuiDriveableController.isHeliGunner((IControllable) mc.thePlayer.ridingEntity)
-            || GuiDriveableController.isJetPilot((IControllable) mc.thePlayer.ridingEntity))) {
+        .getMinecraft().currentScreen instanceof GuiDriveableController) {
       event.setCanceled(true);
       return;
     }
