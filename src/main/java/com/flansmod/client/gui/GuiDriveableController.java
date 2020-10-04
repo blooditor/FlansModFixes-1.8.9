@@ -7,12 +7,14 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.network.PacketRequestDebug;
+import com.flansmod.common.vector.Vector3f;
 import com.flansmod.common.vector.Vector3i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
@@ -81,6 +83,25 @@ public class GuiDriveableController extends GuiScreen {
     }
   }
 
+  public static boolean isTankScreen(IControllable plane) {
+    return plane instanceof EntitySeat && ((EntitySeat) plane).driveable instanceof EntityVehicle && isTankScreen((EntityVehicle) ((EntitySeat) plane).driveable);
+  }
+  public static boolean isTankScreen(EntityVehicle vehicle) {
+    if (!(Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)) {
+      return false;
+    }
+    EntitySeat seat = (EntitySeat) Minecraft.getMinecraft().thePlayer.ridingEntity;
+    if (seat.driveable != vehicle) {
+      return false;
+    }
+    if (seat.seatInfo != null && (seat.seatInfo.gunType != null
+        || seat.seatInfo.id == 0 && seat.driveable.driveableData != null && vehicle.getVehicleType().primary != EnumWeaponType.NONE)) {
+      return true;
+    }
+
+    return false;
+  }
+
   @Override
   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -121,7 +142,7 @@ public class GuiDriveableController extends GuiScreen {
   public void initGui() {
     if (mc.gameSettings.thirdPersonView == 1)
       mc.setRenderViewEntity((plane.getCamera() == null ? mc.thePlayer : plane.getCamera()));
-    if (isHeliGunner(plane)) {
+    if (isHeliGunner(plane) || isTankScreen(plane)) {
       if (mc.gameSettings.thirdPersonView != 0) {
         mc.gameSettings.thirdPersonView = 0;
         mc.setRenderViewEntity(mc.thePlayer);
@@ -159,14 +180,15 @@ public class GuiDriveableController extends GuiScreen {
     // Right mouse. Fires shells, drops bombs. Is not a holding thing
     if (Mouse.isButtonDown(1)) {
       plane.pressKey(8, player);
+    }
 
-
-      if (isHeliGunner(plane) && zoomCooldown < player.ticksExisted-5) {
+    if (Mouse.isButtonDown(2)) {
+      if ((isTankScreen(plane) || isHeliGunner(plane)) && zoomCooldown < player.ticksExisted-5) {
         int ngz = 1;
         switch (gunnerZoom) {
           case 1: ngz = 2;
             break;
-          case 2: ngz = 4;
+          case 2: ngz = isHeliGunner(plane)? 4 : 1;
             break;
           case 4: ngz = 1;
             break;
@@ -302,7 +324,13 @@ public class GuiDriveableController extends GuiScreen {
 
         drawRadar(textureX, textureY);
         drawJetScreen(textureX, textureY, mouseX, mouseY, partialTicks);
-      } else if (enableRadar(plane.driveable)) {
+      }
+      if (plane.driveable instanceof EntityVehicle && isTankScreen((EntityVehicle) plane.driveable)) {
+
+        drawTankScreen(textureX, textureY, mouseX, mouseY, partialTicks);
+      }
+      if (enableRadar(plane.driveable)) {
+        GL11.glEnable(3042 /*GL_BLEND*/);
         drawRadar(textureX, textureY);
       }
       GL11.glDisable(3042 /*GL_BLEND*/);
@@ -317,6 +345,84 @@ public class GuiDriveableController extends GuiScreen {
 
 
     super.drawScreen(mouseX, mouseY, partialTicks);
+  }
+
+  private void drawTankScreen(int textureX, int textureY, int mouseX, int mouseY, float partialTicks) {
+
+    mc.renderEngine.bindTexture(texture);
+
+    EntitySeat seat = (EntitySeat) plane;
+    boolean isMainCannon = seat.seatInfo != null && seat.seatInfo.id == 0;
+    boolean radar = enableRadar(plane);
+    //crosshair
+    GlStateManager.pushMatrix();
+    float scale = 2;
+    float nscale = 1/scale;
+    float crossScale = (radar? 1.5f : scale) *gunnerZoom;
+    float crossnScale = 1/crossScale;
+    GlStateManager.scale(crossScale, crossScale, crossScale);
+    if(radar){
+      //CROSSHAIR
+      drawModalRectWithCustomSizedTexture((int) (crossnScale *width/2-20), (int) (crossnScale *height/2-20), 160, 100, 40, 40, textureX, textureY);
+    } else if (isMainCannon) {
+      drawModalRectWithCustomSizedTexture((int) (crossnScale * width / 2 - 55 / 2), (int) (crossnScale * height / 2 - 27 / 2), 0, 164, 55, 27, textureX,
+          textureY);
+    } else {
+      drawModalRectWithCustomSizedTexture((int) (crossnScale * width / 2 - 19 / 2), (int) (crossnScale * height / 2 - 19 / 2), 66, 181, 19, 19, textureX,
+          textureY);
+    }
+    GlStateManager.popMatrix();
+
+    int turrX = (int) (nscale * width / 2 + 30);
+    int turrY = (int) (nscale*height - 40);
+    //turret orientation
+    GlStateManager.pushMatrix();
+    GlStateManager.scale(scale, scale, scale);
+    drawModalRectWithCustomSizedTexture(turrX, turrY, 55, 182, 11, 18, textureX, textureY);
+
+
+    float yaw = seat.looking.getYaw()+180;
+
+    GlStateManager.pushMatrix();
+    int x = turrX+5;
+    int y = turrY + (isMainCannon? 7 : 10);
+    GlStateManager.translate(x+0.5f, y+0.5f, 0);
+    GlStateManager.rotate(yaw, 0, 0, 1);
+    GlStateManager.translate(-x-0.5f, -y-0.5f, 0);
+    drawModalRectWithCustomSizedTexture(x, y, 55, 187, 1, (isMainCannon? 10 : 7), textureX, textureY);
+    GlStateManager.popMatrix();
+    GlStateManager.popMatrix();
+
+
+    //horzontal line
+    GlStateManager.pushMatrix();
+    GlStateManager.scale(scale, scale, scale);
+    drawModalRectWithCustomSizedTexture((int) (nscale*width/2-21), (int) (nscale*height-20), 0, 198, 42, 1, textureX, textureY);
+    GlStateManager.popMatrix();
+
+    //information text
+    String nameOfGun = seat.seatInfo != null && seat.seatInfo.gunType != null? seat.seatInfo.gunType.name : "";
+    String s = "CANNON " + nameOfGun.toUpperCase();
+    fontRendererObj.drawString(s, width/2-fontRendererObj.getStringWidth(s)/2, height-50, 0xcccccc);
+
+    NumberFormat decimalFormatter = new DecimalFormat("#0.00");
+
+    if (seat.playerLooking != null) {
+
+
+      drawCenteredString(fontRendererObj, decimalFormatter.format(seat.playerLooking.getYaw()), width/2, 10, 0xcccccc);
+      drawCenteredString(fontRendererObj, decimalFormatter.format(seat.playerLooking.getPitch()), width/2, 20, 0xcccccc);
+    }
+    drawString(fontRendererObj, "ZOOM", width-20-fontRendererObj.getStringWidth("ZOOM"), height/2, 0xcccccc);
+    String zoom = (gunnerZoom == 2? 4 : gunnerZoom == 4? 8 : 1) + "x";
+    drawString(fontRendererObj, zoom,width-20-fontRendererObj.getStringWidth(zoom), height/2+10, 0xcccccc);
+    drawString(fontRendererObj, "MODE: VIS", width-20-fontRendererObj.getStringWidth("MODE: VIS"), height/2+25, 0xcccccc);
+
+
+    //border
+    drawGradientRect(0, 0, width, height/4, 0xFF000000, 0);
+    drawGradientRect(0, height-height/4, width, height, 0, 0xFF000000);
+    drawGradientRect(0, height-height/4, width, height, 0, 0xFF000000);
   }
 
   private void drawEject(int textureX, int textureY, int mouseX, int mouseY, float partialTicks) {

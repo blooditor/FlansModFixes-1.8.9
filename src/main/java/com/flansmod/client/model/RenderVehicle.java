@@ -98,10 +98,14 @@ public class RenderVehicle extends Render implements IItemRenderer {
           GL11.glTranslatef(-type.turretOrigin.x, -type.turretOrigin.y, -type.turretOrigin.z);
 
           if (modVehicle != null) {
-            Vector3f color = vehicle.driveableData.color3f;
-            GL11.glColor3f(color.x, color.y, color.z);
-            modVehicle.renderTurret(0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F, vehicle, f1);
-            GL11.glColor3f(1, 1, 1);
+            if (GuiDriveableController.isTankScreen(vehicle) && Minecraft
+                .getMinecraft().currentScreen instanceof GuiDriveableController) {
+            } else {
+              Vector3f color = vehicle.driveableData.color3f;
+              GL11.glColor3f(color.x, color.y, color.z);
+              modVehicle.renderTurret(0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F, vehicle, f1);
+              GL11.glColor3f(1, 1, 1);
+            }
           }
 
           if (FlansMod.DEBUG) {
