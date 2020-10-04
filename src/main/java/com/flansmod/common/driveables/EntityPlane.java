@@ -76,9 +76,14 @@ public class EntityPlane extends EntityDriveable {
 
   public EntityPlane(World world, double x, double y, double z, EntityPlayer placer, PlaneType type,
       DriveableData data) {
-    this(world, x, y, z, type, data);
+    super(world, type, data);
     rotateYaw(placer.rotationYaw + 90F);
     rotatePitch(type.restingPitch);
+    setPosition(x, y, z);
+    prevPosX = x;
+    prevPosY = y;
+    prevPosZ = z;
+    initType(type, false);
   }
 
   @Override
@@ -899,7 +904,6 @@ public class EntityPlane extends EntityDriveable {
           amountToMoveCar.y -= (newWheelPos.y - currentWheelPos.y) * (1F - wheelProportion);
           amountToMoveCar.z -= (newWheelPos.z - currentWheelPos.z) * (1F - wheelProportion);
 
-          //       System.out.println("Move wheel " + amountToMoveWheel + " car " + amountToMoveCar);
           //The difference between how much the wheel moved and how much it was meant to move. i.e. the reaction force from the block
           //amountToMoveCar.x += ((wheel.posX - wheel.prevPosX) - (motionX)) * 0.616F / wheels.length;
           amountToMoveCar.y += ((wheel.posY - wheel.prevPosY) - (motionY)) * 0.5F / wheels.length;
