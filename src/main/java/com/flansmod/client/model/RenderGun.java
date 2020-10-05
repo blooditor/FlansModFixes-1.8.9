@@ -3,11 +3,9 @@ package com.flansmod.client.model;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.ItemRenderType;
-import com.flansmod.client.WorldRenderer;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.IScope;
@@ -17,8 +15,6 @@ import com.flansmod.common.guns.Paintjob;
 import com.flansmod.common.types.PaintableType;
 import com.flansmod.common.vector.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -914,7 +910,6 @@ public class RenderGun implements IItemRenderer {
       GL11.glPopMatrix();
     }
 
-    Vector3f muzzleLocation = model.barrelAttachPoint;
     //Barrel
     if (barrelAttachment != null) {
       GL11.glPushMatrix();
@@ -929,41 +924,7 @@ public class RenderGun implements IItemRenderer {
         ModelAttachment barrelModel = barrelAttachment.model;
 				if (barrelModel != null) {
 					barrelModel.renderAttachment(f);
-       //   muzzleLocation = barrelModel.
-        }
-        renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
-
-      }
-      GL11.glPopMatrix();
-    }
-
-    if(animations.shotThisTick && model.barrelAttachPoint.lengthSquared() != 0){
-      GL11.glPushMatrix();
-      {
-        renderEngine.bindTexture(FlansModResourceHandler.getTrailTexture(BulletType.getBullet("ak47Ammo")));
-
-
-        GL11.glTranslatef(model.barrelAttachPoint.x * type.modelScale,
-            model.barrelAttachPoint.y * type.modelScale,
-            model.barrelAttachPoint.z * type.modelScale);
-
-        GlStateManager.enableRescaleNormal();
-
-        WorldRenderer worldrenderer = FlansModClient.getWorldRenderer();
-
-        float w = 0.6f + animations.random.nextFloat()*0.1f;
-        float h = 0.6f + animations.random.nextFloat()*0.1f;
-
-        Tessellator tessellator = Tessellator.getInstance();
-        worldrenderer.startDrawingQuads();
-        worldrenderer.addVertexWithUV(0, -w/2, -h/2, 0.0f, 0.0f);
-        worldrenderer.addVertexWithUV(0, -w/2, h/2, 0.0f, 1.0f);
-        worldrenderer.addVertexWithUV(0, w/2, h/2, 1.0f, 1.0f);
-        worldrenderer.addVertexWithUV(0, w/2, -h/2, 1.0f, 0.0f);
-        tessellator.draw();
-
-        GlStateManager.disableRescaleNormal();
-
+				}
         renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
       }
       GL11.glPopMatrix();
