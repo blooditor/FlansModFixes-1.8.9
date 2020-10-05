@@ -53,7 +53,6 @@ public class GunAnimations {
   public float switchAnimationProgress = 0, switchAnimationLength = 0;
 
   public static final int[] lookAtTimes = new int[]{1, 10, 20, 10, 20, 10};
-  public boolean shotThisTick;
 
   boolean localPlayer = false;
 

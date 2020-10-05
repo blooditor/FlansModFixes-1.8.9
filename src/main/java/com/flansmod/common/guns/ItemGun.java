@@ -439,9 +439,6 @@ public class ItemGun extends Item implements IPaintableItem {
         }
       }*/
 
-      GunAnimations animations = FlansModClient.getGunAnimations(player, isOffHand);
-      animations.shotThisTick = false;
-
       // Do reload if we pressed fire. TODO
       if (needsToReload && data.shootTimeRight <= 0.0f && data.shootTimeLeft <= 0.0f) {
         if (Reload(gunstack, world, player, player.inventory, isOffHand, hasOffHand, false,
@@ -451,6 +448,7 @@ public class ItemGun extends Item implements IPaintableItem {
      //     data.shootTimeRight = data.shootTimeLeft =
       //        player.capabilities.isCreativeMode ? 5 : (int) type.getReloadTime(gunstack);
 
+          GunAnimations animations = FlansModClient.getGunAnimations(player, isOffHand);
 
           int pumpDelay = type.model == null ? 0 : type.model.pumpDelayAfterReload;
           int pumpTime = type.model == null ? 1 : type.model.pumpTime;
@@ -478,6 +476,7 @@ public class ItemGun extends Item implements IPaintableItem {
         if (FlansModClient.sprintTime > 0.1) {
           return;
         }
+        GunAnimations animations = FlansModClient.getGunAnimations(player, isOffHand);
         animations.lookAt = LookAtState.NONE;
         float shootTime = data.GetShootTime(isOffHand);
 
@@ -544,8 +543,6 @@ public class ItemGun extends Item implements IPaintableItem {
           animations.doShoot(pumpDelay, pumpTime);
           FlansModClient.playerRecoil.addRecoil(type.getRecoil(gunstack));
           animations.recoil += type.getRecoil(gunstack).vertical;
-          animations.shotThisTick = true;
-
             if (type.consumeGunUponUse) {
                 player.inventory.setInventorySlotContents(gunSlot, null);
             }
