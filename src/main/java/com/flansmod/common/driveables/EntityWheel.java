@@ -52,6 +52,7 @@ public class EntityWheel extends Entity implements IEntityAdditionalSpawnData {
         .findLocalVectorGlobally(vehicle.getDriveableType().wheelPositions[ID].position);
     setPosition(vehicle.posX + wheelVector.x, vehicle.posY + wheelVector.y,
         vehicle.posZ + wheelVector.z);
+    setRotation(vehicle.rotationYaw, vehicle.rotationPitch);
     stepHeight = vehicle.getDriveableType().wheelStepHeight;
 
     prevPosX = posX;

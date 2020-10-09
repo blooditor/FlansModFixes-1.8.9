@@ -36,7 +36,7 @@ public class KeyInputHandler {
   //public static KeyBinding leftKey = new KeyBinding("Left Key", Keyboard.KEY_A, "Flan's Mod");
   //public static KeyBinding rightKey = new KeyBinding("Right Key", Keyboard.KEY_D, "Flan's Mod");
   //public static KeyBinding upKey = new KeyBinding("Up Key", Keyboard.KEY_SPACE, "Flan's Mod");
-  public static KeyBinding downKey = new KeyBinding("Down key", Keyboard.KEY_LCONTROL,
+  public static KeyBinding downKey = new KeyBinding("Down key", Keyboard.KEY_LMENU,
       "Flan's Mod");
   //public static KeyBinding exitKey = new KeyBinding("Exit Key", Keyboard.KEY_LSHIFT, "Flan's Mod");
   public static KeyBinding inventoryKey = new KeyBinding("Inventory key", Keyboard.KEY_R,

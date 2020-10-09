@@ -109,9 +109,7 @@ public class ClientRenderHooks {
     EntityPlayer player = mc.thePlayer;
 
     if (mc.thePlayer.ridingEntity instanceof EntitySeat && Minecraft
-        .getMinecraft().currentScreen instanceof GuiDriveableController && (
-        GuiDriveableController.isHeliGunner((IControllable) mc.thePlayer.ridingEntity)
-            || GuiDriveableController.isJetPilot((IControllable) mc.thePlayer.ridingEntity))) {
+        .getMinecraft().currentScreen instanceof GuiDriveableController) {
       event.setCanceled(true);
       return;
     }
@@ -630,16 +628,14 @@ public class ClientRenderHooks {
     if (event.type == ElementType.CROSSHAIRS
         && (mc.thePlayer.getCurrentEquippedItem() != null && mc.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemGun
 //        && (FlansModClient.currentScope != null
-        || mc.thePlayer.ridingEntity instanceof EntitySeat && GuiDriveableController
-        .isHeliGunner((IControllable) mc.thePlayer.ridingEntity))) {
+        || mc.thePlayer.ridingEntity instanceof EntitySeat && mc.currentScreen instanceof GuiDriveableController)) {
       event.setCanceled(true);
-      return;
+    //  return;
     }
     if (event.type == ElementType.HOTBAR && mc.thePlayer.ridingEntity instanceof EntitySeat
-        && Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController
-        && GuiDriveableController.isHeliGunner((IControllable) mc.thePlayer.ridingEntity)) {
+        && Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController) {
       event.setCanceled(true);
-      return;
+   //   return;
     }
 
     ScaledResolution scaledresolution = new ScaledResolution(FlansModClient.minecraft);
