@@ -32,7 +32,7 @@ public class ModelM4Carbine extends ModelGun {
     gunModel[5].addBox(6F, 3.5F, -0.5F, 10, 1, 1);
 
     //Scope
-    scopeAttachPoint = new Vector3f(3.5F / 16F, 5F / 16F, 0F);
+    scopeAttachPoint = new Vector3f(2F / 16F, 5F / 16F, 0F);
 
     //Stock
     defaultStockModel = new ModelRendererTurbo[3];

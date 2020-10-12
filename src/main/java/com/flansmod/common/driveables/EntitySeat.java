@@ -622,8 +622,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 
               //Play the shoot sound
               if (soundDelay <= 0) {
-                PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension,
-                    gun.shootSound, false);
+                PacketPlaySound.sendAdvancedSound(player, gun, bullet, false, true);
                 soundDelay = gun.shootSoundLength;
               }
               //Get the bullet item damage and increment it

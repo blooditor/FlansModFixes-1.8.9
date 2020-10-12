@@ -494,15 +494,6 @@ public class FlansMod {
             }
           }
         }
-        File sounds = new File(contentPack, "/assets/flansmod/sounds/");
-        if (sounds.exists()) {
-          for (File file : sounds.listFiles()) {
-            if (file.isFile() && file.getName().endsWith("-dist.ogg")) {
-              FlansModResourceHandler.soundsWithDistFile.add(file.getName().substring(0, file.getName().length() - "-dist.ogg".length()));
-            }
-          }
-        }
-
       } else {
         try {
           ZipFile zip = new ZipFile(contentPack);
@@ -523,15 +514,6 @@ public class FlansMod {
                 typeFile = new TypeFile(zip.getName(), type,
                     splitName[splitName.length - 1].split("\\.")[0]);
               }
-            }
-            if (typeFile == null) {
-              if (zipEntry.getName().startsWith("assets/flansmod/sounds")) {
-                if (zipEntry.getName().endsWith("-dist.ogg")) {
-                  String name = zipEntry.getName().substring(zipEntry.getName().lastIndexOf("/")+1);
-                  FlansModResourceHandler.soundsWithDistFile.add(name.substring(0, name.length() - "-dist.ogg".length()));
-                }
-              }
-              continue;
             }
             for (; ; ) {
               String line = null;
@@ -642,6 +624,7 @@ public class FlansMod {
               new ItemRewardBox((RewardBox) infoType).setUnlocalizedName(infoType.shortName);
               break;
             case loadout:
+            case sound:
               break;
             default:
               log("Unrecognised type for " + infoType.shortName);

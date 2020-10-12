@@ -6,5 +6,41 @@
 	"hitmarker": {
 		"category" : "player",
 		"sounds" : [ "flansmod:hitmarker" ]
+	},
+	"BulletSniperCrack": {
+		"category" : "player",
+		"sounds" : [
+			"flansmod:BulletSniperCrack1",
+			"flansmod:BulletSniperCrack2",
+			"flansmod:BulletSniperCrack3",
+			"flansmod:BulletSniperCrack4",
+			"flansmod:BulletSniperCrack5",
+			"flansmod:BulletSniperCrack6",
+			"flansmod:BulletSniperCrack7"
+		]
+	},
+	"RocketFlyby": {
+		"category" : "player",
+		"sounds" : [
+			"flansmod:RocketFlyby1",
+			"flansmod:RocketFlyby2",
+			"flansmod:RocketFlyby3",
+			"flansmod:RocketFlyby4",
+			"flansmod:RocketFlyby5",
+			"flansmod:RocketFlyby6",
+			"flansmod:RocketFlyby7"
+		]
+	},
+	"ShellFlyby": {
+		"category" : "player",
+		"sounds" : [
+			"flansmod:ShellFlyby1",
+			"flansmod:ShellFlyby2",
+			"flansmod:ShellFlyby3",
+			"flansmod:ShellFlyby4",
+			"flansmod:ShellFlyby5",
+			"flansmod:ShellFlyby6",
+			"flansmod:ShellFlyby7"
+		]
 	}
 }

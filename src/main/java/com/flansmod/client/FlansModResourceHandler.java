@@ -33,8 +33,6 @@ public class FlansModResourceHandler {
   private static HashMap<String, ResourceLocation> soundMap = new HashMap<String, ResourceLocation>();
   private static HashMap<String, ResourceLocation> blockMap = new HashMap<String, ResourceLocation>();
 
-  public static HashSet<String> soundsWithDistFile = new HashSet<>();
-
   public static ResourceLocation flag = new ResourceLocation("flansmod",
       "textures/items/flagpole.png");
   public static ResourceLocation[] opStick = new ResourceLocation[]{

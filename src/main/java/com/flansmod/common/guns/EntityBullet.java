@@ -15,6 +15,7 @@ import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
+import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.driveables.PlaneType;
 import com.flansmod.common.driveables.VehicleType;
 import com.flansmod.common.driveables.mechas.EntityMecha;
@@ -1051,10 +1052,14 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
           return;
       }
     float speed = getBulletSpeed();
-      if (speed < 1) {
+      boolean missile = type.weaponType == EnumWeaponType.MISSILE || type.ammoType.isMissile();
+      if (speed < 1 && !missile) {
           return;
       }
 
+    boolean a10 = this.type.weaponType == EnumWeaponType.GUN && owner != null && owner.ridingEntity instanceof EntitySeat && "A10".equals(((EntitySeat) owner.ridingEntity).driveable.driveableType);
+    if(a10 && owner == Minecraft.getMinecraft().thePlayer)
+      return;
     EntityPlayer player = Minecraft.getMinecraft().thePlayer;
     Vec3 playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
     Vector3f motion = new Vector3f(motionX, motionY, motionZ);
@@ -1065,7 +1070,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     float t = Vector3f.dot(v, motion);
     if (t > speed || t < 1) {
-      return;
+      if(!a10)
+        return;
     }
 
     if (finalHit != null && Vector3f.sub(finalHit, pos, null).length()
@@ -1078,30 +1084,50 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     float dist = Vector3f.sub(p, new Vector3f(playerPos), null).length();
 
-    float maxDist = 40;
-      if (dist > maxDist) {
-          return;
-      }
+    float maxDist = a10? 100 : 40;
+    if (dist > maxDist) {
+        return;
+    }
 
     float soundSpeed = 15 * BulletType.BULLET_SPEED_MODIFIER;
     boolean playCrack = speed > soundSpeed;
-    boolean playFlyby = !playCrack || speed*rand.nextFloat() < soundSpeed*0.5f;
+    boolean playFlyby = !playCrack || damage > 15 && speed*rand.nextFloat() < soundSpeed*0.5f;
 
     float volCrack = maxDist / 16 * speed * 0.1f;
-    float volFlyby = playCrack ? maxDist / 16 * speed * 0.02f : maxDist / 16 * speed * 0.15f;
+    float volFlyby = missile? dist : playCrack ? maxDist / 16 * speed * 0.02f : maxDist / 16 * speed * 0.15f;
 
     playedFlybySound = true;
     if (playCrack) {
+      String sound = "bulletCrack";
+
+      if (damage > 15) {
+        sound = "BulletSniperCrack";
+        volCrack *= 2;
+      }
+      if(damage*type.damageVsDriveable > 500){
+        sound = "ShellFlyby";
+        volCrack *= 2;
+      }
+      if (a10) {
+        sound = "A10Bullets";
+        volCrack *= 2;
+      }
+
       FMLClientHandler.instance().getClient().getSoundHandler()
           .playSound(
-              new PositionedSoundRecord(FlansModResourceHandler.getSound("bulletCrack"), volCrack,
+              new PositionedSoundRecord(FlansModResourceHandler.getSound(sound), volCrack,
                   1.0F / (rand.nextFloat() * 0.4F + 0.8F), p.x, p.y, p.z));
       log("Play crack sound");
     }
     if (playFlyby) {
+      String flyby = "bulletFlyby";
+      if (missile) {
+        flyby = "RocketFlyby";
+        volFlyby *= 1f;
+      }
       FMLClientHandler.instance().getClient().getSoundHandler()
           .playSound(
-              new PositionedSoundRecord(FlansModResourceHandler.getSound("bulletFlyby"), volFlyby,
+              new PositionedSoundRecord(FlansModResourceHandler.getSound(flyby), volFlyby,
                   1.0F / (rand.nextFloat() * 0.4F + 0.8F), p.x, p.y, p.z));
 
     }
