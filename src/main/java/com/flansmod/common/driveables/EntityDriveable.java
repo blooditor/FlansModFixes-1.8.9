@@ -531,7 +531,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                   gunType.damage * (secondary ? type.damageModifierSecondary
                       : type.damageModifierPrimary), speed, type));
           //Play the shoot sound
-          PacketPlaySound.sendAdvancedSound(this, gunType, bullet, false, true);
+          String shootSound = secondary? type.shootSoundSecondary : type.shootSoundPrimary;
+          PacketPlaySound.sendAdvancedSound(this, shootSound == null? gunType.shootSound : shootSound, bullet, false, true);
           //PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.shootSound(secondary), false);
           //Get the bullet item damage and increment it
           int damage = bulletItemStack.getItemDamage();

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.Entity;
@@ -36,6 +37,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -194,8 +196,9 @@ public class FlansModExplosion extends Explosion {
             d5 /= d13;
             d7 /= d13;
             d9 /= d13;
-            double d14 = this.world.getBlockDensity(vec3, entity.getEntityBoundingBox());
-            double d10 = (1.0D - d12) * d14;
+            double exposure = getBlockDensity(vec3, entity.getEntityBoundingBox());
+            System.out.println("Exposure " + exposure);
+            double d10 = (1.0D - d12) * exposure;
             float dmg = (float) ((int) ((d10 * d10 + d10) / 2.0D * 8.0D * (double) f3 + 1.0D));
             if (entity instanceof EntityDriveable) {
               dmg *= driveableDamageModifier;
@@ -227,6 +230,49 @@ public class FlansModExplosion extends Explosion {
           }
         }
       }
+    }
+  }
+  public float getBlockDensity(Vec3 vec, AxisAlignedBB bb) {
+    double d0 = 1.0D / ((bb.maxX - bb.minX) * 2.0D + 1.0D);
+    double d1 = 1.0D / ((bb.maxY - bb.minY) * 2.0D + 1.0D);
+    double d2 = 1.0D / ((bb.maxZ - bb.minZ) * 2.0D + 1.0D);
+    double d3 = (1.0D - Math.floor(1.0D / d0) * d0) / 2.0D;
+    double d4 = (1.0D - Math.floor(1.0D / d2) * d2) / 2.0D;
+    if (d0 >= 0.0D && d1 >= 0.0D && d2 >= 0.0D) {
+      float unblockedRays = 0;
+      int totalRays = 0;
+
+      for(float f = 0.0F; f <= 1.0F; f = (float)((double)f + d0)) {
+        for(float f1 = 0.0F; f1 <= 1.0F; f1 = (float)((double)f1 + d1)) {
+          for(float f2 = 0.0F; f2 <= 1.0F; f2 = (float)((double)f2 + d2)) {
+            double d5 = bb.minX + (bb.maxX - bb.minX) * (double)f;
+            double d6 = bb.minY + (bb.maxY - bb.minY) * (double)f1;
+            double d7 = bb.minZ + (bb.maxZ - bb.minZ) * (double) f2;
+            List<MovingObjectPosition> pos = FlansModRaytracer.rayTraceBlocks(new Vec3(d5 + d3, d6, d7 + d4), vec, true, true, false, world, 5);
+            if (pos == null || pos.isEmpty()) {
+              ++unblockedRays;
+            } else {
+              float strength = radius*3;
+              float originalStrength = strength;
+              for (MovingObjectPosition p : pos) {
+                if (strength <= 0) {
+                  strength = 0;
+                  break;
+                }
+                BlockPos b  = p.getBlockPos();
+                strength -= world.getBlockState(b).getBlock().getExplosionResistance(world, b, detonator, this);
+              }
+              unblockedRays += strength / originalStrength;
+            }
+
+            ++totalRays;
+          }
+        }
+      }
+
+      return (float)unblockedRays / (float)totalRays;
+    } else {
+      return 0.0F;
     }
   }
 
@@ -283,11 +329,26 @@ public class FlansModExplosion extends Explosion {
    * Second part of the explosion (sound, particles, drop spawn)
    */
   public void doExplosionB(boolean p_77279_1_) {
+    String exploType = "explosionTiny";
+    if (this.radius > 1) {
+      exploType = "explosionSmall";
+      if (this.radius > 2) {
+        exploType = "explosionMedium";
+        if (this.radius >= 4) {
+          exploType = "explosionBig";
+        }
+      }
+    }
+    if (explosive instanceof EntityDriveable) {
+      exploType = "explosionVehicle";
+    }
+    int chunkRange = (int) (8 + this.radius*2f);
+
     if (explosive != null) {
-      PacketPlaySound.sendAdvancedSound(explosive, "minecraft:random.explode", 12,
+      PacketPlaySound.sendAdvancedSound(explosive, "sound_" + exploType, chunkRange,
           (1.0F + (this.world.rand.nextFloat() - this.world.rand.nextFloat()) * 0.2F) * 0.7F);
     } else {
-      this.world.playSoundEffect(this.x, this.y, this.z, "random.explode", 4.0F,
+      this.world.playSoundEffect(this.x, this.y, this.z, "sound_" + exploType, chunkRange,
           (1.0F + (this.world.rand.nextFloat() - this.world.rand.nextFloat()) * 0.2F) * 0.7F);
     }
 

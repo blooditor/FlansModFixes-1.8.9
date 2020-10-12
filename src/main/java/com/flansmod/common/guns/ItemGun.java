@@ -554,9 +554,8 @@ public class ItemGun extends Item implements IPaintableItem {
               if (burstRoundsRemaining > 0) {
                   burstRoundsRemaining--;
               } else {
-                  burstRoundsRemaining = type.numBurstRounds;
+                  burstRoundsRemaining = type.numBurstRounds-1;
               }
-
             data.SetBurstRoundsRemaining(isOffHand, burstRoundsRemaining);
           }
         }
@@ -655,7 +654,7 @@ public class ItemGun extends Item implements IPaintableItem {
     AttachmentType barrel = type.getBarrel(gunstack);
     boolean silenced = type.silenced || barrel != null && barrel.silencer;
 
-    FlansModSounds.playSound(type.shortName,  15, "local");
+   // FlansModSounds.PlaySound(player.posX, player.posY, player.posZ, type.shortName,  15, player.getEntityId(), silenced);
    // PacketPlaySound.sendAdvancedSound(player, type, bullet, silenced, false);
 
     ShotData shotData;
@@ -749,7 +748,7 @@ public class ItemGun extends Item implements IPaintableItem {
        /*   EntitySurvivor s = new EntitySurvivor(player.worldObj);
           s.setPosition(0, 4, 0);
           PacketPlaySound.sendAdvancedSound(s, type, bullet, silenced, false);*/
-          PacketPlaySound.sendAdvancedSound(player, type, bullet, silenced, false);
+          PacketPlaySound.sendAdvancedSound(player, type.shortName, bullet, silenced, false);
           //soundDelay = type.shootSoundLength;
         }
         AttachmentType barrel = type.getBarrel(gunstack);

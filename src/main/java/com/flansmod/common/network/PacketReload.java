@@ -78,7 +78,7 @@ public class PacketReload extends PacketBase {
           }
           //Play reload sound
           if (type.reloadSound != null) {
-            PacketPlaySound.sendAdvancedSound(playerEntity, false, type.reloadSound, 1, 1, false);
+            PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, 30, playerEntity.dimension, type.reloadSound, false);
           }
           if (!isOffHand) {
             playername = playerEntity.getDisplayNameString();

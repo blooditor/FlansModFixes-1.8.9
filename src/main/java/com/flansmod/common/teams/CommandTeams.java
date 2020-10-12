@@ -1,6 +1,5 @@
 package com.flansmod.common.teams;
 
-import com.flansmod.apocalypse.common.FlansModApocalypse;
 import com.flansmod.apocalypse.common.entity.EntityFlyByPlane;
 import com.flansmod.apocalypse.common.entity.EntitySurvivor;
 import com.flansmod.client.FlansModResourceHandler;
@@ -19,7 +18,6 @@ import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
-import com.google.common.io.Files;
 import com.mojang.authlib.GameProfile;
 import java.io.BufferedReader;
 import java.io.File;
@@ -68,74 +66,9 @@ public class CommandTeams extends CommandBase {
       return;
     }
 
-    if (split[0].equals("s")) {
-      String s2 = split.length > 2? split[2] : "";
-      TypeFile f = new TypeFile("test", EnumType.sound, "sound_test");
-      SoundType t = new SoundType(f);
-      t.read(new String[]{"High", "High_" + split[1]}, f);
-      t.read(new String[]{"Low", "Low_" + s2}, f);
-      IThreadListener mainT = Minecraft.getMinecraft();
-      mainT.addScheduledTask(new Runnable() {
-
-        @Override
-        public void run() {
-          FlansModSounds.toPlay.add("test");
-        }
-      });
-      return;
-    }
-
-    if (split[0].equals("rr")) {
-      if (split.length > 1) {
-        SoundType type = SoundType.getSound("sound_test");
-        String file = split[1];
-        File f = new File(
-            "C:\\Users\\Tim\\Desktop\\Projects\\Programming\\FlansModFixes-1.8.9\\run\\Flan\\Modern-Warfare-Content-Pack\\sounds\\sound_" + file + ".txt");
-        try {
-          f.createNewFile();
-          FileWriter fw = new FileWriter(f, false); //the true will append the new data
-          fw.write("High  " + type.high + "\n"
-              + "Low " + type.low + "\nNoise "+type.noise+"\n");//appends the string to the file
-          fw.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-      IThreadListener mainT = Minecraft.getMinecraft();
-      mainT.addScheduledTask(new Runnable() {
-
-        @Override
-        public void run() {
-          FlansModSounds.toPlay.add("test");
-        }
-      });
-      return;
-    }
-    if (split[0].equals("r")) {
-      Random r = new Random();
-      int h = r.nextInt(24) + 1;
-      int l = r.nextInt(30) + 1;
-      TypeFile f = new TypeFile("test", EnumType.sound, "sound_test");
-      SoundType t = new SoundType(f);
-      t.read(new String[]{"High", "High_" + h}, f);
-      t.read(new String[]{"Low", "Low_" + l}, f);
-      t.read(new String[]{"Noise", "rifle"}, f);
-      System.out.println("");
-      System.out.println("\nHigh High_" + h + "\n"
-          + "Low Low_" + l + "\nNoise rifle");
-      IThreadListener mainT = Minecraft.getMinecraft();
-      mainT.addScheduledTask(new Runnable() {
-
-        @Override
-        public void run() {
-          FlansModSounds.toPlay.add("test");
-        }
-      });
-      return;
-    }
-
     if (split[0].equals("sound")) {
-      FlansModSounds.playSound(split[1],  13,"local");
+      EntityPlayer p = (EntityPlayer)sender;
+      FlansModSounds.PlaySound(0, 5, 0, split[1],  13,0, false);
       return;
     }
     if (split[0].equals("reload")) {
@@ -183,14 +116,6 @@ public class CommandTeams extends CommandBase {
                 e.printStackTrace();
               } catch (IOException e) {
                 e.printStackTrace();
-              }
-            }
-          }
-          File sounds = new File(contentPack, "/assets/flansmod/sounds/");
-          if (sounds.exists()) {
-            for (File file : sounds.listFiles()) {
-              if (file.isFile() && file.getName().endsWith("-dist.ogg")) {
-                FlansModResourceHandler.soundsWithDistFile.add(file.getName().substring(0, file.getName().length() - "-dist.ogg".length()));
               }
             }
           }
