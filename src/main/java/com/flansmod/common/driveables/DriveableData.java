@@ -45,6 +45,9 @@ public class DriveableData implements IInventory {
   /**
    * Paintjob index
    */
+
+  public boolean ammoSlotContentsChanged;
+
   public int paintjobID;
   //TODO
   public Vector3f color3f = new Vector3f(1, 1, 1);
@@ -180,6 +183,7 @@ public class DriveableData implements IInventory {
 
   @Override
   public ItemStack decrStackSize(int i, int j) {
+    ammoSlotContentsChanged = true;
     //Find the correct inventory
     ItemStack[] inv = ammo;
     if (i >= ammo.length) {
@@ -222,11 +226,13 @@ public class DriveableData implements IInventory {
 
   @Override
   public ItemStack removeStackFromSlot(int i) {
+    ammoSlotContentsChanged = true;
     return getStackInSlot(i);
   }
 
   @Override
   public void setInventorySlotContents(int i, ItemStack stack) {
+    ammoSlotContentsChanged = true;
     //Find the correct inventory
     ItemStack[] inv = ammo;
     if (i >= ammo.length) {

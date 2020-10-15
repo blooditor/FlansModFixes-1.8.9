@@ -21,6 +21,8 @@ import com.flansmod.common.guns.raytracing.FlansModRaytracer.DriveableHit;
 import com.flansmod.common.network.PacketDriveableDamage;
 import com.flansmod.common.network.PacketDriveableKeyHeld;
 import com.flansmod.common.network.PacketPlaySound;
+import com.flansmod.common.network.PacketVehicleFireMode;
+import com.flansmod.common.network.PacketVehicleFireMode.FireModeWeapon;
 import com.flansmod.common.parts.EnumPartCategory;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
@@ -28,6 +30,7 @@ import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.vector.Vector3f;
 import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -65,6 +68,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
   public static float speedLagModifier = 1;
   public static int speedLagModifierTimer = 0; //in seconds, 0 means none
   int timeUnderWater = 0;
+
+  public PacketVehicleFireMode fireMode = new PacketVehicleFireMode();
 
   public boolean syncFromServer = true;
   /**
@@ -428,12 +433,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     if (!worldObj.isRemote && key == 9
         && getDriveableType().modePrimary == EnumFireMode.SEMIAUTO) //Primary
     {
-      shoot(false);
+      shoot(fireMode.secondary);
       return true;
     } else if (!worldObj.isRemote && key == 8
         && getDriveableType().modeSecondary == EnumFireMode.SEMIAUTO) //Secondary
     {
-      shoot(true);
+   //   shoot(true);
       return true;
     }
     return false;
@@ -508,6 +513,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     Vector3f gunVec = getOrigin(shootPoint);
     Vector3f lookVector = getLookVector(shootPoint);
 
+    FireModeWeapon selectedMode = fireMode.getCurrentShootable();
+    if (selectedMode == null) {
+      return;
+    }
+    BulletType selected = selectedMode.bullet;
+
     //If its a pilot gun, then it is using a gun type, so do the following
     if (shootPoint instanceof PilotGun) {
       //ignoring that instant bullet trash and using 4.10 method to fix guns in vehicles:
@@ -521,7 +532,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
       if (gunType != null && bulletItemStack != null && bulletItemStack
           .getItem() instanceof ItemShootable && TeamsManager.bulletsEnabled) {
         ShootableType bullet = ((ItemShootable) bulletItemStack.getItem()).type;
-        if (gunType.isAmmo(bullet)) {
+        if (gunType.isAmmo(bullet) && bullet == selected) {
           float speed = gunType.getBulletSpeed(bullet, null);
           //Spawn a new bullet item
           worldObj.spawnEntityInWorld(((ItemShootable) bulletItemStack.getItem())
@@ -623,7 +634,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 i < driveableData.getBombInventoryStart() + type.numBombSlots; i++) {
               ItemStack bomb = driveableData.getStackInSlot(i);
               if (bomb != null && bomb.getItem() instanceof ItemBullet && type
-                  .isValidAmmo(((ItemBullet) bomb.getItem()).type, weaponType)) {
+                  .isValidAmmo(((ItemBullet) bomb.getItem()).type, weaponType) && selected == ((ItemBullet) bomb.getItem()).type) {
                 slot = i;
               }
             }
@@ -677,7 +688,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 i < driveableData.getMissileInventoryStart() + type.numMissileSlots; i++) {
               ItemStack shell = driveableData.getStackInSlot(i);
               if (shell != null && shell.getItem() instanceof ItemBullet && type
-                  .isValidAmmo(((ItemBullet) shell.getItem()).type, weaponType)) {
+                  .isValidAmmo(((ItemBullet) shell.getItem()).type, weaponType) && selected == ((ItemBullet) shell.getItem()).type) {
                 slot = i;
               }
             }
@@ -981,24 +992,48 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     }
     if (!worldObj.isRemote) {
       if (leftMouseHeld && getDriveableType().modePrimary == EnumFireMode.FULLAUTO) {
-        shoot(false);
+        shoot(fireMode.secondary);
       }
       if (rightMouseHeld && getDriveableType().modeSecondary == EnumFireMode.FULLAUTO) {
-        shoot(true);
+   //     shoot(true);
       }
       minigunSpeedPrimary *= 0.9F;
       minigunSpeedSecondary *= 0.9F;
       if (leftMouseHeld && getDriveableType().modePrimary == EnumFireMode.MINIGUN) {
         minigunSpeedPrimary += 0.1F;
         if (minigunSpeedPrimary > 1F) {
-          shoot(false);
+          shoot(fireMode.secondary);
         }
       }
       if (rightMouseHeld && getDriveableType().modeSecondary == EnumFireMode.MINIGUN) {
         minigunSpeedSecondary += 0.1F;
         if (minigunSpeedSecondary > 1F) {
-          shoot(true);
+          //shoot(true);
         }
+      }
+
+      if (driveableData.ammoSlotContentsChanged) {
+        if (seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayerMP) {
+
+          PacketVehicleFireMode p = new PacketVehicleFireMode();
+          ItemStack[] driverAmmo = Arrays.copyOfRange(driveableData.ammo, getDriveableType().numPassengerGunners, driveableData.ammo.length);
+          p.addModes(this, driverAmmo);
+          p.addModes(this, driveableData.missiles);
+          p.addModes(this, driveableData.bombs);
+
+          int mode = fireMode.getCurrentMode();
+          try {
+            ShootableType sel = fireMode.modes.get(fireMode.getCurrentMode()).bullet;
+            mode = p.modes.indexOf(sel);
+          } catch (Exception e) {
+          }
+          mode = MathHelper.clamp_int(mode, 0, p.modes.size() - 1);
+          p.setCurrentMode(mode, this);
+          this.fireMode = p;
+
+          FlansMod.getPacketHandler().sendTo(this.fireMode, (EntityPlayerMP) seats[0].riddenByEntity);
+        }
+        driveableData.ammoSlotContentsChanged = false;
       }
     }
 
@@ -1589,6 +1624,4 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
       currentGunPrimary = i;
     }
   }
-
-
 }

@@ -45,11 +45,14 @@ public class PacketPlaySound extends PacketBase {
     this.posX = posX;
     this.posY = posY;
     this.posZ = posZ;
+    this.sound = sound;
   }
 
 
   public static void sendSoundPacket(double x, double y, double z, double range, int dimension,
       String s, boolean distort) {
+    if(s == null)
+      return;
     FlansMod.getPacketHandler()
         .sendToAllAround(new PacketPlaySound((float)x, (float)y, (float)z, s), x, y, z, (float) range,
             dimension);

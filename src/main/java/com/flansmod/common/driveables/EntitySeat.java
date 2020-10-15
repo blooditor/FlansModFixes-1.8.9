@@ -687,6 +687,8 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
     //Put them in the seat
     if (riddenByEntity == null && !driveable.getDriveableData().engine.isAIChip) {
       entityplayer.mountEntity(this);
+      if(seatInfo != null && seatInfo.id == 0)
+        driveable.driveableData.ammoSlotContentsChanged = true;
       return true;
     }
     return false;

@@ -3,9 +3,16 @@ package com.flansmod.client.gui;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.ContainerDriveableInventory;
 import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.driveables.EnumWeaponType;
+import com.flansmod.common.driveables.PilotGun;
+import com.flansmod.common.driveables.Seat;
 import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.guns.BulletType;
+import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.network.PacketDriveableGUI;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -95,6 +102,44 @@ public class GuiDriveableInventory extends GuiContainer {
     RenderHelper.disableStandardItemLighting();
     //	GL11.glDisable(GL11.GL_LIGHTING);
     //	GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+    if (screen == 3) {
+      fontRendererObj.drawString("Usable ammo:", 180, 5, 0xFFa900);
+      int i = 0;
+      for (BulletType t : driveable.getDriveableType().ammo) {
+        if (t.weaponType == EnumWeaponType.SHELL || t.weaponType == EnumWeaponType.MISSILE) {
+          drawStack(new ItemStack(t.item), 180, 17+18*i);
+          fontRendererObj.drawString(t.name, 198, 22 + 18*i, 0xFFFFFF);
+          i++;
+        }
+      }
+    }
+    if (screen == 0) {
+      fontRendererObj.drawString("Usable ammo:", 180, 5, 0xFFa900);
+      List<ShootableType> l = new ArrayList<>();
+      for (Seat s : driveable.getDriveableType().seats) {
+        if (s.gunType != null) {
+          for (ShootableType t : s.gunType.ammo) {
+            if (!l.contains(t)) {
+              l.add(t);
+            }
+          }
+        }
+      }
+      for (PilotGun gun : driveable.getDriveableType().pilotGuns) {
+        for (ShootableType t : gun.type.ammo) {
+          if (!l.contains(t)) {
+            if(!(driveable.driveableType.equals("A10") && !t.shortName.equals("minigunExplosiveAmmo")))
+              l.add(t);
+          }
+        }
+      }
+      for (int i = 0; i < l.size(); i++) {
+        ShootableType t = l.get(i);
+        drawStack(new ItemStack(t.item), 180, 17+18*i);
+        fontRendererObj.drawString(t.name, 198, 22 + 18*i, 0xFFFFFF);
+      }
+    }
   }
 
   private void drawStack(ItemStack itemstack, int i, int j) {

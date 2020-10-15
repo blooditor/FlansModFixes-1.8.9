@@ -213,6 +213,7 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
     registerPacket(PacketClientBulletUpdate.class);
     registerPacket(PacketSurvivorGunHeldState.class);
     registerPacket(PacketToggleFireMode.class);
+    registerPacket(PacketVehicleFireMode.class);
   }
 
   /**

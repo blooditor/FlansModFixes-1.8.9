@@ -43,6 +43,7 @@ import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.EntityWheel;
+import com.flansmod.common.driveables.EnumPlaneMode;
 import com.flansmod.common.driveables.PlaneType;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.EntityAAGun;
@@ -304,30 +305,35 @@ public class ClientProxy extends CommonProxy {
       player.addChatComponentMessage(new ChatComponentText(
           "Press " + Keyboard.getKeyName(KeyInputHandler.inventoryKey.getKeyCode())
               + " to open the menu"));
-      player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard
+      player.addChatComponentMessage(new ChatComponentText("Hold " + Keyboard
           .getKeyName(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())
           + " to get out"));
       player.addChatComponentMessage(new ChatComponentText(
-          "Press " + Keyboard.getKeyName(KeyInputHandler.controlSwitchKey.getKeyCode())
-              + " to switch controls"));
-      player.addChatComponentMessage(new ChatComponentText(
-          "Press " + Keyboard.getKeyName(KeyInputHandler.modeKey.getKeyCode())
-              + " to switch VTOL mode"));
+          "Press " + Keyboard.getKeyName(KeyInputHandler.switchFireModeKey.getKeyCode())
+              + " to switch weapon"));
       if (entityType instanceof EntityPlane) {
+        player.addChatComponentMessage(new ChatComponentText(
+            "Press " + Keyboard.getKeyName(KeyInputHandler.controlSwitchKey.getKeyCode())
+                + " to toggle mouse control"));
+        if (((EntityPlane) entityType).mode == EnumPlaneMode.VTOL) {
+          player.addChatComponentMessage(new ChatComponentText(
+              "Press " + Keyboard.getKeyName(KeyInputHandler.modeKey.getKeyCode())
+                  + " to toggle VTOL mode"));
+        }
         if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).hasGear) {
           player.addChatComponentMessage(new ChatComponentText(
               "Press " + Keyboard.getKeyName(KeyInputHandler.gearKey.getKeyCode())
-                  + " to switch the gear"));
+                  + " to toggle the gear"));
         }
         if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).hasDoor) {
           player.addChatComponentMessage(new ChatComponentText(
               "Press " + Keyboard.getKeyName(KeyInputHandler.doorKey.getKeyCode())
-                  + " to switch the doors"));
+                  + " to toggle the doors"));
         }
         if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).hasWing) {
           player.addChatComponentMessage(new ChatComponentText(
               "Press " + Keyboard.getKeyName(KeyInputHandler.modeKey.getKeyCode())
-                  + " to switch the wings"));
+                  + " to fold/unfold the wings"));
         }
       }
     }
