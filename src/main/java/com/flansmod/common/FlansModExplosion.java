@@ -197,7 +197,6 @@ public class FlansModExplosion extends Explosion {
             d7 /= d13;
             d9 /= d13;
             double exposure = getBlockDensity(vec3, entity.getEntityBoundingBox());
-            System.out.println("Exposure " + exposure);
             double d10 = (1.0D - d12) * exposure;
             float dmg = (float) ((int) ((d10 * d10 + d10) / 2.0D * 8.0D * (double) f3 + 1.0D));
             if (entity instanceof EntityDriveable) {

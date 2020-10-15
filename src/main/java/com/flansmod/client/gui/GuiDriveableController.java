@@ -7,6 +7,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.network.PacketRequestDebug;
+import com.flansmod.common.network.PacketVehicleFireMode;
+import com.flansmod.common.network.PacketVehicleFireMode.FireModeWeapon;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.common.vector.Vector3i;
 import net.minecraft.client.Minecraft;
@@ -55,6 +57,8 @@ public class GuiDriveableController extends GuiScreen {
   public GuiDriveableController(IControllable thePlane) {
     super();
     plane = thePlane;
+
+    zoomCooldown = 5;
   }
 
   private static void loadShader() {
@@ -179,11 +183,11 @@ public class GuiDriveableController extends GuiScreen {
 
     // Right mouse. Fires shells, drops bombs. Is not a holding thing
     if (Mouse.isButtonDown(1)) {
-      plane.pressKey(8, player);
+ //     plane.pressKey(8, player);
     }
 
-    if (Mouse.isButtonDown(2)) {
-      if ((isTankScreen(plane) || isHeliGunner(plane)) && zoomCooldown < player.ticksExisted-5) {
+    if (Mouse.isButtonDown(1)) {
+      if ((isTankScreen(plane) || isHeliGunner(plane)) && zoomCooldown == 0) {
         int ngz = 1;
         switch (gunnerZoom) {
           case 1: ngz = 2;
@@ -202,13 +206,20 @@ public class GuiDriveableController extends GuiScreen {
         } else {
           mc.gameSettings.fovSetting = 60;
         }
-        zoomCooldown = player.ticksExisted;
+        zoomCooldown = 5;
+      }
+    }
+    if (Mouse.isButtonDown(0)) { //update shoot delay on client side
+      if (plane instanceof EntitySeat && ((EntitySeat) plane).driveable != null && ((EntitySeat) plane).seatInfo != null
+          && ((EntitySeat) plane).seatInfo.id == 0) {
+        EntityDriveable d = ((EntitySeat) plane).driveable;
+        boolean secondary = d.fireMode.secondary;
+        ((EntitySeat) plane).driveable.setShootDelay(secondary? d.getDriveableType().shootDelaySecondary : d.getDriveableType().shootDelayPrimary, secondary);
       }
     }
 
     if (!leftMouseHeld && Mouse.isButtonDown(0)) // Left mouse, for MGs. Is
     // a holding thing
-
     {
       leftMouseHeld = true;
       plane.updateKeyHeldState(9, true);
@@ -292,6 +303,20 @@ public class GuiDriveableController extends GuiScreen {
     if (i == KeyInputHandler.reloadModelsKey.getKeyCode()) {
       FlansModClient.reloadModels(false);
     }
+    if (i == KeyInputHandler.switchFireModeKey.getKeyCode()) {
+      if (plane instanceof EntitySeat && ((EntitySeat) plane).driveable != null && ((EntitySeat) plane).seatInfo != null
+          && ((EntitySeat) plane).seatInfo.id == 0) {
+        ((EntitySeat) plane).driveable.fireMode.pressToggleButton(((EntitySeat) plane).driveable);
+      }
+    }
+
+    if (i > 1 && i < 11) {
+      int num = i-2;
+      if (plane instanceof EntitySeat && ((EntitySeat) plane).driveable != null && ((EntitySeat) plane).seatInfo != null && ((EntitySeat) plane).seatInfo.id == 0) {
+        PacketVehicleFireMode m = ((EntitySeat) plane).driveable.fireMode;
+        m.trySetMode(num, ((EntitySeat) plane).driveable);
+      }
+    }
     // fires click event for other mods
     try {
       Class cl = Class.forName("com.mcb.client.KeyHandler");
@@ -373,8 +398,8 @@ public class GuiDriveableController extends GuiScreen {
     }
     GlStateManager.popMatrix();
 
-    int turrX = (int) (nscale * width / 2 + 30);
-    int turrY = (int) (nscale*height - 40);
+    int turrX = (int) (nscale * width / 2 + 40);
+    int turrY = (int) (nscale*height - 36);
     //turret orientation
     GlStateManager.pushMatrix();
     GlStateManager.scale(scale, scale, scale);
@@ -394,16 +419,9 @@ public class GuiDriveableController extends GuiScreen {
     GlStateManager.popMatrix();
 
 
-    //horzontal line
-    GlStateManager.pushMatrix();
-    GlStateManager.scale(scale, scale, scale);
-    drawModalRectWithCustomSizedTexture((int) (nscale*width/2-21), (int) (nscale*height-20), 0, 198, 42, 1, textureX, textureY);
-    GlStateManager.popMatrix();
+   drawSelectedFireMode(seat, 0xcccccc, 0xFF7070);
 
-    //information text
-    String nameOfGun = seat.seatInfo != null && seat.seatInfo.gunType != null? seat.seatInfo.gunType.name : "";
-    String s = "CANNON " + nameOfGun.toUpperCase();
-    fontRendererObj.drawString(s, width/2-fontRendererObj.getStringWidth(s)/2, height-50, 0xcccccc);
+    //angles and zoom
 
     NumberFormat decimalFormatter = new DecimalFormat("#0.00");
 
@@ -423,6 +441,59 @@ public class GuiDriveableController extends GuiScreen {
     drawGradientRect(0, 0, width, height/4, 0xFF000000, 0);
     drawGradientRect(0, height-height/4, width, height, 0, 0xFF000000);
     drawGradientRect(0, height-height/4, width, height, 0, 0xFF000000);
+  }
+
+  private void drawSelectedFireMode(EntitySeat seat, int col, int highlightCol) {
+
+    int y = height-65;
+
+    //information text
+    String nameOfGun = getCurrentFireMode();
+    String gunName = nameOfGun.toUpperCase();
+    int gunNameCol = col;
+    //draw later because the col might change
+
+    //selected gun
+    if (!seat.driveable.fireMode.modes.isEmpty() && seat.seatInfo != null && seat.seatInfo.id == 0) {
+      String s = "";
+      String space = "";
+      int spaceI = Math.max(2, 7 - seat.driveable.fireMode.modes.size());
+      while (spaceI-- > 0) space += " ";
+      for (int i = 0; i < seat.driveable.fireMode.modes.size(); i++) {
+        s += space + "[" + (seat.driveable.fireMode.getCurrentMode() == i? "X" : " ") + "]";
+      }
+      s = s.substring(space.length());
+
+      //s = "[" + Keyboard.getKeyName(KeyInputHandler.switchFireModeKey.getKeyCode()) + "]";
+      fontRendererObj.drawStringWithShadow(s, width/2-fontRendererObj.getStringWidth(s)/2, y+25, col);
+
+      float shootDelay = seat.driveable.fireMode.secondary? seat.driveable.shootDelaySecondary : seat.driveable.shootDelayPrimary;
+      if (shootDelay > 0) {
+        gunNameCol = highlightCol;
+      }
+
+
+      int ammoLeft = seat.driveable.fireMode.getCurrentShootable() == null? 0 : seat.driveable.fireMode.getCurrentShootable().ammoLeft;
+      s = ammoLeft + "";
+      while (s.length() < 4)
+        s = "0" + s;
+      fontRendererObj.drawStringWithShadow(s, width/2-fontRendererObj.getStringWidth(s)/2, y, col);
+    }
+
+
+    fontRendererObj.drawStringWithShadow(gunName, width / 2 - fontRendererObj.getStringWidth(gunName) / 2, y + 10, gunNameCol);
+
+    drawRect(width/2-40,y+20,width/2+40,y+22,0xFF000000 | col);
+  }
+
+  private String getCurrentFireMode() {
+
+    EntityDriveable driveable = ((EntitySeat) plane).driveable;
+    FireModeWeapon bullet = driveable.fireMode.getCurrentShootable();
+    if (bullet != null) {
+      return bullet.bullet.name;
+    }
+    return "-";
   }
 
   private void drawEject(int textureX, int textureY, int mouseX, int mouseY, float partialTicks) {
@@ -516,69 +587,8 @@ public class GuiDriveableController extends GuiScreen {
     }
 
     //WEAPONS
+    drawSelectedFireMode((EntitySeat) plane, 0x00a900, 0xFFa900);
 
-    int gunsI = 0;
-    String[] guns = new String[2];
-    int[] gunsC = {0x00a900,0x00a900};
-    int gun = driveable.getCurrentGun(false);
-
-    EnumWeaponType weaponType1 = driveable.getPlaneType().weaponType(false);
-    switch (weaponType1) {
-      case GUN:
-
-        DriveablePosition position = driveable.getPlaneType().shootPoints(false).size() <= gun? null : driveable.getPlaneType().shootPoints(false).get(gun);
-        if (position instanceof PilotGun) {
-          guns[gunsI++] = ((PilotGun) position).type.name;
-
-        }
-
-        break;
-      case MISSILE:
-        guns[gunsI++] = "MISSILE";
-        break;
-      case SHELL:
-        guns[gunsI++] = "CANNON";
-        break;
-      case BOMB:
-        guns[gunsI++] = "BOMB";
-        break;
-    }
-    if(primaryCooldown > driveable.ticksExisted-driveable.getPlaneType().shootDelayPrimary)
-      gunsC[0] = 0x9DB200;
-
-    EnumWeaponType weaponType2 = driveable.getPlaneType().weaponType(true);
-    switch (weaponType2) {
-      case GUN:
-
-        int gunn = driveable.getCurrentGun(true);
-        DriveablePosition position2 = driveable.getPlaneType().shootPoints(true).size() <= gunn? null : driveable.getPlaneType().shootPoints(true).get(gunn);
-        if (position2 instanceof PilotGun) {
-          guns[gunsI++] = ((PilotGun) position2).type.name;
-        }
-
-        break;
-      case MISSILE:
-
-        guns[gunsI++] = "MISSILE";
-        break;
-      case SHELL:
-        guns[gunsI++] = "CANNON";
-        break;
-      case BOMB:
-        guns[gunsI++] = "BOMB";
-        break;
-    }
-
-    if(secondaryCooldown > driveable.ticksExisted-driveable.getPlaneType().shootDelaySecondary)
-      gunsC[1] = 0x9DB200;
-
-
-    if (guns[0] != null) {
-      drawString(fontRendererObj, guns[0].toUpperCase(), width/2-82+2, height/2+70, gunsC[0]);
-    }
-    if (guns[1] != null) {
-      drawString(fontRendererObj, guns[1].toUpperCase(), width/2+50, height/2+70, gunsC[1]);
-    }
 
     //WARN
     int warnSound = 0;
@@ -768,6 +778,9 @@ public class GuiDriveableController extends GuiScreen {
     if(!ejecting)
       ejectTimer = 0;
     ejecting = false;
+
+    if(zoomCooldown > 0)
+      zoomCooldown--;
   }
 
   @Override
@@ -821,7 +834,7 @@ public class GuiDriveableController extends GuiScreen {
       }
       if (FlansMod.proxy.keyDown(mc.gameSettings.keyBindSneak.getKeyCode()))// KeyInputHandler.exitKey.getKeyCode()))
       {
-        if(ejectTimer++ > EJECT_TIME)
+        if(ejectTimer++ > EJECT_TIME || player != null && player.capabilities.isCreativeMode)
           plane.pressKey(6, player);
         ejecting = true;
       }
