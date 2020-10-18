@@ -312,6 +312,28 @@ public class ItemGun extends Item implements IPaintableItem {
     if (!(entity instanceof EntityPlayer)) {
       return;
     }
+    if (Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer == entity
+        && Minecraft.getMinecraft().thePlayer.inventory.currentItem
+        != GunAnimations.lastInventorySlot) {
+      GunAnimations.lastInventorySlot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
+      ItemStack stack = Minecraft.getMinecraft().thePlayer.getHeldItem();
+      GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
+      if (stack != null && stack.getItem() instanceof ItemGun) {
+        float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
+        if (animationLength == 0) {
+          animations.switchAnimationLength = animations.switchAnimationProgress = 0;
+        } else {
+          animations.switchAnimationProgress = 1;
+          animations.switchAnimationLength = animationLength;
+          PlayerHandler
+              .getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT).shootTimeRight = Math
+              .max(PlayerHandler
+                      .getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT).shootTimeRight,
+                  animationLength);
+        }
+
+      }
+    }
       if (EntityPlane.speedLagModifierTimer > 0 && EntityPlane.speedLagModifier == 0) {
           return;
       }
@@ -1083,28 +1105,7 @@ public class ItemGun extends Item implements IPaintableItem {
    */
   @Override
   public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
-    if (Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer == entity
-        && Minecraft.getMinecraft().thePlayer.inventory.currentItem
-        != GunAnimations.lastInventorySlot) {
-      GunAnimations.lastInventorySlot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
-      ItemStack stack = Minecraft.getMinecraft().thePlayer.getHeldItem();
-      GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
-      if (stack != null && stack.getItem() instanceof ItemGun) {
-        float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
-        if (animationLength == 0) {
-          animations.switchAnimationLength = animations.switchAnimationProgress = 0;
-        } else {
-          animations.switchAnimationProgress = 1;
-          animations.switchAnimationLength = animationLength;
-          PlayerHandler
-              .getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT).shootTimeRight = Math
-              .max(PlayerHandler
-                      .getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT).shootTimeRight,
-                  animationLength);
-        }
 
-      }
-    }
     if (entity instanceof EntityPlayer
         && ((EntityPlayer) entity).inventory.getCurrentItem() == itemstack) {
       if (world.isRemote) {

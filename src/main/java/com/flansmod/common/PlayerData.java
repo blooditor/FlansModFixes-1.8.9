@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -221,7 +218,7 @@ public class PlayerData {
     //Take new snapshot
     snapshots[0] = new PlayerSnapshot(player);
   }
-
+@SideOnly(Side.CLIENT)
   private void finishReload(boolean offHand) {
 
     ItemStack gunStack = offHand ? Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(offHandGunSlot)
@@ -236,7 +233,7 @@ public class PlayerData {
         Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode, true);
     FlansMod.getPacketHandler().sendToServer(new PacketReload(true, offHand, true));
   }
-
+@SideOnly(Side.CLIENT)
   public void clientTick(EntityPlayer player) {
     if (player.getCurrentEquippedItem() == null
         || !(player.getCurrentEquippedItem().getItem() instanceof ItemGun)
@@ -273,67 +270,6 @@ public class PlayerData {
         }
       }
     }
-  }
-
-  //pause the reload sound to resume it later. Pause: resume = false
-  //closing a GUI makes minecraft resume all sounds, that's why we remove the sound after pausing them and keep the unique string
-  public void stopSound(ReloadSoundAtEntity iSound) {
-    Minecraft.getMinecraft().getSoundHandler().stopSound(iSound);
-  }
-
-  public void pauseOrResumeSound(ReloadSoundAtEntity iSound, boolean resume) {
-
-    if (iSound == null) {
-      return;
-    }
-
-    try {
-
-      SoundHandler soundHandler = Minecraft.getMinecraft().getSoundHandler();
-      Field smField = ReflectionHelper
-          .findField(soundHandler.getClass(), "sndManager", "field_147694_f");
-      SoundManager soundManager = (SoundManager) smField.get(soundHandler);
-
-      Field syField = ReflectionHelper
-          .findField(soundManager.getClass(), "sndSystem", "field_148620_e");
-      SoundSystem soundSystem = (SoundSystem) syField.get(soundManager);
-
-      Field invPlayingSoundsF = ReflectionHelper
-          .findField(soundManager.getClass(), "invPlayingSounds", "field_148630_i");
-      Map<ISound, String> invPlayingSounds = (Map<ISound, String>) invPlayingSoundsF
-          .get(soundManager);
-
-      Field playingSoundsF = ReflectionHelper
-          .findField(soundManager.getClass(), "playingSounds", "field_148629_h");
-
-      Map<String, ISound> playingSounds = (Map<String, ISound>) playingSoundsF.get(soundManager);
-
-      String uuid = invPlayingSounds.get(iSound);
-      if (uuid == null) {
-        uuid = iSound.uuid;
-      } else {
-        iSound.uuid = uuid;
-      }
-      if (resume) {
-        soundSystem.play(uuid);
-      } else {
-        soundSystem.pause(uuid);
-        //so it's not resumed when resumeAllSounds is called
-        playingSounds.remove(uuid);
-      }
-
-    } catch (Exception e) {
-      //well at least we tried
-    }
-  }
-
-  private void setShootTime(ItemStack stack, float shootTime) {
-    NBTTagCompound tag = stack.getTagCompound();
-    if (tag == null) {
-      tag = new NBTTagCompound();
-    }
-    tag.setFloat("shootTime", shootTime);
-    stack.setTagCompound(tag);
   }
 
   public IPlayerClass getPlayerClass() {
