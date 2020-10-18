@@ -105,6 +105,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod", version = FlansMod.VERSION, acceptableRemoteVersions = "@ALLOWEDVERSIONS@", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod {
@@ -237,7 +238,9 @@ public class FlansMod {
     //Force Minecraft to reload all resources in order to load content pack resources.
     proxy.forceReload();
 
-    new FlansModSounds();
+    if (event.getSide() == Side.CLIENT) {
+      new FlansModSounds();
+    }
     log("Preinitializing complete.");
   }
 
