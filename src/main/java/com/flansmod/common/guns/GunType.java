@@ -223,7 +223,7 @@ public class GunType extends PaintableType implements IScope {
   /**
    * Various deployable settings controlling the player view limits and standing position
    */
-  public float standBackDist = 1.5F, topViewLimit = -60F, bottomViewLimit = 30F, sideViewLimit = 45F, pivotHeight = 0.375F;
+  public float standBackDist = 1.5F, topViewLimit = 60F, bottomViewLimit = 30F, sideViewLimit = 45F, pivotHeight = 0.375F;
 
   //Default Scope Settings. Overriden by scope attachments
   //In many cases, this will simply be iron sights

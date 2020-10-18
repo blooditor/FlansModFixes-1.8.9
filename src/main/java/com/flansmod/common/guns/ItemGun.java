@@ -269,11 +269,11 @@ public class ItemGun extends Item implements IPaintableItem {
                     i + (playerDir == 1 ? 1 : 0) - (playerDir == 3 ? 1 : 0), j,
                     k - (playerDir == 0 ? 1 : 0) + (playerDir == 2 ? 1 : 0)))
                 .getBlock() == Blocks.snow)) {
-              for (EntityMG mg : EntityMG.mgs) {
+             /* for (EntityMG mg : EntityMG.mgs) {
                   if (mg.blockX == i && mg.blockY == j + 1 && mg.blockZ == k && !mg.isDead) {
                       return itemstack;
                   }
-              }
+              }*/
               if (!world.isRemote) {
                 EntityMG mg = new EntityMG(world, i, j + 1, k, playerDir, type);
                 if (getBulletItemStack(itemstack, 0) != null) {
