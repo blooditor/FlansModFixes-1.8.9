@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,7 +41,6 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
   public int reloadTimer;
   public int soundDelay;
   public float shootDelay;
-  public static List<EntityMG> mgs = new ArrayList<EntityMG>();
   public EntityPlayer gunner;
   //Server side
   public boolean isShooting;
@@ -70,7 +70,6 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
     rotationPitch = -60;
     type = gunType;
     ignoreFrustumCheck = true;
-    mgs.add(this);
   }
 
   @Override
@@ -98,6 +97,14 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
     prevRotationYaw = rotationYaw;
     prevRotationPitch = rotationPitch;
     if (gunner != null) {
+      if (!worldObj.isRemote && (gunner.isSneaking() || !worldObj.playerEntities.contains(gunner))) {
+        EntityPlayer gunner = this.gunner;
+        mountGun(gunner, false);
+        FlansMod.getPacketHandler()
+            .sendToAllAround(new PacketMGMount(gunner, this, false), posX, posY, posZ,
+                FlansMod.driveableUpdateRange, dimension);
+        return;
+      }
       ticksSinceUsed = 0;
       rotationYaw = gunner.rotationYaw - direction * 90;
       for (; rotationYaw < -180; rotationYaw += 360) {
@@ -127,8 +134,8 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
       rotationPitch--;
     }
 
-    if (rotationPitch < type.topViewLimit) {
-      rotationPitch = type.topViewLimit;
+    if (rotationPitch < -type.topViewLimit) {
+      rotationPitch = -type.topViewLimit;
     }
     if (rotationPitch > type.bottomViewLimit) {
       rotationPitch = type.bottomViewLimit;
@@ -144,7 +151,6 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
     }
     if (ammo != null && ammo.getItemDamage() == ammo.getMaxDamage()) {
       ammo = null;
-      // Scrap metal output?
     }
     if (ammo == null && gunner != null) {
       int slot = findAmmo(gunner);
@@ -232,6 +238,9 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
         BulletType bullet = BulletType.getBullet(ammo.getItem());
         if (gunner != null && !gunner.capabilities.isCreativeMode) {
           ammo.damageItem(1, (EntityLiving) player);
+          if (ammo.stackSize <= 0 || ammo.getItemDamage() > ammo.getMaxDamage()) {
+            ammo = null;
+          }
         }
         shootDelay = type.shootDelay;
         if (!worldObj.isRemote) {
@@ -341,6 +350,8 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
 
   @Override
   public void setDead() {
+    if(isDead)
+      return;
     // Drop gun
     if (!worldObj.isRemote) {
       if (TeamsManager.weaponDrops == 2) {
