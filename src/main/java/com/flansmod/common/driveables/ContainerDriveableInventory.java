@@ -188,7 +188,7 @@ public class ContainerDriveableInventory extends Container {
     return stack;
   }
 
-  static class SlotNoVehicle extends Slot {
+  public static class SlotNoVehicle extends Slot {
 
     InfoType whitelist;
     Class whitelistClass;
