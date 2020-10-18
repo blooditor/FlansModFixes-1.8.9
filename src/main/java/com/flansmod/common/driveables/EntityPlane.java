@@ -12,6 +12,8 @@ import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.vector.Matrix4f;
 import com.flansmod.common.vector.Vector3f;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -771,6 +773,7 @@ public class EntityPlane extends EntityDriveable {
       numProps = type.heliPropellers.size();
 
       Vector3f up = axes.getYAxis();
+      up.normalise(up);
 
       float throttleScaled =
           0.01F * (type.maxThrottle + (data.engine == null ? 0 : data.engine.engineSpeed));
