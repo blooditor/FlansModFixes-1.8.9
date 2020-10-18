@@ -169,10 +169,7 @@ public class RenderPlane extends Render implements IItemRenderer {
   public boolean shouldRender(Entity entity, ICamera camera, double camX, double camY,
       double camZ) {
     //custom rendering for own vehicle because of invisibility glitches
-    return !(FlansMod.ENTITY_RENDER_MODE == 0
-        && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && Minecraft
-        .getMinecraft().thePlayer.ridingEntity instanceof EntitySeat
-        && ((EntitySeat) Minecraft.getMinecraft().thePlayer.ridingEntity).driveable == entity);
+    return !useCustomRenderer(entity);
   }
 
   @Override
@@ -202,6 +199,25 @@ public class RenderPlane extends Render implements IItemRenderer {
     return false;
   }
 
+  public boolean useCustomRenderer(Entity entity) {
+    if (entity == null) {
+      if (Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat
+          && ((EntitySeat) Minecraft.getMinecraft().thePlayer.ridingEntity).driveable instanceof EntityPlane) {
+        entity = ((EntitySeat) Minecraft.getMinecraft().thePlayer.ridingEntity).driveable;
+      }
+    }
+    if (!(entity instanceof EntityPlane)) {
+      return false;
+    }
+
+    if (FlansMod.ENTITY_RENDER_MODE == 0
+        && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat
+        && ((EntitySeat) Minecraft.getMinecraft().thePlayer.ridingEntity).driveable == entity || entity.posY > 250) {
+      return true;
+    }
+    return false;
+  }
+
   @SubscribeEvent
   public void renderWorld(RenderWorldLastEvent event) {
     //Get the world
@@ -211,10 +227,7 @@ public class RenderPlane extends Render implements IItemRenderer {
     }
 
     //custom rendering for own vehicle because of invisibility glitches
-    if (FlansMod.ENTITY_RENDER_MODE == 0
-        && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && Minecraft
-        .getMinecraft().thePlayer.ridingEntity instanceof EntitySeat && ((EntitySeat) Minecraft
-        .getMinecraft().thePlayer.ridingEntity).driveable instanceof EntityPlane) {
+    if (useCustomRenderer(null)) {
       EntityPlane plane = (EntityPlane) ((EntitySeat) Minecraft
           .getMinecraft().thePlayer.ridingEntity).driveable;
 

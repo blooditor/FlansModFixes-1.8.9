@@ -1333,7 +1333,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
   public float getRealSpeedXYZ() {
     double motY = onGround() ? 0 : motionY;
-    return Vector3f.dot(new Vector3f(motionX, motY, motionZ), axes.getXAxis());
+    return Vector3f.dot(new Vector3f(motionX, motY, motionZ), axes.getXAxis().normalise(null));
   }
 
   public double getSpeedXZ() {
