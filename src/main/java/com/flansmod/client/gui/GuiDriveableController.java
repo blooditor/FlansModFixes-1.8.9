@@ -377,6 +377,8 @@ public class GuiDriveableController extends GuiScreen {
     mc.renderEngine.bindTexture(texture);
 
     EntitySeat seat = (EntitySeat) plane;
+    EntityDriveable driveable = seat.driveable;
+
     boolean isMainCannon = seat.seatInfo != null && seat.seatInfo.id == 0;
     boolean radar = enableRadar(plane);
     //crosshair
@@ -435,6 +437,37 @@ public class GuiDriveableController extends GuiScreen {
     String zoom = (gunnerZoom == 2? 4 : gunnerZoom == 4? 8 : 1) + "x";
     drawString(fontRendererObj, zoom,width-20-fontRendererObj.getStringWidth(zoom), height/2+10, 0xcccccc);
     drawString(fontRendererObj, "MODE: VIS", width-20-fontRendererObj.getStringWidth("MODE: VIS"), height/2+25, 0xcccccc);
+
+    //fuel
+    int fuel = (int) Math.max(0, Math.min(100, 100 *seat.driveable.driveableData.fuelInTank / Math.max(seat.driveable.getDriveableType().fuelTankSize, 1)));
+    drawString(fontRendererObj, "FUEL: " + fuel + "%", 12, height/2+25, fuel < 10? fuel < 1? 0xFF5500 : 0xFF9900 : 0xcccccc);
+
+    //WARN
+    int warnSound = 0;
+    boolean fire = false;
+    for(DriveablePart part : driveable.getDriveableData().parts.values())
+    {
+      if (part.onFire || part.maxHealth > 0 && part.health < part.maxHealth / 4 &&
+          (part.type == EnumDriveablePart.core || part.type == EnumDriveablePart.turret)) {
+        fire = part.onFire || fire;
+        warnSound = Math.max(warnSound, part.health < part.maxHealth / 8 ? part.health < part.maxHealth / 16 ? 4 : 2 : 1);
+      }
+      if (part.maxHealth > 0 && driveable instanceof EntityVehicle && (
+                    part.type == EnumDriveablePart.backLeftWheel ||part.type == EnumDriveablePart.backRightWheel ||part.type == EnumDriveablePart.frontLeftWheel ||part.type == EnumDriveablePart.frontRightWheel ||
+                        part.type == EnumDriveablePart.rightTrack || part.type == EnumDriveablePart.leftTrack)) {
+
+          warnSound = Math.max(warnSound, part.health < part.maxHealth / 8 ? part.health < part.maxHealth / 16 ? 2 : 1 : 0);
+      }
+    }
+    if (warnSound > 0) {
+      int col = warnSound == 1 ? 0xD44300 : warnSound == 2 ? 0xD43000 : 0xFF0000;
+      if(warnSound == 1 ||  warnSound == 2 && ((EntitySeat) plane).ticksExisted%20 < 10 || warnSound == 4 && ((EntitySeat) plane).ticksExisted%10 < 5)
+        drawCenteredString(fontRendererObj, "WARN", width/2, height/2+40, col);
+    }
+    if (fire) {
+      drawCenteredString(fontRendererObj, "- FIRE -", width/2, height/2+52, driveable.ticksExisted%10<5? 0xFF9900 : 0xFF5500);
+    }
+    GlStateManager.color(1,1,1);
 
 
     //border
@@ -612,6 +645,11 @@ public class GuiDriveableController extends GuiScreen {
     }
     if (fire) {
       drawCenteredString(fontRendererObj, "- FIRE -", width/2, height/2+52, driveable.ticksExisted%10<5? 0xFF9900 : 0xFF5500);
+    }
+
+    if (driveable.driveableData.fuelInTank < driveable.getDriveableType().fuelTankSize * 0.2f && !Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
+      if(driveable.driveableData.fuelInTank > driveable.getDriveableType().fuelTankSize * 0.05f || driveable.ticksExisted%10<5)
+        drawCenteredString(fontRendererObj, (driveable.driveableData.fuelInTank <= 0? "NO FUEL" : "LOW FUEL"), width/2, height/2+60, driveable.driveableData.fuelInTank < driveable.getDriveableType().fuelTankSize * 0.1f? 0xFF5500 : 0xFF9900);
     }
 
 
