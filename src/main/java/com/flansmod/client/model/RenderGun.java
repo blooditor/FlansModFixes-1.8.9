@@ -284,6 +284,7 @@ public class RenderGun implements IItemRenderer {
               case "ironSight5":
               case "ironSight6":
               case "ironSight7":
+              case "ironSight8":
                 //		modY = 1.05f;
                 modY = 0.85f;
                 break;
