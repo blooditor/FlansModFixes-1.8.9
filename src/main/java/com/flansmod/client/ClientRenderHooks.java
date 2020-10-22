@@ -632,7 +632,7 @@ public class ClientRenderHooks {
       event.setCanceled(true);
     //  return;
     }
-    if (event.type == ElementType.HOTBAR && mc.thePlayer.ridingEntity instanceof EntitySeat
+    if ((event.type == ElementType.HOTBAR || event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && mc.thePlayer.ridingEntity instanceof EntitySeat
         && Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController) {
       event.setCanceled(true);
    //   return;

@@ -129,7 +129,7 @@ public class GuiDriveableInventory extends GuiContainer {
       for (PilotGun gun : driveable.getDriveableType().pilotGuns) {
         for (ShootableType t : gun.type.ammo) {
           if (!l.contains(t)) {
-            if(!(driveable.driveableType.equals("A10") && !t.shortName.equals("minigunExplosiveAmmo")))
+            if(driveable.driveableType.equals("A10") || !t.shortName.equals("minigunExplosiveAmmo"))
               l.add(t);
           }
         }

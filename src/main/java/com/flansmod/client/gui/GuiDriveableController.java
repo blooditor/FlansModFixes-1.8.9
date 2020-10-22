@@ -433,14 +433,14 @@ public class GuiDriveableController extends GuiScreen {
       drawCenteredString(fontRendererObj, decimalFormatter.format(seat.playerLooking.getYaw()), width/2, 10, 0xcccccc);
       drawCenteredString(fontRendererObj, decimalFormatter.format(seat.playerLooking.getPitch()), width/2, 20, 0xcccccc);
     }
-    drawString(fontRendererObj, "ZOOM", width-20-fontRendererObj.getStringWidth("ZOOM"), height/2, 0xcccccc);
+    drawString(fontRendererObj, "ZOOM", 12, height/2-5, 0xcccccc);
     String zoom = (gunnerZoom == 2? 4 : gunnerZoom == 4? 8 : 1) + "x";
-    drawString(fontRendererObj, zoom,width-20-fontRendererObj.getStringWidth(zoom), height/2+10, 0xcccccc);
-    drawString(fontRendererObj, "MODE: VIS", width-20-fontRendererObj.getStringWidth("MODE: VIS"), height/2+25, 0xcccccc);
+    drawString(fontRendererObj, zoom,12, height/2+5, 0xcccccc);
+    drawString(fontRendererObj, "MODE: VIS", 12, height/2+20, 0xcccccc);
 
     //fuel
     int fuel = (int) Math.max(0, Math.min(100, 100 *seat.driveable.driveableData.fuelInTank / Math.max(seat.driveable.getDriveableType().fuelTankSize, 1)));
-    drawString(fontRendererObj, "FUEL: " + fuel + "%", 12, height/2+25, fuel < 10? fuel < 1? 0xFF5500 : 0xFF9900 : 0xcccccc);
+    drawString(fontRendererObj, "FUEL: " + fuel + "%", 12, height/2+35, fuel < 10? fuel < 1? 0xFF5500 : 0xFF9900 : 0xcccccc);
 
     //WARN
     int warnSound = 0;
@@ -478,7 +478,7 @@ public class GuiDriveableController extends GuiScreen {
 
   private void drawSelectedFireMode(EntitySeat seat, int col, int highlightCol) {
 
-    int y = height-65;
+    int y = height-75;
 
     //information text
     String nameOfGun = getCurrentFireMode();
@@ -649,7 +649,7 @@ public class GuiDriveableController extends GuiScreen {
 
     if (driveable.driveableData.fuelInTank < driveable.getDriveableType().fuelTankSize * 0.2f && !Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
       if(driveable.driveableData.fuelInTank > driveable.getDriveableType().fuelTankSize * 0.05f || driveable.ticksExisted%10<5)
-        drawCenteredString(fontRendererObj, (driveable.driveableData.fuelInTank <= 0? "NO FUEL" : "LOW FUEL"), width/2, height/2+60, driveable.driveableData.fuelInTank < driveable.getDriveableType().fuelTankSize * 0.1f? 0xFF5500 : 0xFF9900);
+        drawCenteredString(fontRendererObj, (driveable.driveableData.fuelInTank <= 0? "NO FUEL" : "LOW FUEL"), width/2, height-85, driveable.driveableData.fuelInTank < driveable.getDriveableType().fuelTankSize * 0.1f? 0xFF5500 : 0xFF9900);
     }
 
 
