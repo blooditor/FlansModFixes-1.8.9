@@ -25,7 +25,6 @@ public class ItemBullet extends ItemShootable implements IFlanItem {
     super(infoType);
     type = infoType;
     setMaxStackSize(type.maxStackSize);
-    setHasSubtypes(true);
     type.item = this;
     switch (type.weaponType) {
       case SHELL:
