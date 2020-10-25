@@ -13,6 +13,7 @@ import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.IScope;
 import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.network.PacketHitmark.HitMarkType;
 import com.flansmod.common.network.PacketTeamInfo;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
@@ -128,8 +129,7 @@ public class FlansModClient extends FlansMod {
    */
   public static PacketTeamInfo teamInfo;
 
-  public static int hitMarkerTime = 0;
-  public static int hitMarkerTimeHeadshot = 0;
+  public static int[] hitMarkerTime = new int[3];//indirect, direct, headshot
 
   public static ArrayList<Vector3i> blockLightOverrides = new ArrayList<Vector3i>();
   public static int lightOverrideRefreshRate = 5;
@@ -221,11 +221,10 @@ public class FlansModClient extends FlansMod {
 
     EntityPlayerSP p = minecraft.thePlayer;
 
-    if (hitMarkerTime > 0) {
-      hitMarkerTime--;
-    }
-    if (hitMarkerTimeHeadshot > 0) {
-      hitMarkerTimeHeadshot--;
+    for (int i = 0; i < hitMarkerTime.length; i++) {
+      if (hitMarkerTime[i] > 0) {
+        hitMarkerTime[i]--;
+      }
     }
     float pspeed = Math.min(0.3f, 3f * (float) (p.motionX * minecraft.thePlayer.motionX
         + minecraft.thePlayer.motionY * minecraft.thePlayer.motionY
@@ -585,12 +584,8 @@ public class FlansModClient extends FlansMod {
     return animations;
   }
 
-  public static void AddHitMarker(boolean headshot) {
-    if (headshot) {
-      hitMarkerTimeHeadshot = 20;
-    } else {
-      hitMarkerTime = 20;
-    }
+  public static void AddHitMarker(HitMarkType type) {
+   hitMarkerTime[type.ordinal()] = 20;
     //makes sure only one hit marker per tick
     if (!playedHitMarker && FlansMod.enableHitmarkerSounds) {
       playedHitMarker = true;

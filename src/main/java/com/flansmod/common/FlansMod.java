@@ -238,9 +238,6 @@ public class FlansMod {
     //Force Minecraft to reload all resources in order to load content pack resources.
     proxy.forceReload();
 
-    if (event.getSide() == Side.CLIENT) {
-      new FlansModSounds();
-    }
     log("Preinitializing complete.");
   }
 
@@ -342,6 +339,7 @@ public class FlansMod {
     MinecraftForge.EVENT_BUS.register(INSTANCE);
     //Starting the EventListener
     new PlayerDeathEventListener();
+
     log("Loading complete.");
   }
 
@@ -353,6 +351,11 @@ public class FlansMod {
     packetHandler.postInitialise();
 
     hooks.hook();
+
+
+    if (event.getSide() == Side.CLIENT) {
+      new FlansModSounds();
+    }
   }
 
   @SubscribeEvent
@@ -517,6 +520,9 @@ public class FlansMod {
                 typeFile = new TypeFile(zip.getName(), type,
                     splitName[splitName.length - 1].split("\\.")[0]);
               }
+            }
+            if (typeFile == null) {
+              continue;
             }
             for (; ; ) {
               String line = null;

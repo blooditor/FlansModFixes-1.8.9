@@ -134,7 +134,7 @@ public class KeyInputHandler {
           if (item.CanReload(stack, player.inventory)) {
             FlansMod.getPacketHandler().sendToServer(new PacketReload(false, false, true));
 
-            item.playReloadSound(type, data);
+          //  item.playReloadSound(type, data);
             //Set player shoot delay to be the reload delay
             //Set both gun delays to avoid reloading two guns at once
      //       data.shootTimeRight = data.shootTimeLeft = (int) type.getReloadTime(stack);

@@ -354,7 +354,7 @@ public class EntityAAGun extends Entity implements IEntityAdditionalSpawnData {
             worldObj.spawnEntityInWorld(((ItemBullet) ammo[j].getItem()).getEntity(worldObj,
                 origin, gunYaw + 90F, gunPitch, player, type.accuracy, type.damage, type));
 
-            PacketPlaySound.sendSoundPacket(posX, posY, posZ, 50, dimension, type.shootSound, true);
+            PacketPlaySound.sendAdvancedSound(player, type.shootSound, bullet, false, true);
           }
         }
         currentBarrel = (currentBarrel + 1) % type.numBarrels;
@@ -380,7 +380,7 @@ public class EntityAAGun extends Entity implements IEntityAdditionalSpawnData {
 
             worldObj.spawnEntityInWorld(((ItemBullet) ammo[ammoSlot].getItem()).getEntity(worldObj,
                 origin, gunYaw + 90F, gunPitch, placer, type.accuracy, type.damage, type));
-            PacketPlaySound.sendSoundPacket(posX, posY, posZ, 50, dimension, type.shootSound, true);
+            PacketPlaySound.sendAdvancedSound(this, type.shootSound, bullet, false, true);
           }
         }
         currentBarrel = (currentBarrel + 1) % type.numBarrels;

@@ -68,6 +68,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -275,6 +276,9 @@ public class ItemGun extends Item implements IPaintableItem {
                   }
               }*/
               if (!world.isRemote) {
+                if (!world.getEntitiesWithinAABB(EntityMG.class, new AxisAlignedBB(i, j + 1, k, i + 1, j + 2, k + 1)).isEmpty()) {
+                  return itemstack;
+                }
                 EntityMG mg = new EntityMG(world, i, j + 1, k, playerDir, type);
                 if (getBulletItemStack(itemstack, 0) != null) {
                   mg.ammo = getBulletItemStack(itemstack, 0);
@@ -284,6 +288,7 @@ public class ItemGun extends Item implements IPaintableItem {
               }
                 if (!entityplayer.capabilities.isCreativeMode) {
                     itemstack.stackSize = 0;
+                    return null;
                 }
             }
           }
@@ -676,7 +681,7 @@ public class ItemGun extends Item implements IPaintableItem {
     AttachmentType barrel = type.getBarrel(gunstack);
     boolean silenced = type.silenced || barrel != null && barrel.silencer;
 
-   // FlansModSounds.PlaySound(player.posX, player.posY, player.posZ, type.shortName,  15, player.getEntityId(), silenced);
+    FlansModSounds.PlaySound(player.posX, player.posY, player.posZ, "sound_" + type.shortName,  15, player.getEntityId(), silenced);
    // PacketPlaySound.sendAdvancedSound(player, type, bullet, silenced, false);
 
     ShotData shotData;
