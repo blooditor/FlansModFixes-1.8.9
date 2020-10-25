@@ -8,24 +8,24 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 public class PacketHitmark extends PacketBase {
 
-  boolean headshot;
+  HitMarkType type;
 
   public PacketHitmark() {
 
   }
 
-  public PacketHitmark(boolean headshot) {
-    this.headshot = headshot;
+  public PacketHitmark(HitMarkType type) {
+    this.type = type;
   }
 
   @Override
   public void encodeInto(ChannelHandlerContext ctx, ByteBuf data) {
-    data.writeBoolean(headshot);
+    data.writeByte(type.ordinal());
   }
 
   @Override
   public void decodeInto(ChannelHandlerContext ctx, ByteBuf data) {
-    headshot = data.readBoolean();
+    type = HitMarkType.values()[data.readByte()];
   }
 
   @Override
@@ -34,7 +34,12 @@ public class PacketHitmark extends PacketBase {
 
   @Override
   public void handleClientSide(EntityPlayer clientPlayer) {
-    FlansModClient.AddHitMarker(headshot);
+    FlansModClient.AddHitMarker(type);
   }
 
+  public static enum HitMarkType{
+    INDIRECT,
+    DIRECT,
+    HEADSHOT
+  }
 }

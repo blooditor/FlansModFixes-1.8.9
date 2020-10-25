@@ -625,14 +625,14 @@ public class ClientRenderHooks {
     Minecraft mc = Minecraft.getMinecraft();
 
     //Remove crosshairs if looking down the sights of a gun
-    if (event.type == ElementType.CROSSHAIRS
+    if (event.isCancelable() && event.type == ElementType.CROSSHAIRS
         && (mc.thePlayer.getCurrentEquippedItem() != null && mc.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemGun
 //        && (FlansModClient.currentScope != null
         || mc.thePlayer.ridingEntity instanceof EntitySeat && mc.currentScreen instanceof GuiDriveableController)) {
       event.setCanceled(true);
     //  return;
     }
-    if ((event.type == ElementType.HOTBAR || event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && mc.thePlayer.ridingEntity instanceof EntitySeat
+    if (event.isCancelable() && (event.type == ElementType.HOTBAR || event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && mc.thePlayer.ridingEntity instanceof EntitySeat
         && Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController) {
       event.setCanceled(true);
    //   return;
@@ -653,8 +653,10 @@ public class ClientRenderHooks {
     if (event.isCancelable() && event.type == ElementType.HOTBAR) {
       RenderOffHandHighlights(tessellator, i, j);
     }
-    if (!event.isCancelable() && event.type == ElementType.HOTBAR) {
-      RenderPlayerAmmo(i, j);
+    if (event.isCancelable() && event.type == ElementType.HOTBAR) {
+      if (!event.isCanceled()) {
+        RenderPlayerAmmo(i, j);
+      }
 
       RenderTeamInfo(tessellator, i, j);
 
@@ -703,18 +705,26 @@ public class ClientRenderHooks {
     }
   }
 
-  private void RenderHitMarker(Tessellator tessellator, int i, int j) {
-    if (FlansModClient.hitMarkerTime > 0 || FlansModClient.hitMarkerTimeHeadshot > 0) {
+  private void RenderHitMarker(Tessellator tessellator, int width, int height) {
+    int max = 0;
+    int maxVal = 0;
+    for (int i = 0; i < FlansModClient.hitMarkerTime.length; i++) {
+      if (FlansModClient.hitMarkerTime[i] > 0) {
+        max = i;
+        maxVal = FlansModClient.hitMarkerTime[i];
+      }
+    }
+    if (maxVal != 0) {
       //Off-hand weapon graphics
       mc.renderEngine.bindTexture(hitMarker);
 
       GlStateManager.enableAlpha();
       GlStateManager.enableBlend();
 
-      int hitMarkerTime = Math
-          .max(FlansModClient.hitMarkerTime, FlansModClient.hitMarkerTimeHeadshot);
-      float hs = FlansModClient.hitMarkerTimeHeadshot > 0 ? 0f : 1;
-      GlStateManager.color(1.0f, hs, hs,
+      int hitMarkerTime = maxVal;
+      float g = max == 0? 1 : max == 1? 1 : 0;
+      float b = max == 0? 1 : max == 1? 0.1f : 0;
+      GlStateManager.color(1.0f, g, b,
           Math.max(((float) hitMarkerTime - 10.0f + partialTicks) / 10.0f, 0.0f));
 
       ItemStack currentStack = mc.thePlayer.inventory.getCurrentItem();
@@ -726,13 +736,13 @@ public class ClientRenderHooks {
 
       FlansModClient.getWorldRenderer().startDrawingQuads();
       FlansModClient.getWorldRenderer()
-          .addVertexWithUV(i / 2 - w, j / 2 + w2, zLevel, 0D / 16D, 9D / 16D);
+          .addVertexWithUV(width / 2 - w, height / 2 + w2, zLevel, 0D / 16D, 9D / 16D);
       FlansModClient.getWorldRenderer()
-          .addVertexWithUV(i / 2 + w2, j / 2 + w2, zLevel, 9D / 16D, 9D / 16D);
+          .addVertexWithUV(width / 2 + w2, height / 2 + w2, zLevel, 9D / 16D, 9D / 16D);
       FlansModClient.getWorldRenderer()
-          .addVertexWithUV(i / 2 + w2, j / 2 - w, zLevel, 9D / 16D, 0D / 16D);
+          .addVertexWithUV(width / 2 + w2, height / 2 - w, zLevel, 9D / 16D, 0D / 16D);
       FlansModClient.getWorldRenderer()
-          .addVertexWithUV(i / 2 - w, j / 2 - w, zLevel, 0D / 16D, 0D / 16D);
+          .addVertexWithUV(width / 2 - w, height / 2 - w, zLevel, 0D / 16D, 0D / 16D);
       tessellator.draw();
 
       GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);

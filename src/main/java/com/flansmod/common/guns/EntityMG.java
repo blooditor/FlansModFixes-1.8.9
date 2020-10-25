@@ -363,6 +363,7 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
         // Drop ammo box
         if (ammo != null) {
           entityDropItem(ammo, 0.5F);
+          ammo = null;
         }
       }
     }

@@ -100,7 +100,9 @@ public class GuiDriveableController extends GuiScreen {
     }
     if (seat.seatInfo != null && (seat.seatInfo.gunType != null
         || seat.seatInfo.id == 0 && seat.driveable.driveableData != null && vehicle.getVehicleType().primary != EnumWeaponType.NONE)) {
-      return true;
+
+      if(!vehicle.getVehicleType().pilotGuns.isEmpty() || !vehicle.getVehicleType().ammo.isEmpty())
+        return true;
     }
 
     return false;
@@ -146,6 +148,7 @@ public class GuiDriveableController extends GuiScreen {
   public void initGui() {
     if (mc.gameSettings.thirdPersonView == 1)
       mc.setRenderViewEntity((plane.getCamera() == null ? mc.thePlayer : plane.getCamera()));
+    FlansModClient.originalFOV = mc.gameSettings.fovSetting;
     if (isHeliGunner(plane) || isTankScreen(plane)) {
       if (mc.gameSettings.thirdPersonView != 0) {
         mc.gameSettings.thirdPersonView = 0;
@@ -153,7 +156,6 @@ public class GuiDriveableController extends GuiScreen {
       }
       loadShader();
       if (FlansModClient.currentScope == null) {
-        FlansModClient.originalFOV = mc.gameSettings.fovSetting;
         mc.gameSettings.fovSetting = 60;
       }
     }

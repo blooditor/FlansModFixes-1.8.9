@@ -1,11 +1,15 @@
 package com.flansmod.common;
 
 import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.guns.EntityAAGun;
+import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.EntityDamageSourceGun;
+import com.flansmod.common.guns.EntityShootable;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.raytracing.FlansModRaytracer;
 import com.flansmod.common.guns.raytracing.PlayerHitbox;
+import com.flansmod.common.network.PacketHitmark.HitMarkType;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.teams.ItemTeamArmour;
 import com.flansmod.common.teams.TeamsManager;
@@ -122,6 +126,8 @@ public class FlansModExplosion extends Explosion {
     int j;
     int k;
 
+    boolean sendHitmarker = false;
+
     if (breaksBlocks) {
       for (int i = 0; i < 16; ++i) {
         for (j = 0; j < 16; ++j) {
@@ -214,6 +220,7 @@ public class FlansModExplosion extends Explosion {
             entity.attackEntityFrom(
                 new EntityDamageSourceGun(type.shortName, explosive, detonator, type, false), dmg);
             double d11 = EnchantmentProtection.func_92092_a(entity, d10);
+            sendHitmarker = sendHitmarker || entity != detonator && dmg > 0.1 && (entity instanceof EntityLivingBase || entity instanceof EntityDriveable || entity instanceof EntityAAGun);
 
             if (!(entity instanceof EntityDriveable)) {
               d11 /= 2;
@@ -228,6 +235,12 @@ public class FlansModExplosion extends Explosion {
             }
           }
         }
+      }
+    }
+    if (sendHitmarker && explosive instanceof EntityShootable) {
+      EntityShootable bullet = (EntityShootable) explosive;
+      if (!bullet.sentHitMarker) {
+        bullet.sendHitMarker(HitMarkType.INDIRECT);
       }
     }
   }

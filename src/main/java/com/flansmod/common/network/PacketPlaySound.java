@@ -66,9 +66,12 @@ public class PacketPlaySound extends PacketBase {
   //for guns
   public static void sendAdvancedSound(Entity shooter, String sound, ShootableType bullet,
       boolean silenced, boolean sendToShooter) {
-    float chunkRange = 12;
+    float chunkRange = 15;
     if (bullet instanceof BulletType) {
       chunkRange *= ((BulletType) bullet).ammoType.shootVolume;
+    }
+    if (silenced) {
+      chunkRange *= 0.4f;
     }
     sendAdvancedSound(shooter, silenced, "sound_" + sound, chunkRange, sendToShooter);
   }
@@ -94,8 +97,9 @@ public class PacketPlaySound extends PacketBase {
     if (shooter.worldObj.isRemote) {
       return;
     }
+    int origin = sendToShooter? -2 : shooter.getEntityId();
     PacketPlaySound soundPacket = new PacketPlaySound((float)shooter.posX, (float)shooter.posY,
-        (float)shooter.posZ, shootSound, shooter.getEntityId(), chunkRange,  silenced);
+        (float)shooter.posZ, shootSound, origin, chunkRange,  silenced);
     FlansMod.getPacketHandler().sendToAllAround(soundPacket, shooter.posX, shooter.posY, shooter.posZ, chunkRange*16, shooter.dimension);
   }
 
@@ -139,7 +143,7 @@ public class PacketPlaySound extends PacketBase {
       FMLClientHandler.instance().getClient().getSoundHandler().playSound(
           new PositionedSoundRecord(FlansModResourceHandler.getSound(sound), volume,
               1.0F, posX, posY, posZ));
-    } else {
+    } else if(origin == -2 || origin != clientPlayer.getEntityId()){
 
       FlansModSounds.PlaySound(posX, posY, posZ, sound, volume, origin, silenced);
     }

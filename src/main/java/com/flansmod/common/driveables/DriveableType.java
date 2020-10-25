@@ -376,7 +376,8 @@ public abstract class DriveableType extends PaintableType {
 
       //Ammo limiters
       else if (split[0].equals("AddAmmo")) {
-        ammo.add(BulletType.getBullet(split[1]));
+        BulletType t = BulletType.getBullet(split[1]);
+        if(t != null) ammo.add(t);
       } else if (split[0].equals("AllowAllAmmo") || split[0].equals("AcceptAllAmmo")) {
         acceptAllAmmo = Boolean.parseBoolean(split[1]);
       }

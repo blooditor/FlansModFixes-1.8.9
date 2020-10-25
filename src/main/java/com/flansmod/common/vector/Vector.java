@@ -92,7 +92,7 @@ public abstract class Vector implements Serializable, ReadableVector {
       float l = 1.0f / len;
       return scale(l);
     } else {
-      FlansMod.Assert(false, "ZERO LENGTH VECTOR");
+     // FlansMod.Assert(false, "ZERO LENGTH VECTOR");
       return this;
     }
   }

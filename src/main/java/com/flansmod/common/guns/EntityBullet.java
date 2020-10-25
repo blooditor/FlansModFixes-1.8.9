@@ -29,6 +29,7 @@ import com.flansmod.common.guns.raytracing.FlansModRaytracer.PlayerBulletHit;
 import com.flansmod.common.network.PacketClientBulletUpdate;
 import com.flansmod.common.network.PacketFlak;
 import com.flansmod.common.network.PacketHitmark;
+import com.flansmod.common.network.PacketHitmark.HitMarkType;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
@@ -85,6 +86,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
   public Entity owner;
   private int ticksInAir;
   public BulletType type;
+
+  private Vector3f spawnPos;
   /**
    * What type of weapon did this come from? For death messages
    */
@@ -116,8 +119,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
   @SideOnly(Side.CLIENT)
   private boolean playedFlybySound;
-
-  boolean sentHitMarker;
 
   public int clientBulletId; //serverside: -1 means server controls, int means a client controls. clientside: -2 means server (or other client) controls, -1 means this client controls
 
@@ -707,17 +708,20 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
   }
 
 
+  public void sendHitMarker(HitMarkType type) {
+    if(this.owner instanceof EntityPlayerMP)
+      FlansMod.getPacketHandler().sendTo(new PacketHitmark(type), (EntityPlayerMP) this.owner);
+  }
+
   private void sendHitMarker(BulletHit hit) {
-    //     if(bullet.ticksExisted > 30)
-    //         return;
+    boolean hs = false;
     if (this.owner instanceof EntityPlayerMP) {
-      boolean hs = false;
         if (hit instanceof PlayerBulletHit) {
             hs = ((PlayerBulletHit) hit).hitbox != null
                 && ((PlayerBulletHit) hit).hitbox.type == EnumHitboxType.HEAD;
         }
-      FlansMod.getPacketHandler().sendTo(new PacketHitmark(hs), (EntityPlayerMP) this.owner);
     }
+    sendHitMarker(hs ? HitMarkType.HEADSHOT : HitMarkType.DIRECT);
   }
 
   public Vector3f intercept(Vector3f tpos, Vector3f tdir, double tspeed, Vector3f P1, double dXYZ,
@@ -962,6 +966,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
   }
 
   private void raytraceHits(Vector3f origin, Vector3f motion, float speed) {
+    Vector3f originalMotion = new Vector3f(motion);
     List<BulletHit> hits = FlansModRaytracer
         .Raytrace(worldObj, owner, ticksInAir > 20, this, origin, motion,
             pingOfShooter);
@@ -1040,47 +1045,55 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     if (worldObj.isRemote && !playedFlybySound) {
 
-      playFlyBySound(finalHit);
+      playFlyBySound(finalHit, originalMotion);
 
     }
   }
 
 
   @SideOnly(Side.CLIENT)
-  private void playFlyBySound(Vector3f finalHit) {
+  private void playFlyBySound(Vector3f finalHit, Vector3f motion) {
       if (clientBulletId == -1) {
           return;
       }
-    float speed = getBulletSpeed();
+ //   System.out.println(this.getPositionVector());
+    float speed = motion.length();
       boolean missile = type.weaponType == EnumWeaponType.MISSILE || type.ammoType.isMissile();
       if (speed < 1 && !missile) {
+ //       System.out.println("SPEED end " + speed);
           return;
       }
 
-    boolean a10 = this.type.weaponType == EnumWeaponType.GUN && owner != null && owner.ridingEntity instanceof EntitySeat && "A10".equals(((EntitySeat) owner.ridingEntity).driveable.driveableType);
+    boolean a10 = this.type.weaponType == EnumWeaponType.NONE && owner != null && owner.ridingEntity instanceof EntitySeat && "A10".equals(((EntitySeat) owner.ridingEntity).driveable.driveableType);
     if(a10 && owner == Minecraft.getMinecraft().thePlayer)
       return;
     EntityPlayer player = Minecraft.getMinecraft().thePlayer;
     Vec3 playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-    Vector3f motion = new Vector3f(motionX, motionY, motionZ);
     motion.normalise();
     Vector3f v = new Vector3f(playerPos.subtract(this.getPositionVector()));
     // v.normalise();
     Vector3f pos = new Vector3f(this.getPositionVector());
 
     float t = Vector3f.dot(v, motion);
-    if (t > speed || t < 1) {
+ //   System.out.println("t " + t + " speed " + speed + " v " + this.getPositionVector());
+    if (t < -speed || t > 0) {
       if(!a10)
         return;
     }
+    Vector3f v2 = new Vector3f(playerPos.subtract(spawnPos.toVec3()));
+    float t2 = Vector3f.dot(v2, motion);
+    if(t2 < 0)
+      return;
+/*
 
     if (finalHit != null && Vector3f.sub(finalHit, pos, null).length()
         < new Vector3f(t * motion.x, t * motionY, t * motionZ).length() + 5) {
       return;
     }
+*/
 
     Vector3f p = new Vector3f(posX + t * motion.x, posY + t * motion.y, posZ + t * motion.z);
-    log(t + " " + speed + "  p " + p);
+  //  System.out.println(t + " " + speed + "  p " + p);
 
     float dist = Vector3f.sub(p, new Vector3f(playerPos), null).length();
 
@@ -1091,16 +1104,16 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     float soundSpeed = 15 * BulletType.BULLET_SPEED_MODIFIER;
     boolean playCrack = speed > soundSpeed;
-    boolean playFlyby = !playCrack || damage > 15 && speed*rand.nextFloat() < soundSpeed*0.5f;
+    boolean playFlyby = !playCrack || damage > 5 && speed*rand.nextFloat() < soundSpeed*0.5f;
 
     float volCrack = maxDist / 16 * speed * 0.1f;
-    float volFlyby = missile? dist : playCrack ? maxDist / 16 * speed * 0.02f : maxDist / 16 * speed * 0.15f;
+    float volFlyby = missile? 2 : playCrack ? maxDist / 16 * speed * 0.02f : maxDist / 16 * speed * 0.15f;
 
     playedFlybySound = true;
     if (playCrack) {
       String sound = "bulletCrack";
 
-      if (damage > 15) {
+      if (damage > 25) {
         sound = "BulletSniperCrack";
         volCrack *= 2;
       }
@@ -1156,6 +1169,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
       Vec3i normal = blockHit.raytraceResult.sideHit.getDirectionVec();
       Vector3f bulletDir = Vector3f.sub(hitData.hitPos, origin, null);
+      if(bulletDir.x == 0 && bulletDir.y == 0 && bulletDir.z == 0)
+        return;
       bulletDir.normalise();
       bulletDir.scale(0.5f);
 
@@ -1617,6 +1632,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
       damage = data.readFloat();
       originalSpeed = getBulletSpeed();
       renderTrail = data.readBoolean();
+      spawnPos = new Vector3f(this.getPositionVector());
     } catch (Exception e) {
       FlansMod.log("Failed to load bullet.");
       super.setDead();

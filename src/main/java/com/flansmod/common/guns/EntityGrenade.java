@@ -7,6 +7,8 @@ import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.network.PacketFlak;
+import com.flansmod.common.network.PacketHitmark;
+import com.flansmod.common.network.PacketHitmark.HitMarkType;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.teams.ItemTeamArmour;
 import com.flansmod.common.teams.Team;
@@ -632,5 +634,10 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
       }
     }
     return true;
+  }
+
+  public void sendHitMarker(HitMarkType type) {
+    if(thrower instanceof EntityPlayerMP)
+      FlansMod.getPacketHandler().sendTo(new PacketHitmark(type), (EntityPlayerMP) this.thrower);
   }
 }
