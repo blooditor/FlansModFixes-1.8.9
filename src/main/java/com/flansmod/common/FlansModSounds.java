@@ -17,6 +17,7 @@ import java.net.URLStreamHandler;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import net.minecraft.block.material.Material;
@@ -58,6 +59,7 @@ public class FlansModSounds {
 
   private static int noiseTypeCacheChunkSize = 2; //2^x
   private Cache<BlockPos, NoiseType> noiseTypeCache = CacheBuilder.newBuilder().maximumSize(1000).build();
+  private static Map<ISound, Integer> delayedSounds = new HashMap<>();
 
   SoundSystem soundSystem;
   SoundManager sndManager;
@@ -72,11 +74,11 @@ public class FlansModSounds {
   private void soundThreadLoop() {
     while (true) {
       long nano = System.currentTimeMillis();
-      tick();
+      tickThread();
 
       long nano2 = System.currentTimeMillis();
       try {
-        long sl = 49 - (nano2 - nano);
+        long sl = 42 - (nano2 - nano);
         if (sl > 0)
           Thread.sleep(sl);
       } catch (InterruptedException e) {
@@ -86,6 +88,19 @@ public class FlansModSounds {
 
 
   public synchronized void tick() {
+    Iterator iterator1 = delayedSounds.entrySet().iterator();
+
+    while(iterator1.hasNext()) {
+      Entry<ISound, Integer> entry1 = (Entry)iterator1.next();
+      if (entry1.getValue() > 0) {
+        entry1.setValue(entry1.getValue() - 1);
+      } else {
+        this.playSoundRecord(entry1.getKey());
+        iterator1.remove();
+      }
+    }
+  }
+  public synchronized void tickThread() {
     Iterator<Map.Entry<Integer, EndSound>> it = endSounds.entrySet().iterator();
 
     while (it.hasNext()) {
@@ -172,17 +187,17 @@ public class FlansModSounds {
             //    } else {
             String noise = playTheSoundOffThread(x, y, z, relDist, type.noise.sound, vol, type.noise.pitch, loc, silenced, delay);
 
-            if (delay == 0) {
+        //    if (delay == 0) {
 
               synchronized (this) {
                 endSounds.put(origin, new EndSound(x, y, z, relDist, vol, type.noise.pitch, delay, silenced, noise + "_end"));
               }
-            } else {
-              playTheSoundOffThread(x, y, z, relDist,noise + "_end", vol, type.noise.pitch, loc, silenced, delay+2);
-            }
+      //      } else {
+      //        playTheSoundOffThread(x, y, z, relDist,noise + "_end", vol, type.noise.pitch, loc, silenced, delay+2);
+      //      }
             //     }
           } else {
-            String noise = playTheSound(x, y, z, relDist, type.noise.sound, vol, type.noise.pitch, loc, silenced, delay);
+            String noise = playTheSoundOffThread(x, y, z, relDist, type.noise.sound, vol, type.noise.pitch, loc, silenced, delay);
           }
 
 
@@ -205,9 +220,9 @@ public class FlansModSounds {
         }
       }
     } else {
-      if (sound.startsWith("sound_")) {
+     /* if (sound.startsWith("sound_")) {
         sound = sound.substring(6);
-      }
+      }*/
       String resName = "flansmod:" + sound;
       PositionedSoundRecord positionedsoundrecord = new PositionedSoundRecord(new ResourceLocation(resName), volume, 1, (float) x, (float) y,
           (float) z);
@@ -249,13 +264,17 @@ public class FlansModSounds {
     PositionedSoundRecord positionedsoundrecord = new RelativeSoundRecord(res, volume, pitch, (float) x, (float) y, (float) z);
 
     if (delay > 0) {
-      Minecraft.getMinecraft().getSoundHandler().playDelayedSound(positionedsoundrecord, delay);
+      playDelayedSound(positionedsoundrecord, delay);
     } else {
       playSoundRecord(positionedsoundrecord);
       //  Minecraft.getMinecraft().getSoundHandler().playSound(positionedsoundrecord);
     }
 
     return soundName;
+  }
+
+  private synchronized void playDelayedSound(PositionedSoundRecord positionedsoundrecord, int delay) {
+    delayedSounds.put(positionedsoundrecord, delay);
   }
 
   private String getSoundForLocation(Vec3 loc, double dist, String sound, boolean silenced) {
@@ -271,6 +290,10 @@ public class FlansModSounds {
         if (silenced)
           return "Noise_Close_Silenced_Wave_0";
         type = getNoiseType(loc);
+        if (type == NoiseType.INDOOR_GARAGE || type == NoiseType.INDOOR_SMALL) {
+          distType = dist > 0.2 ? dist > 0.5 ? "Far" : "Distant" : "Close";
+          return "Noise_" + distType + "_" + type.sound + "_Wave_0";
+        }
         return "Noise_" + distType + "_" + type.sound + "_Wave_0";
       case "BushmasterCannon":
         return "BushmasterFire" + distType + "";
@@ -284,6 +307,10 @@ public class FlansModSounds {
         if (dist > 0.5)
           return "CoreBassDistant_Missile_01";
         return "Projectile_AT_Engine_01_Wave";
+      case "missileMedium2":
+        if (dist > 0.5)
+          return "CoreBassDistant_Missile_01";
+        return "Projectile_AT_Engine_02_Wave";
       case "missileBig":
         if (dist > 0.5)
           return "CoreBassDistant_Missile_01";

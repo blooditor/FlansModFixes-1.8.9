@@ -23,6 +23,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.EmptyChunk;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class EntityPlane extends EntityDriveable {
@@ -440,6 +441,10 @@ public class EntityPlane extends EntityDriveable {
         }
 
       }
+    }
+    boolean isInUnloadedChunk = !worldObj.isRemote && (seats[0] == null || seats[0].riddenByEntity == null) && isFlyingIntoUnloadedChunk();
+    if (isInUnloadedChunk) {
+      motionX = motionY = motionZ = 0;
     }
     super.onUpdate();
 
@@ -965,6 +970,30 @@ public class EntityPlane extends EntityDriveable {
       FlansMod.getPacketHandler().sendToAllAround(new PacketPlaneControl(this), posX, posY, posZ,
           FlansMod.driveableUpdateRange, dimension);
     }
+  }
+  private boolean isFlyingIntoUnloadedChunk() {
+   /* if (unloadedChunkMode == 0 || unloadedChunkMode == 1 && worldObj.isRemote) {
+      return false;
+    }*/
+    int x = chunkCoordX;
+    int z = chunkCoordZ;
+
+    return !(isChunkLoaded(x+1, z) &&
+        isChunkLoaded(x+1, z+1) &&
+        isChunkLoaded(x, z+1) &&
+        isChunkLoaded(x-1, z) &&
+        isChunkLoaded(x-1, z-1) &&
+        isChunkLoaded(x, z-1) &&
+        isChunkLoaded(x+1, z-1) &&
+        isChunkLoaded(x-1, z+1)
+    );
+  }
+
+  private boolean isChunkLoaded(int x, int z) {
+    if (worldObj.isRemote) {
+      return !(worldObj.getChunkFromChunkCoords(x, z) instanceof EmptyChunk);
+    }
+    return worldObj.getChunkProvider().chunkExists(x, z);
   }
 
   private boolean isOnGround() {

@@ -652,8 +652,7 @@ public class ClientRenderHooks {
     }
     if (event.isCancelable() && event.type == ElementType.HOTBAR) {
       RenderOffHandHighlights(tessellator, i, j);
-    }
-    if (event.isCancelable() && event.type == ElementType.HOTBAR) {
+
       if (!event.isCanceled()) {
         RenderPlayerAmmo(i, j);
       }
@@ -663,6 +662,8 @@ public class ClientRenderHooks {
       RenderKillMessages(i, j);
 
       RenderVehicleDebug();
+
+      GlStateManager.color(1,1,1);
     }
 
   }

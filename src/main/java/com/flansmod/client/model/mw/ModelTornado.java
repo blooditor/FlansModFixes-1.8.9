@@ -339,33 +339,33 @@ public class ModelTornado extends ModelPlane {
     pitchFlapRightModel[0].setRotationPoint(140F, -21F, 16F);
 
 // Right Wing
-    rightWingPos2Model = new ModelRendererTurbo[1];
-    rightWingPos2Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing2
+    leftWingPos2Model = new ModelRendererTurbo[1];
+    leftWingPos2Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing2
 
-    rightWingPos2Model[0]
+    leftWingPos2Model[0]
         .addShapeBox(0F, 0F, -83F, 40, 3, 83, 0F, -27F, 0F, -4F, 10F, 0F, 0F, 0F, 0F, 0F, 0F, 0F,
             0F, -27F, 0F, -4F, 10F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F); //Test
-    rightWingPos2Model[0].setRotationPoint(38F, -28F, -18F);
+    leftWingPos2Model[0].setRotationPoint(38F, -28F, -18F);
 
     // Left Wing Position 1
-    leftWingPos1Model = new ModelRendererTurbo[1];
-    leftWingPos1Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing1
-
-    leftWingPos1Model[0]
-        .addShapeBox(0F, 0F, 0F, 40, 3, 83, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 10F, 0F, 0F, -27F, 0F, -4F,
-            0F, 0F, 0F, 0F, 0F, 0F, 10F, 0F, 0F, -27F, 0F, -4F); //Test
-    leftWingPos1Model[0].setRotationPoint(34F, -28F, 20F);
-    leftWingPos1Model[0].rotateAngleY = -0.76794487F;
-
-    // Right Wing
     rightWingPos1Model = new ModelRendererTurbo[1];
-    rightWingPos1Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing2
+    rightWingPos1Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing1
 
     rightWingPos1Model[0]
+        .addShapeBox(0F, 0F, 0F, 40, 3, 83, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 10F, 0F, 0F, -27F, 0F, -4F,
+            0F, 0F, 0F, 0F, 0F, 0F, 10F, 0F, 0F, -27F, 0F, -4F); //Test
+    rightWingPos1Model[0].setRotationPoint(34F, -28F, 20F);
+    rightWingPos1Model[0].rotateAngleY = -0.76794487F;
+
+    // Right Wing
+    leftWingPos1Model = new ModelRendererTurbo[1];
+    leftWingPos1Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing2
+
+    leftWingPos1Model[0]
         .addShapeBox(0F, 0F, -83F, 40, 3, 83, 0F, -27F, 0F, -4F, 10F, 0F, 0F, 0F, 0F, 0F, 0F, 0F,
             0F, -27F, 0F, -4F, 10F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F); //Test
-    rightWingPos1Model[0].setRotationPoint(34F, -28F, -20F);
-    rightWingPos1Model[0].rotateAngleY = 0.76794487F;
+    leftWingPos1Model[0].setRotationPoint(34F, -28F, -20F);
+    leftWingPos1Model[0].rotateAngleY = 0.76794487F;
 
     // Body Wheel
     bodyWheelModel = new ModelRendererTurbo[8];
@@ -475,13 +475,13 @@ public class ModelTornado extends ModelPlane {
     rightWingWheelModel[4].setRotationPoint(73F, 8F, 16F);
 
     // Left Wing Position 1
-    leftWingPos2Model = new ModelRendererTurbo[1];
-    leftWingPos2Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing1
+    rightWingPos2Model = new ModelRendererTurbo[1];
+    rightWingPos2Model[0] = new ModelRendererTurbo(this, 240, 300, textureX, textureY); // LeftWing1
 
-    leftWingPos2Model[0]
+    rightWingPos2Model[0]
         .addShapeBox(0F, 0F, 0F, 40, 3, 83, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 10F, 0F, 0F, -27F, 0F, -4F,
             0F, 0F, 0F, 0F, 0F, 0F, 10F, 0F, 0F, -27F, 0F, -4F); //Test
-    leftWingPos2Model[0].setRotationPoint(38F, -28F, 18F);
+    rightWingPos2Model[0].setRotationPoint(38F, -28F, 18F);
 
     translateAll(0, 0, 0);
 

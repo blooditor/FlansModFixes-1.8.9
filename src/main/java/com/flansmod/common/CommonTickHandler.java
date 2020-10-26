@@ -27,6 +27,7 @@ public class CommonTickHandler {
   public void tick(TickEvent.ClientTickEvent event) {
     switch (event.phase) {
       case START: {
+        FlansModSounds.inst.tick();
         break;
       }
       case END: {

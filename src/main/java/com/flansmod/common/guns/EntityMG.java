@@ -190,7 +190,7 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
           rotationPitch,
           gunner,
           bullet.bulletSpread * type.bulletSpread,
-          type.damage,
+          type.getDamage(ammo),
           type));
 
       if (soundDelay <= 0) {

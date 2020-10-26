@@ -145,6 +145,14 @@ public class PacketVehicleFireMode extends PacketBase {
     FlansMod.getPacketHandler().sendToServer(this);
   }
   //client side press
+  public void switchMode(EntityDriveable driveable, int add) {
+    if(modes.size() == 0)
+      return;
+    int m = (currentMode + add)%modes.size();
+    this.setCurrentMode(m < 0? modes.size()+m : m, driveable);
+    FlansMod.getPacketHandler().sendToServer(this);
+  }
+  //client side press
   public void trySetMode(int mode, EntityDriveable driveable) {
     if(modes.size() == 0 || mode < 0 || mode >= modes.size())
       return;

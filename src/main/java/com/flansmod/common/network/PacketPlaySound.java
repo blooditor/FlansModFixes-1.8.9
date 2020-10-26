@@ -61,7 +61,7 @@ public class PacketPlaySound extends PacketBase {
   //for vehicles
   public static void sendAdvancedSound(Entity shooter, GunType type, ShootableType bullet,
       boolean silenced, boolean sendToShooter) {
-    sendAdvancedSound(shooter, type.shortName, bullet, silenced, sendToShooter);
+    sendAdvancedSound(shooter, type.shootSound, bullet, silenced, sendToShooter);
   }
   //for guns
   public static void sendAdvancedSound(Entity shooter, String sound, ShootableType bullet,
@@ -73,12 +73,12 @@ public class PacketPlaySound extends PacketBase {
     if (silenced) {
       chunkRange *= 0.4f;
     }
-    sendAdvancedSound(shooter, silenced, "sound_" + sound, chunkRange, sendToShooter);
+    sendAdvancedSound(shooter, silenced, sound, chunkRange, sendToShooter);
   }
 
   //bombs, shells, detonate sounds, idle sounds
   public static void sendAdvancedSound(Entity shooter, String shootSound, int chunkRange) {
-    sendAdvancedSound(shooter, false,"sound_" + shootSound, chunkRange, true);
+    sendAdvancedSound(shooter, false,shootSound, chunkRange, true);
   }
 
   //explosion

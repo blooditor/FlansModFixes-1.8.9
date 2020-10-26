@@ -48,12 +48,12 @@ public class KeyInputHandler {
   public static KeyBinding controlSwitchKey = new KeyBinding("Control Switch key", Keyboard.KEY_C,
       "Flan's Mod");
   public static KeyBinding reloadKey = new KeyBinding("Reload key", Keyboard.KEY_R, "Flan's Mod");
-  public static KeyBinding switchFireModeKey = new KeyBinding("Switch Fire Mode Key", Keyboard.KEY_F,
-      "Flan's Mod");
+  public static KeyBinding switchFireModeKey = new KeyBinding("Switch Fire Mode Key", Keyboard.KEY_G,
+      "Flan's Mod");/*
   public static KeyBinding teamsMenuKey = new KeyBinding("Teams Menu Key", Keyboard.KEY_G,
       "Flan's Mod");
   public static KeyBinding teamsScoresKey = new KeyBinding("Teams Scores Key", Keyboard.KEY_H,
-      "Flan's Mod");
+      "Flan's Mod");*/
   public static KeyBinding leftRollKey = new KeyBinding("Roll Left Key", Keyboard.KEY_Z,
       "Flan's Mod");
   public static KeyBinding rightRollKey = new KeyBinding("Roll Right Key", Keyboard.KEY_X,
@@ -62,7 +62,7 @@ public class KeyInputHandler {
       "Flan's Mod");
   public static KeyBinding doorKey = new KeyBinding("Door Open / Close Key", Keyboard.KEY_K,
       "Flan's Mod");
-  public static KeyBinding modeKey = new KeyBinding("Mode Switch Key", Keyboard.KEY_J,
+  public static KeyBinding modeKey = new KeyBinding("VTOL Mode Switch Key", Keyboard.KEY_J,
       "Flan's Mod");
   public static KeyBinding lookAtGunKey = new KeyBinding("Look at Gun", Keyboard.KEY_L,
       "Flan's Mod");
@@ -89,8 +89,8 @@ public class KeyInputHandler {
     ClientRegistry.registerKeyBinding(controlSwitchKey);
     ClientRegistry.registerKeyBinding(reloadKey);
     ClientRegistry.registerKeyBinding(switchFireModeKey);
-    ClientRegistry.registerKeyBinding(teamsMenuKey);
-    ClientRegistry.registerKeyBinding(teamsScoresKey);
+    /*ClientRegistry.registerKeyBinding(teamsMenuKey);
+    ClientRegistry.registerKeyBinding(teamsScoresKey);*/
     ClientRegistry.registerKeyBinding(leftRollKey);
     ClientRegistry.registerKeyBinding(rightRollKey);
     ClientRegistry.registerKeyBinding(gearKey);
@@ -114,14 +114,14 @@ public class KeyInputHandler {
     Entity ridingEntity = player.ridingEntity;
 
     //Handle universal keys
-    if (teamsMenuKey.isPressed()) {
+   /* if (teamsMenuKey.isPressed()) {
       mc.displayGuiScreen(new GuiLandingPage());
       return;
     }
     if (teamsScoresKey.isPressed()) {
       mc.displayGuiScreen(new GuiTeamScores());
       return;
-    }
+    }*/
     if (reloadKey.isPressed()) {
       PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
       ItemStack stack = player.getCurrentEquippedItem();
@@ -134,7 +134,7 @@ public class KeyInputHandler {
           if (item.CanReload(stack, player.inventory)) {
             FlansMod.getPacketHandler().sendToServer(new PacketReload(false, false, true));
 
-          //  item.playReloadSound(type, data);
+            item.playReloadSound(type, data);
             //Set player shoot delay to be the reload delay
             //Set both gun delays to avoid reloading two guns at once
      //       data.shootTimeRight = data.shootTimeLeft = (int) type.getReloadTime(stack);
