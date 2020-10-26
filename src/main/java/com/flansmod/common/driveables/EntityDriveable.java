@@ -661,7 +661,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
               worldObj.spawnEntityInWorld(bulletEntity);
 
               if (type.shootSound(secondary) != null) {
-                PacketPlaySound.sendAdvancedSound(this, type.shootSound(secondary), 12);
+                PacketPlaySound.sendAdvancedSound(this, type.shootSound(secondary), 10);
               }
               //PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.shootSound(secondary), false);
               if (!driverIsCreative()) {
@@ -713,7 +713,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
               worldObj.spawnEntityInWorld(bulletEntity);
 
               if (type.shootSound(secondary) != null) {
-                PacketPlaySound.sendAdvancedSound(this, type.shootSound(secondary), 12);
+                PacketPlaySound.sendAdvancedSound(this, type.shootSound(secondary), bulletItem.type, false, true);
               }
               //PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.shootSound(secondary), false);
               if (!driverIsCreative()) {

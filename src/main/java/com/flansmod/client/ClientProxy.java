@@ -309,8 +309,7 @@ public class ClientProxy extends CommonProxy {
           .getKeyName(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())
           + " to get out"));
       player.addChatComponentMessage(new ChatComponentText(
-          "Press " + Keyboard.getKeyName(KeyInputHandler.switchFireModeKey.getKeyCode())
-              + " to switch weapon"));
+          "Press number keys or scroll to switch weapons"));
       if (entityType instanceof EntityPlane) {
         player.addChatComponentMessage(new ChatComponentText(
             "Press " + Keyboard.getKeyName(KeyInputHandler.controlSwitchKey.getKeyCode())

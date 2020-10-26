@@ -180,7 +180,12 @@ public class GuiDriveableController extends GuiScreen {
 
     int dWheel = Mouse.getDWheel();
     if (dWheel != 0) {
-      player.inventory.changeCurrentItem(dWheel);
+      dWheel = -Math.min(1, Math.max(-1, dWheel));
+      //player.inventory.changeCurrentItem(dWheel);
+      if (plane instanceof EntitySeat && ((EntitySeat) plane).driveable != null && ((EntitySeat) plane).seatInfo != null
+          && ((EntitySeat) plane).seatInfo.id == 0) {
+        ((EntitySeat) plane).driveable.fireMode.switchMode(((EntitySeat) plane).driveable, dWheel);
+      }
     }
 
     // Right mouse. Fires shells, drops bombs. Is not a holding thing
@@ -495,7 +500,9 @@ public class GuiDriveableController extends GuiScreen {
       int spaceI = Math.max(2, 7 - seat.driveable.fireMode.modes.size());
       while (spaceI-- > 0) space += " ";
       for (int i = 0; i < seat.driveable.fireMode.modes.size(); i++) {
-        s += space + "[" + (seat.driveable.fireMode.getCurrentMode() == i? "X" : " ") + "]";
+        boolean sel = seat.driveable.fireMode.getCurrentMode() == i;
+        //s += space + "[" + (sel? "X" : " ") + "]";
+        s += space + (!sel? (i+1) + "" : "["+(i+1)+"]");
       }
       s = s.substring(space.length());
 

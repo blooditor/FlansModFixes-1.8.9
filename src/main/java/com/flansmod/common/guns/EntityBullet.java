@@ -1053,7 +1053,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
   @SideOnly(Side.CLIENT)
   private void playFlyBySound(Vector3f finalHit, Vector3f motion) {
-      if (clientBulletId == -1) {
+      if (clientBulletId == -1 || this.type == null) {
           return;
       }
  //   System.out.println(this.getPositionVector());
@@ -1064,7 +1064,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
           return;
       }
 
-    boolean a10 = this.type.weaponType == EnumWeaponType.NONE && owner != null && owner.ridingEntity instanceof EntitySeat && "A10".equals(((EntitySeat) owner.ridingEntity).driveable.driveableType);
+    boolean a10 = this.type.weaponType == EnumWeaponType.NONE && owner != null && owner.ridingEntity instanceof EntitySeat && ((EntitySeat) owner.ridingEntity).driveable instanceof EntityPlane && "A10".equals(((EntitySeat) owner.ridingEntity).driveable.driveableType);
     if(a10 && owner == Minecraft.getMinecraft().thePlayer)
       return;
     EntityPlayer player = Minecraft.getMinecraft().thePlayer;
@@ -1082,7 +1082,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     }
     Vector3f v2 = new Vector3f(playerPos.subtract(spawnPos.toVec3()));
     float t2 = Vector3f.dot(v2, motion);
-    if(t2 < 0)
+    if(t2 < 1)
       return;
 /*
 

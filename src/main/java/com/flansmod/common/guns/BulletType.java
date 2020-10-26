@@ -180,7 +180,7 @@ public class BulletType extends ShootableType {
     MM556("5.56x45mm NATO", "5.56mm", 811, 0.8f, 1.3f, 1.1f), //m16 first before balance: 911, 0.9f, 1.3f, 1.1f
     MM762("7.62x51mm NATO", "7.62mm", 716, 0.9f, 1.55f, 0.85f, 1.1f), //sniper first before balance: 716, 0.8f, 1.5f, 0.9f
     MM762_39("7.62x39mm","7.62x39mm", 730, 0.77f, 1.35f, 1.1f, 1.05f), // 730, 0.8f, 1.3f, 1f
-    C50(".50 BMG", ".50", 858, 0.94f, 2.2f, 0.7f, 1.5f), //barrett
+    C50(".50 BMG", ".50", 858, 0.94f, 2.2f, 0.7f, 1.45f), //barrett
     MM57("5.7x28mm", "5.7mm", 716, 0.8f, 1.3f, 1.1f, 0.9f), //p90 ammo
     MM545("5.45x39mm", "5.45mm", 756, 0.85f, 1.2f, 1.1f), //ak47 856, 0.85f, 1.2f, 1.2f
     C50AE(".50 AE", ".50ae", 450, 0.8f, 1.2f, 1.2f, 1, 1.3f), //deagle
@@ -191,12 +191,12 @@ public class BulletType extends ShootableType {
     GAUGEBUCK("12 Gauge Buckshot", "12gaugebuck", 300, 0.38f, 0.75f, 1.5f, 1, 1.9f),
     GAUGEFLETCHETTE("12 Gauge Fletchette", "12gaugefletchette", 450, 0.60f, 1.55f, 1f, 1f),
     C357(".357 Magnum", ".357", 400f, 0.80f, 1f, 1.3f, 1f, 1.3f),//jury
-    MM30("30mm", "30mm", 1010f, 0.90f, 3f, 1f, 2f),
-    MISSILE("Missile", "missile", 70, 1.015f, 1f, 1f, 1.5f, 3),
-    MISSILE_SLOW("Missile", "missile_slow", 32, 0.98f, 1f, 1f, 1.5f, 3),
-    MISSILE_FAST("Missile", "missile_fast", 90, 1.03f, 1f, 1f, 1.5f, 3),
-    SHELL("Shell", "shell", 200, 0.90f, 3f, 1f, 2f, 2),
-    SHELL_FAST("Shell", "shell_fast", 350, 0.90f, 3f, 1f, 1.8f, 2),
+    MM30("30mm", "30mm", 1010f, 0.90f, 3f, 1f, 1.5f),
+    MISSILE("Missile", "missile", 70, 1.015f, 1f, 1f, 1f, 3),
+    MISSILE_SLOW("Missile", "missile_slow", 32, 0.98f, 1f, 1f, 1f, 3),
+    MISSILE_FAST("Missile", "missile_fast", 90, 1.03f, 1f, 1f, 1f, 3),
+    SHELL("Shell", "shell", 200, 0.90f, 3f, 1f, 1.6f, 2),
+    SHELL_FAST("Shell", "shell_fast", 350, 0.90f, 3f, 1f, 1.4f, 2),
     //   MM30("30mm", "30mm", 1010f, 0.90f, 3f, 1f, 3f),
     //   MM70("70mm", "70mm", 0, 0.70f, 3f, 1f, 3f, 3),
     DEFAULT("default", "default", 400, 0.8f, 0.9f, 1, 1, 1.2f),
