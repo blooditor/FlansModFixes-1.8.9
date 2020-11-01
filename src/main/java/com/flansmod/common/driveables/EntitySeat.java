@@ -781,4 +781,20 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
   public float getMinigunSpeed() {
     return minigunSpeed;
   }
+
+
+  @Override
+  public boolean shouldDismountInWater(Entity rider) {
+    if (driveable == null || !(rider instanceof EntityPlayer)) {
+      return false;
+    }
+    if(driveable.getDriveableType() == null)
+      return false;
+    if(driveable.getDriveableType().floatOnWater)
+      return false;
+    if (driveable.timeUnderWater >= 100) {
+      return true;
+    }
+    return false;
+  }
 }

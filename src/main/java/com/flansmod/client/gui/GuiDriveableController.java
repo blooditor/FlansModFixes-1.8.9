@@ -81,7 +81,6 @@ public class GuiDriveableController extends GuiScreen {
       }
 
       loadShaderMethod.invoke(entityRenderer, object);
-      System.out.println("Loaded gunner view shader");
     } catch (Exception e1) {
       e1.printStackTrace();
     }
@@ -159,6 +158,10 @@ public class GuiDriveableController extends GuiScreen {
         mc.gameSettings.fovSetting = 60;
       }
     }
+
+    if (plane instanceof EntitySeat && ((EntitySeat) plane).driveable != null) {
+      ((EntitySeat) plane).driveable.fireMode.setCurrentMode(((EntitySeat) plane).driveable.fireMode.getCurrentMode(), ((EntitySeat) plane).driveable);
+    }
   }
 
   @Override
@@ -221,7 +224,8 @@ public class GuiDriveableController extends GuiScreen {
           && ((EntitySeat) plane).seatInfo.id == 0) {
         EntityDriveable d = ((EntitySeat) plane).driveable;
         boolean secondary = d.fireMode.secondary;
-        ((EntitySeat) plane).driveable.setShootDelay(secondary? d.getDriveableType().shootDelaySecondary : d.getDriveableType().shootDelayPrimary, secondary);
+        if(((EntitySeat) plane).driveable.getShootDelay(secondary) == 0)
+          ((EntitySeat) plane).driveable.setShootDelay(secondary? d.getDriveableType().shootDelaySecondary : d.getDriveableType().shootDelayPrimary, secondary);
       }
     }
 
@@ -349,7 +353,7 @@ public class GuiDriveableController extends GuiScreen {
       EntitySeat plane = (EntitySeat) this.plane;
 
       if (plane.driveable instanceof EntityPlane && isHeliGunner((EntityPlane) plane.driveable)) {
-
+        drawRect(0,0,width, height, 0xb0405040);
         drawGunnerScreen(textureX, textureY, mouseX, mouseY, partialTicks);
       }
       if (plane.driveable instanceof EntityPlane && isJetPilot((EntityPlane) plane.driveable)) {
@@ -387,7 +391,7 @@ public class GuiDriveableController extends GuiScreen {
     EntityDriveable driveable = seat.driveable;
 
     boolean isMainCannon = seat.seatInfo != null && seat.seatInfo.id == 0;
-    boolean radar = enableRadar(plane);
+    boolean radar = enableRadar(plane) || driveable.driveableType.equals("mim23");
     //crosshair
     GlStateManager.pushMatrix();
     float scale = 2;
@@ -485,7 +489,7 @@ public class GuiDriveableController extends GuiScreen {
 
   private void drawSelectedFireMode(EntitySeat seat, int col, int highlightCol) {
 
-    int y = height-75;
+    int y = height-60;
 
     //information text
     String nameOfGun = getCurrentFireMode();

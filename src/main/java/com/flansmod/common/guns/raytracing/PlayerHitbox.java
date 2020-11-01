@@ -65,10 +65,10 @@ public class PlayerHitbox {
   @SideOnly(Side.CLIENT)
   public void renderHitbox(World world, Vector3f pos) {
 
-    Vector3f boxOrigin = new Vector3f(pos.x + rP.x, pos.y + rP.y, pos.z + rP.z);
+ /*   Vector3f boxOrigin = new Vector3f(pos.x + rP.x, pos.y + rP.y, pos.z + rP.z);
     world.spawnEntityInWorld(
         new EntityDebugAABB(world, boxOrigin, d, 2, 1F, 1F, 0F, axes.getYaw(), axes.getPitch(),
-            axes.getRoll(), o));
+            axes.getRoll(), o));*/
 /*		if(type != EnumHitboxType.RIGHTARM)
 			return;
 		for(int i = 0; i < 3; i++)

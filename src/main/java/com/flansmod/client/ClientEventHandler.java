@@ -8,8 +8,12 @@ import com.flansmod.client.model.RenderGun;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.guns.ItemGun;
+import java.lang.reflect.Field;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.client.event.MouseEvent;
@@ -22,6 +26,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -33,6 +38,7 @@ public class ClientEventHandler {
 
   private KeyInputHandler keyInputHandler = new KeyInputHandler();
   private ClientRenderHooks renderHooks = new ClientRenderHooks();
+  private Field renderOutlinesField;
 
   @SubscribeEvent
   public void renderTick(TickEvent.RenderTickEvent event) {
@@ -128,7 +134,15 @@ public class ClientEventHandler {
     if (Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat && Minecraft
         .getMinecraft().currentScreen instanceof GuiDriveableController && GuiDriveableController
         .isHeliGunner((IControllable) Minecraft.getMinecraft().thePlayer.ridingEntity)) {
-      GL11.glColor3f(0.1f, 0.1f, 0.1f);
+      if (renderOutlinesField == null) {
+        renderOutlinesField = ReflectionHelper.findField(RendererLivingEntity.class, "renderOutlines", "field_177098_i");
+        renderOutlinesField.setAccessible(true);
+      }
+      try {
+        renderOutlinesField.set(event.renderer, true);
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      }
     }
   }
 

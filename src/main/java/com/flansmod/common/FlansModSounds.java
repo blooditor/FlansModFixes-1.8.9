@@ -368,12 +368,14 @@ public class FlansModSounds {
     if (indoor != null)
       return indoor;
 
-    BiomeGenBase base = mc.theWorld.getBiomeGenForCoords(new BlockPos(pos));
-    if (base.biomeName.contains("Forest") || base.biomeName.contains("Taiga") || base.biomeName.contains("jungle") || base.biomeName.contains("forest") || base.biomeName.contains("taiga") || base == BiomeGenBase.swampland) {
-      return NoiseType.FOREST;
-    }
-    if (base == BiomeGenBase.extremeHills || base == BiomeGenBase.extremeHillsEdge || base == BiomeGenBase.extremeHillsPlus) {
-      return NoiseType.FOREST;
+    if (pos.yCoord < 140) {
+      BiomeGenBase base = mc.theWorld.getBiomeGenForCoords(new BlockPos(pos));
+      if (base.biomeName.contains("Forest") || base.biomeName.contains("Taiga") || base.biomeName.contains("jungle") || base.biomeName.contains("forest") || base.biomeName.contains("taiga") || base == BiomeGenBase.swampland) {
+        return NoiseType.FOREST;
+      }
+      if (base == BiomeGenBase.extremeHills || base == BiomeGenBase.extremeHillsEdge || base == BiomeGenBase.extremeHillsPlus) {
+        return NoiseType.FOREST;
+      }
     }
     return NoiseType.OPENFIELD;
   }

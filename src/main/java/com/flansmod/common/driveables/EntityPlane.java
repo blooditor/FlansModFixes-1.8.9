@@ -188,9 +188,7 @@ public class EntityPlane extends EntityDriveable {
       FlansMod.getPacketHandler().sendToServer(new PacketDriveableKey(key));
       return true;
     }
-    boolean canThrust = ((seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer
-        && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode)
-        || getDriveableData().fuelInTank > 0) && hasWorkingProp();
+    boolean canThrust = canThrust();
     switch (key) {
       case 0: //Accelerate : Increase the throttle, up to 1.
       {
@@ -1006,9 +1004,9 @@ public class EntityPlane extends EntityDriveable {
   }
 
   public boolean canThrust() {
-    return (seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer
+    return ((seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer
         && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode)
-        || driveableData.fuelInTank > 0 && (getPlaneType().floatOnWater || timeUnderWater < 60);
+        || driveableData.fuelInTank > 0 && (getPlaneType().floatOnWater || timeUnderWater < 60)) && hasWorkingProp();
   }
 
   @Override

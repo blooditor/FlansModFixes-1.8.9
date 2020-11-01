@@ -268,6 +268,7 @@ public class PlayerData {
           Minecraft.getMinecraft().getSoundHandler().stopSound(reloadSound);
           reloadSound = null;
         }
+        GunAnimations.lastInventorySlot = slot;
       }
     }
   }

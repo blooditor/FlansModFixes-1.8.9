@@ -82,6 +82,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
+import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -352,12 +354,13 @@ public class FlansMod {
 
     hooks.hook();
 
-
-    if (event.getSide() == Side.CLIENT) {
-      new FlansModSounds();
-    }
+    new FlansModSounds();
   }
-
+  @SubscribeEvent
+  public void soundInit(SoundLoadEvent event) {
+    if(FlansModSounds.inst != null)
+      FlansModSounds.inst.sndHandler = null;
+  }
   @SubscribeEvent
   public void playerDrops(PlayerDropsEvent event) {
     for (int i = event.drops.size() - 1; i >= 0; i--) {

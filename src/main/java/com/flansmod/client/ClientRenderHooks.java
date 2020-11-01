@@ -26,6 +26,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -650,7 +651,7 @@ public class ClientRenderHooks {
     if (event.isCancelable() && event.type == ElementType.HOTBAR) {
       RenderHitMarker(tessellator, i, j);
     }
-    if (event.isCancelable() && event.type == ElementType.HOTBAR) {
+    if (event.isCancelable() && event.type == ElementType.EXPERIENCE) {
       RenderOffHandHighlights(tessellator, i, j);
 
       if (!event.isCanceled()) {
@@ -663,9 +664,19 @@ public class ClientRenderHooks {
 
       RenderVehicleDebug();
 
+
       GlStateManager.color(1,1,1);
+      Minecraft.getMinecraft().renderEngine.bindTexture(Gui.icons);
     }
 
+    if (event.type == ElementType.HEALTH && mc.currentScreen instanceof GuiDriveableController) {
+      int y = 15;
+      if (event.isCancelable()) {
+        GlStateManager.translate(0, y, 0);
+      } else {
+        GlStateManager.translate(0, -y, 0);
+      }
+    }
   }
 
   private void RenderScopeOverlay(Tessellator tessellator, int i, int j) {
