@@ -325,8 +325,10 @@ public class EntityPlane extends EntityDriveable {
             } else {
               mode = EnumPlaneMode.HELI;
             }
+            throttle = Math.min(throttle, 0.5f);
+            speedChange = Math.min(throttle, 10f);
             player.addChatMessage(new ChatComponentText(
-                mode == EnumPlaneMode.HELI ? "Entering hover mode" : "Entering plane mode"));
+                mode == EnumPlaneMode.HELI ? "Entering vertical mode" : "Entering plane mode"));
           }
           toggleTimer = 10;
           FlansMod.getPacketHandler().sendToServer(new PacketDriveableControl(this));
