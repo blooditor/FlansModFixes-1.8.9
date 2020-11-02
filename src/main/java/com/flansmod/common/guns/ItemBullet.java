@@ -71,9 +71,9 @@ public class ItemBullet extends ItemShootable implements IFlanItem {
   //Can be overriden to allow new types of bullets to be created, AA/MG constructor
   @Override
   public EntityShootable getEntity(World worldObj, Vec3 origin, float yaw,
-      float pitch, EntityLivingBase shooter, float spread, float damage,
+      float pitch, EntityLivingBase shooter, float spread, float damage, float speed,
       InfoType shotFrom) {
-    return new EntityBullet(worldObj, origin, yaw, pitch, shooter, spread, damage, this.type, 3.0f,
+    return new EntityBullet(worldObj, origin, yaw, pitch, shooter, spread, damage, this.type, speed,
         shotFrom);
   }
 

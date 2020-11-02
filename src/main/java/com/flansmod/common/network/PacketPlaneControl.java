@@ -2,12 +2,14 @@ package com.flansmod.common.network;
 
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EntityPlane;
+import com.flansmod.common.driveables.EnumPlaneMode;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
 public class PacketPlaneControl extends PacketDriveableControl {
 
   public boolean gear, doors, wings;
+  public boolean verticalMode;
 
   public PacketPlaneControl() {
   }
@@ -18,6 +20,7 @@ public class PacketPlaneControl extends PacketDriveableControl {
     gear = plane.varGear;
     doors = plane.varDoor;
     wings = plane.varWing;
+    verticalMode = plane.mode == EnumPlaneMode.HELI;
   }
 
   @Override
@@ -26,6 +29,7 @@ public class PacketPlaneControl extends PacketDriveableControl {
     data.writeBoolean(gear);
     data.writeBoolean(doors);
     data.writeBoolean(wings);
+    data.writeBoolean(verticalMode);
   }
 
   @Override
@@ -34,6 +38,7 @@ public class PacketPlaneControl extends PacketDriveableControl {
     gear = data.readBoolean();
     doors = data.readBoolean();
     wings = data.readBoolean();
+    verticalMode = data.readBoolean();
   }
 
   @Override
@@ -43,6 +48,7 @@ public class PacketPlaneControl extends PacketDriveableControl {
     plane.varDoor = doors;
     plane.varGear = gear;
     plane.varWing = wings;
+    plane.mode = verticalMode? EnumPlaneMode.HELI : EnumPlaneMode.PLANE;
   }
 }
 

@@ -23,6 +23,7 @@ import net.minecraftforge.client.event.RenderItemInFrameEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -156,7 +157,7 @@ public class ClientEventHandler {
     renderHooks.cameraSetup(event);
   }
 
-  @SubscribeEvent
+  @SubscribeEvent(priority = EventPriority.HIGH)
   public void ModifyHUD(RenderGameOverlayEvent event) {
     renderHooks.ModifyHUD(event);
   }

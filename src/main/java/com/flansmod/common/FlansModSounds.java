@@ -299,6 +299,8 @@ public class FlansModSounds {
         return "BushmasterFire" + distType + "";
       case "explosionAmbience":
         return "Explosion_Ambience_" + distType + "_Wave";
+      case "hugeExplosionAmbience":
+        return "Explosion_Detonations_IED_" + distType2;
       case "missileSmall":
         if (dist > 0.5)
           return "CoreBassDistant_Missile_01";

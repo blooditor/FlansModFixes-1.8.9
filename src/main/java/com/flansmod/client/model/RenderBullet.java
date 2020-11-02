@@ -39,6 +39,7 @@ public class RenderBullet extends Render {
     ModelBase model = bullet.type.model;
 
 		if (model != null) {
+		  GlStateManager.scale(bullet.type.modelScale, bullet.type.modelScale, bullet.type.modelScale);
 			model.render(bullet, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
 		}
 

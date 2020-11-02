@@ -420,7 +420,6 @@ public class EntityPlane extends EntityDriveable {
 
   @Override
   public void onUpdate() {
-
     boolean thePlayerIsDrivingThis =
         worldObj.isRemote && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer
             && FlansMod.proxy.isThePlayer((EntityPlayer) seats[0].riddenByEntity);

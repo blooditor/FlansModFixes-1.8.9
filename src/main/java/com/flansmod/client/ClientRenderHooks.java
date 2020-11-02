@@ -631,12 +631,21 @@ public class ClientRenderHooks {
 //        && (FlansModClient.currentScope != null
         || mc.thePlayer.ridingEntity instanceof EntitySeat && mc.currentScreen instanceof GuiDriveableController)) {
       event.setCanceled(true);
-    //  return;
+      return;
     }
-    if (event.isCancelable() && (event.type == ElementType.HOTBAR || event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && mc.thePlayer.ridingEntity instanceof EntitySeat
+    if (event.isCancelable() && (event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && mc.thePlayer.ridingEntity instanceof EntitySeat
         && Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController) {
       event.setCanceled(true);
-   //   return;
+      return;
+    }
+
+    if ((event.type == ElementType.HEALTH || event.type == ElementType.HOTBAR) && mc.currentScreen instanceof GuiDriveableController) {
+      int y = event.type == ElementType.HEALTH? 15 : 30;
+      if (event.isCancelable()) {
+        GlStateManager.translate(0, y, 0);
+      } else {
+        GlStateManager.translate(0, -y, 0);
+      }
     }
 
     ScaledResolution scaledresolution = new ScaledResolution(FlansModClient.minecraft);
@@ -648,15 +657,15 @@ public class ClientRenderHooks {
     if (!event.isCancelable() && event.type == ElementType.HELMET) {
       RenderScopeOverlay(tessellator, i, j);
     }
-    if (event.isCancelable() && event.type == ElementType.HOTBAR) {
+    if (!event.isCancelable() && event.type == ElementType.HOTBAR) {
       RenderHitMarker(tessellator, i, j);
     }
-    if (event.isCancelable() && event.type == ElementType.EXPERIENCE) {
+
+    if (!event.isCancelable() && event.type == ElementType.HOTBAR) {
       RenderOffHandHighlights(tessellator, i, j);
 
-      if (!event.isCanceled()) {
+      if(!(Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController))
         RenderPlayerAmmo(i, j);
-      }
 
       RenderTeamInfo(tessellator, i, j);
 
@@ -666,16 +675,6 @@ public class ClientRenderHooks {
 
 
       GlStateManager.color(1,1,1);
-      Minecraft.getMinecraft().renderEngine.bindTexture(Gui.icons);
-    }
-
-    if (event.type == ElementType.HEALTH && mc.currentScreen instanceof GuiDriveableController) {
-      int y = 15;
-      if (event.isCancelable()) {
-        GlStateManager.translate(0, y, 0);
-      } else {
-        GlStateManager.translate(0, -y, 0);
-      }
     }
   }
 

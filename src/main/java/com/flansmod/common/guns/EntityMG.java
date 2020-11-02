@@ -112,6 +112,8 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
       for (; rotationYaw > 180; rotationYaw -= 360) {
       }
       rotationPitch = gunner.rotationPitch;
+
+
       // Keep it within reasonable angles
       if (rotationYaw > type.sideViewLimit) {
         prevRotationYaw = rotationYaw = type.sideViewLimit;
@@ -124,6 +126,17 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
       float angle = direction * 90F + rotationYaw;
       double dX = (type.standBackDist * Math.sin(angle * 3.1415926535F / 180F));
       double dZ = -(type.standBackDist * Math.cos(angle * 3.1415926535F / 180F));
+
+      BlockPos pos = new BlockPos((blockX + 0.5D + dX), blockY + 1 - 0.5D,
+          (blockZ + 0.5D + dZ));
+      //dont allow to rotate if you would get pushed into a block
+      if (worldObj.getBlockState(pos).getBlock() != Blocks.air || worldObj.getBlockState(pos.down()).getBlock() != Blocks.air) {
+        rotationYaw = prevRotationYaw;
+        angle = direction * 90F + rotationYaw;
+        dX = (type.standBackDist * Math.sin(angle * 3.1415926535F / 180F));
+        dZ = -(type.standBackDist * Math.cos(angle * 3.1415926535F / 180F));
+      }
+
       gunner.setPosition((blockX + 0.5D + dX), blockY + gunner.getYOffset() - 0.5D,
           (blockZ + 0.5D + dZ));
       // gunner.setPosition((double)(blockX + (direction == 1 ? 1 : 0) -
@@ -191,6 +204,7 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
           gunner,
           bullet.bulletSpread * type.bulletSpread,
           type.getDamage(ammo),
+          bullet.ammoType.getSpeed(),
           type));
 
       if (soundDelay <= 0) {
@@ -298,6 +312,16 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
       //Spectators can't mount guns
       if (TeamsManager.instance.currentRound != null
           && PlayerHandler.getPlayerData(player).team == Team.spectators) {
+        return true;
+      }
+
+      //cant mount gun if blocked
+      float angle = direction * 90F + rotationYaw;
+      double dX = (type.standBackDist * Math.sin(angle * 3.1415926535F / 180F));
+      double dZ = -(type.standBackDist * Math.cos(angle * 3.1415926535F / 180F));
+      BlockPos pos = new BlockPos((blockX + 0.5D + dX), blockY + 1 - 0.5D,
+          (blockZ + 0.5D + dZ));
+      if (worldObj.getBlockState(pos).getBlock() != Blocks.air || worldObj.getBlockState(pos.down()).getBlock() != Blocks.air) {
         return true;
       }
 

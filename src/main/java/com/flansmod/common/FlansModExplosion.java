@@ -348,6 +348,9 @@ public class FlansModExplosion extends Explosion {
         exploType = "explosionMedium";
         if (this.radius >= 4) {
           exploType = "explosionBig";
+          if (this.radius >= 6) {
+            exploType = "explosionHuge";
+          }
         }
       }
     }

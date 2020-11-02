@@ -623,6 +623,8 @@ public class GuiDriveableController extends GuiScreen {
 
     //SPEED
     float speed = driveable.getRealSpeedXYZ()*20;
+    if(speed < 0.1 && speed > -0.1)
+      speed = 0;
     speed = Math.min(9999, speed);
     String speedT = speed < 1000 ? decimalFormatter.format(speed) : ""+Math.round(speed);
     drawCenteredString(fontRendererObj, speedT, width/2-82+16, height/2-70+2, 0x00a900);

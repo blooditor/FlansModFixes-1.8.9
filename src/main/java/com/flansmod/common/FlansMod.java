@@ -108,6 +108,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod", version = FlansMod.VERSION, acceptableRemoteVersions = "@ALLOWEDVERSIONS@", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod {
@@ -354,8 +355,11 @@ public class FlansMod {
 
     hooks.hook();
 
-    new FlansModSounds();
+    if (event.getSide() == Side.CLIENT) {
+      new FlansModSounds();
+    }
   }
+  @SideOnly(Side.CLIENT)
   @SubscribeEvent
   public void soundInit(SoundLoadEvent event) {
     if(FlansModSounds.inst != null)
