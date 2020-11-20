@@ -3,6 +3,7 @@ package com.flansmod.client.model;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.WorldRenderer;
+import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EntityBullet;
@@ -26,7 +27,8 @@ public class RenderBullet extends Render {
   }
 
   public void render(EntityBullet bullet, double d, double d1, double d2, float f, float f1) {
-		if (bullet.owner == Minecraft.getMinecraft().thePlayer && bullet.ticksExisted < 2 || bullet.type == null) {
+		if (bullet.owner == Minecraft.getMinecraft().thePlayer && bullet.ticksExisted < 2 && !(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat)
+        || bullet.type == null) {
 			return;
 		}
     bindEntityTexture(bullet);
@@ -82,14 +84,14 @@ public class RenderBullet extends Render {
     double length = 1;
     length = bulletSpeed - 0.5f;
 
-		if (bullet.ticksExisted < 2) {
+	/*	if (bullet.ticksExisted < 2) {
 			return;
 		}
 
 		if (bulletSpeed < 10 && bullet.ticksExisted < 8) {
 			length *= bullet.ticksExisted / 8f;
 		}
-
+*/
 		if (length <= 0) {
 			return;
 		}

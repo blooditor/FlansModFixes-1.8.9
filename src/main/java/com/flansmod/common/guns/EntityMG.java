@@ -97,7 +97,7 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
     prevRotationYaw = rotationYaw;
     prevRotationPitch = rotationPitch;
     if (gunner != null) {
-      if (!worldObj.isRemote && (gunner.isSneaking() || !worldObj.playerEntities.contains(gunner))) {
+      if (!worldObj.isRemote && (gunner.isSneaking() || !worldObj.playerEntities.contains(gunner) || !gunner.isEntityAlive())) {
         EntityPlayer gunner = this.gunner;
         mountGun(gunner, false);
         FlansMod.getPacketHandler()
@@ -139,6 +139,8 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData {
 
       gunner.setPosition((blockX + 0.5D + dX), blockY + gunner.getYOffset() - 0.5D,
           (blockZ + 0.5D + dZ));
+      gunner.fallDistance = 0;
+      gunner.motionX = gunner.motionY = gunner.motionZ = 0;
       // gunner.setPosition((double)(blockX + (direction == 1 ? 1 : 0) -
       // (direction == 3 ? 1 : 0)) + 0.5D, blockY + gunner.getYOffset() -
       // 0.5D, (double)(blockZ - (direction == 0 ? 1 : 0) + (direction ==

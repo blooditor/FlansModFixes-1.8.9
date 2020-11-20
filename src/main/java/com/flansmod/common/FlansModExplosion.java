@@ -1,6 +1,8 @@
 package com.flansmod.common;
 
 import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.driveables.EntitySeat;
+import com.flansmod.common.driveables.EntityWheel;
 import com.flansmod.common.guns.EntityAAGun;
 import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.EntityDamageSourceGun;
@@ -222,7 +224,7 @@ public class FlansModExplosion extends Explosion {
             double d11 = EnchantmentProtection.func_92092_a(entity, d10);
             sendHitmarker = sendHitmarker || entity != detonator && dmg > 0.1 && (entity instanceof EntityLivingBase || entity instanceof EntityDriveable || entity instanceof EntityAAGun);
 
-            if (!(entity instanceof EntityDriveable)) {
+            if (!(entity instanceof EntityDriveable || entity instanceof EntitySeat || entity instanceof EntityWheel)) {
               d11 /= 2;
 
               entity.motionX = Math.min(1, entity.motionX + d5 * d11);

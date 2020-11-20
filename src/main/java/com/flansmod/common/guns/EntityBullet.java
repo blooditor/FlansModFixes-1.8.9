@@ -727,7 +727,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
   public Vector3f intercept(Vector3f tpos, Vector3f tdir, double tspeed, Vector3f P1, double dXYZ,
       Vector3f motion) {
 
-    if (lockedOnTo instanceof EntityPlane && ((EntityPlane) lockedOnTo).onGround()) {
+    if (lockedOnTo instanceof EntityPlane && ((EntityPlane) lockedOnTo).onGround() || lockedOnTo instanceof EntityVehicle) {
       tdir.y = 0;
     }
     //scale distance
@@ -746,16 +746,30 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     double dX = lockedOnTo.posX - posX;
     double dY = lockedOnTo.posY - posY;
     double dZ = lockedOnTo.posZ - posZ;
-    double dXZ = Math.sqrt(dX * dX + dZ * dZ);
     if (lockedOnTo instanceof EntityVehicle) {
 
-      if (dXZ > 35) {
-        tdir.y += dXZ * 0.3f;
-      }else{
-        tdir.y = (float) dY*1.6f * Math.max(0.3f, 0.6f/(Math.abs(motion.y)+0.3f));
+      double dXZ = Math.sqrt(dX * dX + dZ * dZ);
+
+      double travelHeight = lockedOnTo.posY + 30;
+      double dropDist = 30;
+
+      double y = 0;
+
+      if (type.shortName.equals("at4Ammo")) {
+        if (dXZ > 45) {
+          if (dY < -30) {
+            y += (dY + 30)*0.01; //we are high above, so slowly come down
+          } else {
+            y += dXZ * 0.3f; //we are low, so go higher
+          }
+        }else{
+          y = (float) dY*1.7f * Math.max(0.3f, 0.6f/(Math.abs(motion.y)+0.3f));
+        }
+      } else {
+        double fall = posY - lockedOnTo.posY;
+        y = (travelHeight-posY)*(dXZ/dropDist)*0.01 - fall*0.2;
       }
-
-
+      tdir.y = (float) y;
     }
 
     //pre aim globally
