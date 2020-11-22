@@ -86,7 +86,7 @@ public abstract class DriveableType extends PaintableType {
   /**
    * Damage modifiers, so that different vehicles firing the same weapons can do different damage
    */
-  public int damageModifierPrimary = 1, damageModifierSecondary = 1;
+  public float damageModifierPrimary = 1, damageModifierSecondary = 1;
   /**
    * Sounds
    */
@@ -392,9 +392,9 @@ public abstract class DriveableType extends PaintableType {
       } else if (split[0].equals("ShootDelaySecondary")) {
         shootDelaySecondary = Integer.parseInt(split[1]);
       } else if (split[0].equals("DamageModifierPrimary")) {
-        damageModifierPrimary = Integer.parseInt(split[1]);
+        damageModifierPrimary = Float.parseFloat(split[1]);
       } else if (split[0].equals("DamageModifierSecondary")) {
-        damageModifierSecondary = Integer.parseInt(split[1]);
+        damageModifierSecondary = Float.parseFloat(split[1]);
       } else if (split[0].equals("AlternatePrimary")) {
         alternatePrimary = Boolean.parseBoolean(split[1]);
       } else if (split[0].equals("AlternateSecondary")) {

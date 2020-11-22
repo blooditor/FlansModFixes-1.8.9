@@ -136,8 +136,9 @@ public class GunType extends PaintableType implements IScope {
   public boolean showReloadTime = false;
   public boolean hasSingleFire = true;
 
-  AttachmentType defaultSight = null;
+  public AttachmentType defaultSight = null;
   String defaultSightName = null;
+  public int defaultSightId = 0;
 
   //Shields
   //A shield is actually a gun without any shoot functionality (similar to knives or binoculars)
@@ -332,7 +333,11 @@ public class GunType extends PaintableType implements IScope {
       dropItemOnShoot = Read(split, "DropItemOnShoot", dropItemOnShoot);
       numBurstRounds = Read(split, "NumBurstRounds", numBurstRounds);
       minigunStartSpeed = Read(split, "MinigunStartSpeed", minigunStartSpeed);
-      defaultSightName = Read(split, "defaultSight", defaultSightName);
+      if (split[0].equals("defaultSight")) {
+        defaultSightName = split[1];
+        if(split.length > 2)
+          defaultSightId = Integer.parseInt(split[2]);
+      }
       if (split[0].equals("MeleeDamage")) {
         meleeDamage = Float.parseFloat(split[1]);
         if (meleeDamage > 0F) {

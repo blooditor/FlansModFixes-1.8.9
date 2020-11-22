@@ -641,7 +641,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
             if (slot != -1) {
               int spread = 0;
-              int damageMultiplier =
+              float damageMultiplier =
                   secondary ? type.damageModifierSecondary : type.damageModifierPrimary;
               float shellSpeed = 0F;
 
@@ -695,7 +695,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
             if (slot != -1) {
               int spread = 0;
-              int damageMultiplier =
+              float damageMultiplier =
                   secondary ? type.damageModifierSecondary : type.damageModifierPrimary;
               float shellSpeed = weaponType == EnumWeaponType.SHELL ? 7 : 2;
 

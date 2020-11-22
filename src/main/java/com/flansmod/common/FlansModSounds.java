@@ -53,6 +53,7 @@ import paulscode.sound.SoundSystem;
 public class FlansModSounds {
 
   public static FlansModSounds inst;
+  static int noiseTypeMode = 0; //0=standard, 1=local player only, 2=openfield only
 
   private HashMap<Integer, EndSound> endSounds = new HashMap<>();
   private HashMap<String, ResourceLocation> resourceLocCache = new HashMap<>();
@@ -342,6 +343,12 @@ public class FlansModSounds {
 
 
   private NoiseType getNoiseType(Vec3 pos) {
+
+    if(noiseTypeMode == 2)
+      return NoiseType.OPENFIELD;
+    if(noiseTypeMode == 1)
+      pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
+
     int ix = (int) Math.floor(pos.xCoord);
     int iy = (int) Math.floor(pos.yCoord);
     int iz = (int) Math.floor(pos.zCoord);
@@ -351,10 +358,11 @@ public class FlansModSounds {
 
     BlockPos cachePos = new BlockPos(cx, cy, cz);
     try {
+      Vec3 finalPos = pos;
       return noiseTypeCache.get(cachePos, new Callable<NoiseType>() {
         @Override
         public NoiseType call() throws Exception {
-          return calcNoiseType(pos);
+          return calcNoiseType(finalPos);
         }
       });
     } catch (ExecutionException e) {

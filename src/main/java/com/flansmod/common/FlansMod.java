@@ -679,6 +679,9 @@ public class FlansMod {
     enableHitmarkerSounds = configFile
         .getBoolean("Enable hit marker sound", Configuration.CATEGORY_GENERAL, enableHitmarkerSounds,
             "Plays a sound when you shoot and damage a living entity");
+    FlansModSounds.noiseTypeMode = configFile
+        .getInt("Shoot sound physics mode", Configuration.CATEGORY_GENERAL, FlansModSounds.noiseTypeMode, 0, 2,
+            "Determines how gun sounds (indoor/outdoor/...) are calculated. 0 = fancy, 1 = simplified, 2 = disabled");
 
     if (configFile.hasChanged()) {
       configFile.save();

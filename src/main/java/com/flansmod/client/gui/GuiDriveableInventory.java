@@ -121,7 +121,8 @@ public class GuiDriveableInventory extends GuiContainer {
         if (s.gunType != null) {
           for (ShootableType t : s.gunType.ammo) {
             if (!l.contains(t)) {
-              l.add(t);
+              if(driveable.driveableType.equals("A10") || !t.shortName.equals("minigunExplosiveAmmo"))
+                l.add(t);
             }
           }
         }
