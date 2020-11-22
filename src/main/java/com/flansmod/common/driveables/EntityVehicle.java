@@ -573,7 +573,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
     }
 
     //If this is the server, send position updates to everyone, having received them from the driver
-    if (!worldObj.isRemote && ticksExisted % 5 == 0) {
+    if (!worldObj.isRemote && ticksExisted % 1 == 0) {
       FlansMod.getPacketHandler().sendToAllAround(new PacketVehicleControl(this), posX, posY, posZ,
           FlansMod.driveableUpdateRange, dimension);
     }

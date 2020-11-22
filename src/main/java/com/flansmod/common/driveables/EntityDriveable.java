@@ -1108,6 +1108,14 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         }
       }
     }
+    if (worldObj.isRemote) {
+
+      for (EntitySeat s : seats) {
+        if (s != null && s.riddenByEntity instanceof EntityPlayer && !FlansMod.proxy.isThePlayer((EntityPlayer) s.riddenByEntity)) {
+          s.riddenByEntity.setPosition(s.posX, s.posY, s.posZ);
+        }
+      }
+    }
   }
 
   public void checkForCollisions() {
