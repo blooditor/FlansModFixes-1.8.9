@@ -1024,7 +1024,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
           int mode = fireMode.getCurrentMode();
           try {
             ShootableType sel = fireMode.modes.get(fireMode.getCurrentMode()).bullet;
-            mode = p.modes.indexOf(sel);
+            mode = p.modes.contains(sel)? p.modes.indexOf(sel) : mode;
           } catch (Exception e) {
           }
           mode = MathHelper.clamp_int(mode, 0, p.modes.size() - 1);

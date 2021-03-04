@@ -241,6 +241,9 @@ public class FlansMod {
     //Force Minecraft to reload all resources in order to load content pack resources.
     proxy.forceReload();
 
+    if (event.getSide() == Side.SERVER) {
+      throw new RuntimeException("This Flan's Mod version is not intended to run on dedicated servers. Join minecraft-breakdown.net.");
+    }
     log("Preinitializing complete.");
   }
 

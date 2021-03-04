@@ -57,6 +57,7 @@ public class FlansModSounds {
 
   private HashMap<Integer, EndSound> endSounds = new HashMap<>();
   private HashMap<String, ResourceLocation> resourceLocCache = new HashMap<>();
+  public static HashMap<Integer, Integer> soundsPlayedThisTick = new HashMap<>();
 
   private static int noiseTypeCacheChunkSize = 2; //2^x
   private Cache<BlockPos, NoiseType> noiseTypeCache = CacheBuilder.newBuilder().maximumSize(1000).build();
@@ -89,6 +90,7 @@ public class FlansModSounds {
 
 
   public synchronized void tick() {
+    soundsPlayedThisTick.clear();
     Iterator iterator1 = delayedSounds.entrySet().iterator();
 
     while(iterator1.hasNext()) {

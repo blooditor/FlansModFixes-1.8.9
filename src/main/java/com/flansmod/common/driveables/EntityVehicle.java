@@ -270,7 +270,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             player.addChatMessage(new ChatComponentText("Doors " + (varDoor ? "open" : "closed")));
           }
           toggleTimer = 10;
-          FlansMod.getPacketHandler().sendToServer(new PacketVehicleControl(this));
+          //FlansMod.getPacketHandler().sendToServer(new PacketVehicleControl(this));
         }
         return true;
       }
@@ -496,8 +496,15 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
       Vector3f currentWheelPos = new Vector3f(wheel.posX - posX, wheel.posY - posY,
           wheel.posZ - posZ);
 
-      Vector3f dPos = ((Vector3f) Vector3f.sub(targetWheelPos, currentWheelPos, null)
-          .scale(getVehicleType().wheelSpringStrength));
+
+      Vector3f dPos = Vector3f.sub(targetWheelPos, currentWheelPos, null);
+      //the wheel might be stuck and desynced. Just teleport it.
+      if (!thePlayerIsDrivingThis && Math.abs(dPos.length()) > 5) {
+        wheel.setPosition(targetWheelPos.x, targetWheelPos.y, targetWheelPos.z);
+        continue;
+      }
+
+      dPos = (Vector3f) dPos.scale(getVehicleType().wheelSpringStrength);
 
       if (dPos.length() > 0.001F) {
         wheel.moveEntity(dPos.x, dPos.y, dPos.z);

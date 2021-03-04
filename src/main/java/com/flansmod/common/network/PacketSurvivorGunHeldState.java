@@ -18,9 +18,15 @@ public class PacketSurvivorGunHeldState extends PacketBase {
 
     }
 
+    public PacketSurvivorGunHeldState(int id, int state) {
+        this.id = id;
+        this.state = state;
+    }
 
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ByteBuf data) {
+        data.writeInt(id);
+        data.writeInt(state);
     }
 
     @Override

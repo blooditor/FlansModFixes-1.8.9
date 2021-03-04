@@ -625,21 +625,22 @@ public class ClientRenderHooks {
   public void ModifyHUD(RenderGameOverlayEvent event) {
     Minecraft mc = Minecraft.getMinecraft();
 
+    boolean pilotOrGunner = mc.thePlayer != null && mc.thePlayer.ridingEntity instanceof EntitySeat && Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController &&
+        (GuiDriveableController.isHeliGunner((IControllable) mc.thePlayer.ridingEntity)  ||GuiDriveableController.isJetPilot((IControllable) mc.thePlayer.ridingEntity)  ||GuiDriveableController.isTankScreen((IControllable) mc.thePlayer.ridingEntity));
     //Remove crosshairs if looking down the sights of a gun
-    if (event.isCancelable() && event.type == ElementType.CROSSHAIRS
+    if (event.isCancelable() && event.type == ElementType.CROSSHAIRS && !FlansMod.DEBUG
         && (mc.thePlayer.getCurrentEquippedItem() != null && mc.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemGun
 //        && (FlansModClient.currentScope != null
         || mc.thePlayer.ridingEntity instanceof EntitySeat && mc.currentScreen instanceof GuiDriveableController)) {
       event.setCanceled(true);
       return;
     }
-    if (event.isCancelable() && (event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && mc.thePlayer.ridingEntity instanceof EntitySeat
-        && Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController) {
+    if (event.isCancelable() && (event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && pilotOrGunner) {
       event.setCanceled(true);
       return;
     }
 
-    if ((event.type == ElementType.HEALTH || event.type == ElementType.HOTBAR) && mc.currentScreen instanceof GuiDriveableController) {
+    if ((event.type == ElementType.HEALTH || event.type == ElementType.HOTBAR) && pilotOrGunner) {
       int y = event.type == ElementType.HEALTH? 15 : 30;
       if (event.isCancelable()) {
         GlStateManager.translate(0, y, 0);

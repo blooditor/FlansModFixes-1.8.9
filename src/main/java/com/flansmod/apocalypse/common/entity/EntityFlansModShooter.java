@@ -29,8 +29,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
-public class EntityFlansModShooter extends EntityMob implements IRangedAttackMob {
+public class EntityFlansModShooter extends EntityMob implements IRangedAttackMob, IEntityAdditionalSpawnData {
 
   private EntityAIArrowAttack aiArrowAttack = new EntityAIArrowAttack(this, 1.0D, 20, 1, 70.0F);
   public ItemStack[] ammoStacks;
@@ -300,6 +301,15 @@ public class EntityFlansModShooter extends EntityMob implements IRangedAttackMob
       }
     }
     shootDelay = gunType.GetShootDelay(stack);
+  }
+  @Override
+  public void writeSpawnData(ByteBuf buffer) {
+    buffer.writeInt(gunHeldState.ordinal());
+  }
+
+  @Override
+  public void readSpawnData(ByteBuf additionalData) {
+    readAiState(additionalData.readInt());
   }
   public void readAiState(int type) {
     switch (type) {
