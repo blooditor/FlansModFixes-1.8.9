@@ -1,6 +1,5 @@
 package com.flansmod.common.teams;
 
-import com.flansmod.apocalypse.common.entity.EntityFlansModShooter;
 import com.flansmod.apocalypse.common.entity.EntityFlyByPlane;
 import com.flansmod.apocalypse.common.entity.EntitySurvivor;
 import com.flansmod.client.FlansModResourceHandler;
@@ -15,8 +14,6 @@ import com.flansmod.common.driveables.PlaneType;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.ItemGun;
-import com.flansmod.common.network.PacketPlaySound;
-import com.flansmod.common.network.PacketSurvivorGunHeldState;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
@@ -35,7 +32,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -70,23 +66,6 @@ public class CommandTeams extends CommandBase {
       return;
     }
 
-    if (split[0].equals("bulksound")) {
-      for (int i = 0; i < 20; i++) {
-        Entity shooter = (Entity) sender;
-        PacketPlaySound soundPacket = new PacketPlaySound((float)shooter.posX, (float)shooter.posY,
-            (float)shooter.posZ, "sound_ak47", 11, 12,  false);
-        FlansMod.getPacketHandler().sendToAllAround(soundPacket, shooter.posX, shooter.posY, shooter.posZ, 11*16, shooter.dimension);
-      }
-    }
-    if (split[0].equals("npc")) {
-      EntityPlayerMP p = (EntityPlayerMP) sender;
-      for (Entity e : p.worldObj.loadedEntityList) {
-        if (e instanceof EntityFlansModShooter) {
-          FlansMod.getPacketHandler().sendTo(new PacketSurvivorGunHeldState(e.getEntityId(), Integer.parseInt(split[1])), p);
-          return;
-        }
-      }
-    }
     if (split[0].equals("sound")) {
       EntityPlayer p = (EntityPlayer)sender;
       FlansModSounds.PlaySound(0, 5, 0, split[1],  13,0, false);

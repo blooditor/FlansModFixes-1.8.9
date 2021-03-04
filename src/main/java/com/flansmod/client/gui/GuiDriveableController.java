@@ -309,11 +309,7 @@ public class GuiDriveableController extends GuiScreen {
       mc.displayGuiScreen(new GuiChat("/"));
     }
     if (i == KeyInputHandler.debugKey.getKeyCode()) {
-      if (FlansMod.DEBUG) {
-        FlansMod.DEBUG = false;
-      } else {
-        FlansMod.packetHandler.sendToServer(new PacketRequestDebug());
-      }
+      FlansMod.packetHandler.sendToServer(new PacketRequestDebug());
     }
     if (i == KeyInputHandler.reloadModelsKey.getKeyCode()) {
       FlansModClient.reloadModels(false);

@@ -23,6 +23,7 @@ public class RenderSurvivor extends RenderBiped {
 
   @Override
   public void doRender(EntityLiving entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    super.doRender(entity, x, y, z, entityYaw, partialTicks);
     EntitySurvivor survivor = (EntitySurvivor) entity;
 
     EntitySurvivor.EnumGunHeldState state = survivor.getGunHeldState();
@@ -31,7 +32,6 @@ public class RenderSurvivor extends RenderBiped {
  //   else if(survivor.reloading || !survivor.hasAmmo)
   //    state = EntitySurvivor.EnumGunHeldState.DOWN;
     ((ModelSurvivor) this.mainModel).gunHeldState = state;
-    super.doRender(entity, x, y, z, entityYaw, partialTicks);
   }
 
   protected ResourceLocation getEntityTexture(EntityLiving entity) {

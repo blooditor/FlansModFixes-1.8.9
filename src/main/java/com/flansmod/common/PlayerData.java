@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -244,9 +243,6 @@ public class PlayerData {
       offHandGunStack = null;
       reloadingLeft = 0;
     }
-
-    if(Minecraft.getMinecraft().currentScreen instanceof GuiContainer)
-      previousSlot = -1;
 
     if (player == Minecraft.getMinecraft().thePlayer) {
 

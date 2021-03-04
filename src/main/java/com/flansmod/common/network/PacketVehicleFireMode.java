@@ -55,7 +55,7 @@ public class PacketVehicleFireMode extends PacketBase {
     if (playerEntity.ridingEntity instanceof EntitySeat) {
       EntityDriveable driveable = ((EntitySeat) playerEntity.ridingEntity).driveable;
       if (driveable != null && ((EntitySeat) playerEntity.ridingEntity).seatInfo != null &&  ((EntitySeat) playerEntity.ridingEntity).seatInfo.id == 0 && driveable.fireMode != null) {
-        driveable.fireMode.setCurrentMode(MathHelper.clamp_int(this.getCurrentMode(), 0, driveable.fireMode.modes.size()-1), driveable);
+        driveable.fireMode.setCurrentMode(MathHelper.clamp_int(this.getCurrentMode(), 0, driveable.fireMode.modes.size()), driveable);
       //  driveable.fireMode.setCurrentMode(this.getCurrentMode());
     //    if(getCurrentShootable() != null)
       //    playerEntity.addChatMessage(new ChatComponentText("Switched to " + this.getCurrentMode() + " " + getCurrentShootable().name));

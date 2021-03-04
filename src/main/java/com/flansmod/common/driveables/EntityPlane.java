@@ -871,11 +871,6 @@ public class EntityPlane extends EntityDriveable {
         float currentWheelLength = currentWheelPos.length();
 
         float dLength = targetWheelLength - currentWheelLength;
-        //the wheel might be stuck and desynced. Just teleport it.
-        if (!thePlayerIsDrivingThis && Math.abs(dLength) > 5) {
-          wheel.setPosition(targetWheelPos.x, targetWheelPos.y, targetWheelPos.z);
-          continue;
-        }
         float dAngle = Vector3f.angle(targetWheelPos, currentWheelPos);
 
         {

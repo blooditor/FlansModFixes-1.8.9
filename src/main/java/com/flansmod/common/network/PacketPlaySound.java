@@ -145,14 +145,7 @@ public class PacketPlaySound extends PacketBase {
               1.0F, posX, posY, posZ));
     } else if(origin == -2 || origin != clientPlayer.getEntityId()){
 
-      if (origin != -2) {
-        Integer count = FlansModSounds.soundsPlayedThisTick.get(origin);
-        if (count != null && count > 2) {
-          return;
-        }
-        FlansModSounds.soundsPlayedThisTick.put(origin, count == null? 1 : count+1);
-      }
-        FlansModSounds.PlaySound(posX, posY, posZ, sound, volume, origin, silenced);
+      FlansModSounds.PlaySound(posX, posY, posZ, sound, volume, origin, silenced);
     }
   }
 

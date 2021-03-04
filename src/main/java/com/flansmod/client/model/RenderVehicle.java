@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -44,12 +43,7 @@ public class RenderVehicle extends Render implements IItemRenderer {
 
   public void render(EntityVehicle vehicle, double d, double d1, double d2, float f, float f1) {
 
-  //  Minecraft.getMinecraft().entityRenderer.disableLightmap();
-    if (vehicle.posY > 250) {
-      int i = 0xF0;
-      OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (i & 65535),
-          (float) (i >> 16));
-    }
+    Minecraft.getMinecraft().entityRenderer.disableLightmap();
     if (Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat && Minecraft
         .getMinecraft().currentScreen instanceof GuiDriveableController && GuiDriveableController
         .isHeliGunner((IControllable) Minecraft.getMinecraft().thePlayer.ridingEntity)) {

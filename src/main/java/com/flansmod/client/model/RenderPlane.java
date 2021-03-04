@@ -11,7 +11,6 @@ import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.EnumDriveablePart;
 import com.flansmod.common.driveables.ItemPlane;
 import com.flansmod.common.driveables.PlaneType;
@@ -43,12 +42,7 @@ public class RenderPlane extends Render implements IItemRenderer {
   }
 
   public void render(EntityPlane entityPlane, double d, double d1, double d2, float f, float f1) {
-
-    if (entityPlane.posY > 250) { //fix lighting
-      int i = 0xF0;
-      OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (i & 65535),
-          (float) (i >> 16));
-    }
+    Minecraft.getMinecraft().entityRenderer.disableLightmap();
     if (GuiDriveableController.isHeliGunner(entityPlane) && Minecraft
         .getMinecraft().currentScreen instanceof GuiDriveableController) {
       return;
@@ -206,6 +200,12 @@ public class RenderPlane extends Render implements IItemRenderer {
   }
 
   public boolean useCustomRenderer(Entity entity) {
+    if (entity == null) {
+      if (Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntitySeat
+          && ((EntitySeat) Minecraft.getMinecraft().thePlayer.ridingEntity).driveable instanceof EntityPlane) {
+        entity = ((EntitySeat) Minecraft.getMinecraft().thePlayer.ridingEntity).driveable;
+      }
+    }
     if (!(entity instanceof EntityPlane)) {
       return false;
     }
@@ -226,57 +226,56 @@ public class RenderPlane extends Render implements IItemRenderer {
       return;
     }
 
-    for (Entity e : world.loadedEntityList) {
-        //custom rendering for own vehicle because of invisibility glitches
-        if (useCustomRenderer(e)) {
-          EntityPlane plane = (EntityPlane) e;
+    //custom rendering for own vehicle because of invisibility glitches
+    if (useCustomRenderer(null)) {
+      EntityPlane plane = (EntityPlane) ((EntitySeat) Minecraft
+          .getMinecraft().thePlayer.ridingEntity).driveable;
 
-          //Get the camera frustrum for clipping
-          Entity camera = Minecraft.getMinecraft().getRenderViewEntity();
-          double x = camera.lastTickPosX + (camera.posX - camera.lastTickPosX) * event.partialTicks;
-          double y = camera.lastTickPosY + (camera.posY - camera.lastTickPosY) * event.partialTicks;
-          double z = camera.lastTickPosZ + (camera.posZ - camera.lastTickPosZ) * event.partialTicks;
+      //Get the camera frustrum for clipping
+      Entity camera = Minecraft.getMinecraft().getRenderViewEntity();
+      double x = camera.lastTickPosX + (camera.posX - camera.lastTickPosX) * event.partialTicks;
+      double y = camera.lastTickPosY + (camera.posY - camera.lastTickPosY) * event.partialTicks;
+      double z = camera.lastTickPosZ + (camera.posZ - camera.lastTickPosZ) * event.partialTicks;
 
-          //fix when war away from spawn
-          x = -x + plane.prevPosX + (plane.posX - plane.prevPosX) * event.partialTicks;
-          y = -y + plane.prevPosY + (plane.posY - plane.prevPosY) * event.partialTicks;
-          z = -z + plane.prevPosZ + (plane.posZ - plane.prevPosZ) * event.partialTicks;
-          //Frustum frustrum = new Frustum();
-          //frustrum.setPosition(x, y, z);
+      //fix when war away from spawn
+      x = -x + plane.prevPosX + (plane.posX - plane.prevPosX) * event.partialTicks;
+      y = -y + plane.prevPosY + (plane.posY - plane.prevPosY) * event.partialTicks;
+      z = -z + plane.prevPosZ + (plane.posZ - plane.prevPosZ) * event.partialTicks;
+      //Frustum frustrum = new Frustum();
+      //frustrum.setPosition(x, y, z);
 
-          //Push
-          GL11.glPushMatrix();
-          //Setup lighting
-          Minecraft.getMinecraft().entityRenderer.enableLightmap();
-          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-          GL11.glEnable(GL11.GL_LIGHTING);
-          GL11.glDisable(GL11.GL_BLEND);
+      //Push
+      GL11.glPushMatrix();
+      //Setup lighting
+      Minecraft.getMinecraft().entityRenderer.enableLightmap();
+      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+      GL11.glEnable(GL11.GL_LIGHTING);
+      GL11.glDisable(GL11.GL_BLEND);
 
-          RenderHelper.enableStandardItemLighting();
+      RenderHelper.enableStandardItemLighting();
 
-          GlStateManager.translate(x, y, z);
+      GlStateManager.translate(x, y, z);
 
-          int i = plane.getBrightnessForRender(event.partialTicks);
+      int i = plane.getBrightnessForRender(event.partialTicks);
 
-          if (plane.isBurning()) {
-            i = 15728880;
-          }
-
-          int j = i % 65536;
-          int k = i / 65536;
-          OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F,
-              (float) k / 1.0F);
-          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-          render(plane, 0, 0, 0, 0, event.partialTicks);
-
-          //Reset Lighting
-          Minecraft.getMinecraft().entityRenderer.disableLightmap();
-          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-          GL11.glDisable(GL11.GL_LIGHTING);
-          //Pop
-          GL11.glPopMatrix();
-        }
+      if (plane.isBurning()) {
+        i = 15728880;
       }
+
+      int j = i % 65536;
+      int k = i / 65536;
+      OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F,
+          (float) k / 1.0F);
+      GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+      render(plane, 0, 0, 0, 0, event.partialTicks);
+
+      //Reset Lighting
+      Minecraft.getMinecraft().entityRenderer.disableLightmap();
+      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+      GL11.glDisable(GL11.GL_LIGHTING);
+      //Pop
+      GL11.glPopMatrix();
+    }
   }
 
 
