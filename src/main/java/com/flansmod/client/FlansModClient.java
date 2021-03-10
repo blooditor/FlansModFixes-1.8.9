@@ -74,6 +74,10 @@ public class FlansModClient extends FlansMod {
   //pistol and no armor has 0.99, full jugg and m60 has 0.1
   public static float playerErgonomics = 1;
 
+
+  public static float crosshairSize;
+  public static float crosshairTargetSize;
+
   //goes up when player is sprinting to lower the gun
   //0 = normal
   //1 = sprinting
@@ -181,6 +185,7 @@ public class FlansModClient extends FlansMod {
     if (minecraft.thePlayer == null || minecraft.theWorld == null) {
       return;
     }
+    crosshairTargetSize = 1;
 
     playerErgonomics = 1;
     if (minecraft.thePlayer.getHeldItem() != null) {
@@ -209,8 +214,13 @@ public class FlansModClient extends FlansMod {
     prevSprintTime = sprintTime;
     if (minecraft.thePlayer.isSprinting()) {
       sprintTime = Math.min(1, 1 - (1 - sprintTime) * sprintSpeed);
+      crosshairTargetSize = 2;
     }else{
       sprintTime *= sprintSpeed;
+
+      if (minecraft.thePlayer.isSneaking()) {
+        crosshairTargetSize = 0.5f;
+      }
     }
 
 
@@ -233,7 +243,10 @@ public class FlansModClient extends FlansMod {
     if (p.ridingEntity instanceof EntitySeat) {
       pspeed *= 0.1f;
       sneaking = true;
+      crosshairTargetSize = 0.5f;
     }
+
+    crosshairTargetSize *= 1+pspeed*2;
     float recoilToAdd = playerRecoil.update(sneaking, currentScope != null, pspeed);
 
     if (p.ridingEntity instanceof EntitySeat && ((EntitySeat) p.ridingEntity).seatInfo != null) {
@@ -249,7 +262,7 @@ public class FlansModClient extends FlansMod {
       }
       s.playerLooking.setAngles(newPlayerYaw, newPlayerPitch, 0);
     } else {
-      minecraft.thePlayer.rotationPitch += recoilToAdd;
+   //   minecraft.thePlayer.rotationPitch += recoilToAdd;
 
       if (minecraft.thePlayer.rotationPitch < -90) {
         minecraft.thePlayer.rotationPitch = -90;
@@ -257,7 +270,7 @@ public class FlansModClient extends FlansMod {
         minecraft.thePlayer.rotationPitch = 90;
       } else {
         float horizontal = playerRecoil.horizontal;
-        minecraft.thePlayer.rotationYaw += horizontal;
+  //      minecraft.thePlayer.rotationYaw += horizontal;
       }
     }
 
@@ -347,6 +360,9 @@ public class FlansModClient extends FlansMod {
     if (controlModeSwitchTimer > 0) {
       controlModeSwitchTimer--;
     }
+
+    crosshairTargetSize *= (1-zoomProgress);
+    crosshairSize = (crosshairSize*7+crosshairTargetSize)/8;
   }
 
   public static void SetScope(IScope scope) {

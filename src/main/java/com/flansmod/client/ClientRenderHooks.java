@@ -633,6 +633,9 @@ public class ClientRenderHooks {
 //        && (FlansModClient.currentScope != null
         || mc.thePlayer.ridingEntity instanceof EntitySeat && mc.currentScreen instanceof GuiDriveableController)) {
       event.setCanceled(true);
+      if (!(mc.thePlayer.ridingEntity instanceof EntitySeat && mc.currentScreen instanceof GuiDriveableController)) {
+        renderCrosshair(event.resolution.getScaledWidth(), event.resolution.getScaledHeight());
+      }
       return;
     }
     if (event.isCancelable() && (event.type == ElementType.EXPERIENCE || event.type == ElementType.ARMOR) && pilotOrGunner) {
@@ -677,6 +680,78 @@ public class ClientRenderHooks {
 
       GlStateManager.color(1,1,1);
     }
+  }
+
+  private void renderCrosshair(int width, int height){
+
+    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+
+    float crosshairSize = 20 * (1 - FlansModClient.playerErgonomics) * FlansModClient.crosshairSize;
+    crosshairSize = crosshairSize > 19? (float)Math.log10(crosshairSize) * 18f - 4 : crosshairSize < 1? 1 : crosshairSize;
+
+    float lineLengthF = Math.min(10, (3 + crosshairSize / 3f));
+
+
+    float opacity = 1-FlansModClient.zoomProgress;
+    int alpha = (int) (opacity*255);
+    int color = (alpha << 24) + 0xFFFFFF;
+
+    GlStateManager.enableBlend();
+    GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, 1, 0);
+    GlStateManager.enableAlpha();
+
+    boolean smooth = true;
+    if (smooth) {
+      float centerX = width/2f;
+      float centerY = height/2f;
+      //left
+      GlStateManager.pushMatrix();
+      GlStateManager.translate(-crosshairSize, 0, 0);
+      GlStateManager.translate(centerX-lineLengthF+1, centerY, 0);
+      GlStateManager.scale(lineLengthF, 1, 1);
+      Gui.drawRect(0,0, 1, 1, color);
+      GlStateManager.popMatrix();
+      // right
+      GlStateManager.pushMatrix();
+      GlStateManager.translate(crosshairSize, 0, 0);
+      GlStateManager.translate(centerX, centerY, 0);
+      GlStateManager.scale(lineLengthF, 1, 1);
+      Gui.drawRect(0,0,1, 1, color);
+      GlStateManager.popMatrix();
+      // top
+      GlStateManager.pushMatrix();
+      GlStateManager.translate(0, -crosshairSize, 0);
+      GlStateManager.translate(centerX, centerY-lineLengthF+1, 0);
+      GlStateManager.scale(1, lineLengthF, 1);
+      Gui.drawRect(0,0,1,1, color);
+      GlStateManager.popMatrix();
+      // bottom
+      GlStateManager.pushMatrix();
+      GlStateManager.translate(0, crosshairSize, 0);
+      GlStateManager.translate(centerX, centerY, 0);
+      GlStateManager.scale(1, lineLengthF, 1);
+      Gui.drawRect(0,0,1,1, color);
+      GlStateManager.popMatrix();
+    } else {
+      int centerX = width/2;
+      int centerY = height/2;
+      int lineLength = Math.min(10, (int) (3 + crosshairSize / 3f));
+      int size = (int) crosshairSize;
+      //left
+      Gui.drawRect(centerX-size-lineLength+1, centerY, centerX-size+1, centerY+1, color);
+      //right
+      Gui.drawRect(centerX+size, centerY, centerX+size+lineLength, centerY+1, color);
+      //top
+      Gui.drawRect(centerX, centerY-size-lineLength+1,centerX+1, centerY-size+1, color);
+      //bottom
+      Gui.drawRect(centerX, centerY+size,centerX+1, centerY+size+lineLength, color);
+
+    }
+
+
+    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+    GlStateManager.disableBlend();
+    GlStateManager.color(1,1,1,1);
   }
 
   private void RenderScopeOverlay(Tessellator tessellator, int i, int j) {

@@ -328,6 +328,7 @@ public class ItemGun extends Item implements IPaintableItem {
         if (animationLength == 0) {
           animations.switchAnimationLength = animations.switchAnimationProgress = 0;
         } else {
+          FlansModClient.crosshairSize = animationLength*0.3f;
           animations.switchAnimationProgress = 1;
           animations.switchAnimationLength = animationLength;
           PlayerHandler
@@ -639,9 +640,9 @@ public class ItemGun extends Item implements IPaintableItem {
     if (FlansModClient.zoomProgress != 1) {
       float movementModifier = (float) (player.motionX * player.motionX + player.motionY * player.motionY + player.motionZ * player.motionZ);
       float ergoModifier = 1-FlansModClient.playerErgonomics;
-      float dirSpread = movementModifier*0.3f + ergoModifier;
+      float dirSpread = (1 - FlansModClient.playerErgonomics) * FlansModClient.crosshairSize * 0.4f;
       dirSpread *= 0.1f;
-      dirSpread *= 1-FlansModClient.zoomProgress;
+   //   dirSpread *= 1-FlansModClient.zoomProgress;
     //  System.out.println("Spread " + dirSpread + " ergo " + ergoModifier + " movement " + movementModifier);
 
       Random rand = player.getRNG();
