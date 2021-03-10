@@ -92,6 +92,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -422,6 +423,10 @@ public class FlansMod {
     }
   }
 
+  @SubscribeEvent
+  public void worldLoad(WorldEvent.Load e) {
+    DEBUG = false;
+  }
   @SubscribeEvent
   public void onLivingSpecialSpawn(EntityJoinWorldEvent event) {
     double chance = event.world.rand.nextDouble();

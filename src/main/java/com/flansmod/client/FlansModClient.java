@@ -249,6 +249,7 @@ public class FlansModClient extends FlansMod {
     crosshairTargetSize *= 1+pspeed*2;
     float recoilToAdd = playerRecoil.update(sneaking, currentScope != null, pspeed);
 
+    boolean enableRecoil = true;
     if (p.ridingEntity instanceof EntitySeat && ((EntitySeat) p.ridingEntity).seatInfo != null) {
       EntitySeat s = (EntitySeat) p.ridingEntity;
       float newPlayerPitch = s.playerLooking.getPitch() + recoilToAdd;
@@ -261,8 +262,9 @@ public class FlansModClient extends FlansMod {
         newPlayerPitch = -s.seatInfo.maxPitch;
       }
       s.playerLooking.setAngles(newPlayerYaw, newPlayerPitch, 0);
-    } else {
-   //   minecraft.thePlayer.rotationPitch += recoilToAdd;
+    } else if(enableRecoil){
+      minecraft.thePlayer.rotationPitch += recoilToAdd;
+      crosshairSize+=(playerRecoil.vertical+playerRecoil.horizontal)*0.1f;
 
       if (minecraft.thePlayer.rotationPitch < -90) {
         minecraft.thePlayer.rotationPitch = -90;
@@ -270,7 +272,7 @@ public class FlansModClient extends FlansMod {
         minecraft.thePlayer.rotationPitch = 90;
       } else {
         float horizontal = playerRecoil.horizontal;
-  //      minecraft.thePlayer.rotationYaw += horizontal;
+        minecraft.thePlayer.rotationYaw += horizontal;
       }
     }
 
