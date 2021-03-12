@@ -396,7 +396,7 @@ public class ItemGun extends Item implements IPaintableItem {
 
     // Update off hand cycling. Controlled by the main gun, since it is
     // always around.
-    if (!isOffHand && type.oneHanded) {
+    if (false && !isOffHand && type.oneHanded) {
       // Cycle selection
       int dWheel = Mouse.getDWheel();
       if (mc.gameSettings.keyBindSneak.isKeyDown() && dWheel != 0) // isKeyDown
@@ -1091,7 +1091,7 @@ public class ItemGun extends Item implements IPaintableItem {
           || !(player.inventory.getCurrentItem().getItem() instanceof ItemGun)) {
         data.isShootingRight = data.isShootingLeft = false;
         data.offHandGunSlot = 0;
-        (new PacketSelectOffHandGun(0)).handleServerSide(player);
+       // (new PacketSelectOffHandGun(0)).handleServerSide(player);
       }
       return;
     }
@@ -1128,7 +1128,7 @@ public class ItemGun extends Item implements IPaintableItem {
       EntityPlayer player = (EntityPlayer) entity;
       PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
 
-      if (type.oneHanded) {
+      if (false && type.oneHanded) {
         // If the offhand item is this item, select none
           if (data.offHandGunSlot == player.inventory.currentItem + 1) {
               data.offHandGunSlot = 0;

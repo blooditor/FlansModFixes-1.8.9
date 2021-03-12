@@ -135,7 +135,7 @@ public class PlayerSnapshot {
         //Add left hand shield box
         //not used and not working
         PlayerData data = PlayerHandler.getPlayerData(player);
-        if (gunType.oneHanded && data.offHandGunSlot != 0) {
+        if (false && gunType.oneHanded && data.offHandGunSlot != 0) {
           ItemStack leftHandStack = null;
           //Client side other players
           if (player.worldObj.isRemote && !FlansMod.proxy.isThePlayer(player)) {

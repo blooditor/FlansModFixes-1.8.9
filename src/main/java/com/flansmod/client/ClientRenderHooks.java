@@ -503,7 +503,7 @@ public class ClientRenderHooks {
       }
 
       //Render off hand gun
-      if (entity instanceof EntityPlayer) {
+      if (false && entity instanceof EntityPlayer) {
         PlayerData data = PlayerHandler.getPlayerData((EntityPlayer) entity, Side.CLIENT);
         ItemStack gunStack = null;
 
@@ -666,7 +666,7 @@ public class ClientRenderHooks {
     }
 
     if (!event.isCancelable() && event.type == ElementType.HOTBAR) {
-      RenderOffHandHighlights(tessellator, i, j);
+      //RenderOffHandHighlights(tessellator, i, j);
 
       if(!(Minecraft.getMinecraft().currentScreen instanceof GuiDriveableController))
         RenderPlayerAmmo(i, j);

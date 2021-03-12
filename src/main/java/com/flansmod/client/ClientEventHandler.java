@@ -85,7 +85,7 @@ public class ClientEventHandler {
     }
   }
 
-  @SubscribeEvent
+/*  @SubscribeEvent
   public void CheckForOffHandWeaponSwitch(MouseEvent event) {
     EntityPlayer player = Minecraft.getMinecraft().thePlayer;
     if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
@@ -100,7 +100,7 @@ public class ClientEventHandler {
       } //fixes crash for illegal key bindings
 
     }
-  }
+  }*/
 
   @SubscribeEvent
   public void CheckKeyInput(KeyInputEvent event) {
