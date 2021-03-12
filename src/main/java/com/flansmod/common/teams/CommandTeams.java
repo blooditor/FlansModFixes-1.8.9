@@ -70,6 +70,9 @@ public class CommandTeams extends CommandBase {
       return;
     }
 
+    if (split[0].equals("heal")) {
+      ((EntityPlayer)sender).setHealth(20);
+    }
     if (split[0].equals("bulksound")) {
       for (int i = 0; i < 20; i++) {
         Entity shooter = (Entity) sender;

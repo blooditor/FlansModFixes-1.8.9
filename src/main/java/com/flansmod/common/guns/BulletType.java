@@ -186,10 +186,10 @@ public class BulletType extends ShootableType {
     C50AE(".50 AE", ".50ae", 450, 0.8f, 1.2f, 1.2f, 1, 1.3f), //deagle
     MM9_39("9x39mm", "9x39mm", 280, 0.85f, 3.5f, 1.05f, 0.7f), //vss
     C300(".300 AAC Blackout", ".300aac", 400, 0.01f, 3f, 1.05f, 0.8f, 1.2f), //honeybadger
-    GAUGE("12 Gauge", "12gauge", 290, 0.27f, 0.5f, 2f, 1, 1.8f),
-    GAUGESLUG("12 Gauge Slug", "12gaugeslug", 350, 0.54f, 1.4f, 1.1f, 1, 1.8f),
-    GAUGEBUCK("12 Gauge Buckshot", "12gaugebuck", 300, 0.38f, 0.75f, 1.5f, 1, 1.9f),
-    GAUGEFLETCHETTE("12 Gauge Fletchette", "12gaugefletchette", 450, 0.60f, 1.55f, 1f, 1f),
+    GAUGE("12 Gauge", "12gauge", 290, 0.27f, 0.7f, 2f, 1, 1.8f),
+    GAUGESLUG("12 Gauge Slug", "12gaugeslug", 350, 0.54f, 1.6f, 1.1f, 1, 1.8f),
+    GAUGEBUCK("12 Gauge Buckshot", "12gaugebuck", 300, 0.38f, 1.05f, 1.5f, 1, 1.9f),
+    GAUGEFLETCHETTE("12 Gauge Fletchette", "12gaugefletchette", 450, 0.60f, 1.95f, 1f, 1f),
     C357(".357 Magnum", ".357", 400f, 0.80f, 1f, 1.3f, 1f, 1.3f),//jury
     MM30("30mm", "30mm", 1010f, 0.90f, 3f, 1f, 1.5f),
     MISSILE("Missile", "missile", 70, 1.015f, 1f, 1f, 1f, 3),
