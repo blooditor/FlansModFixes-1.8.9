@@ -81,6 +81,7 @@ public class RenderPlane extends Render implements IItemRenderer {
     GL11.glRotatef(entityPlane.prevRotationPitch + dPitch * f1, 0.0F, 0.0F, 1.0F);
     GL11.glRotatef(entityPlane.prevRotationRoll + dRoll * f1, 1.0F, 0.0F, 0.0F);
 
+    GL11.glPushMatrix();
     float modelScale = type.modelScale;
     GL11.glScalef(modelScale, modelScale, modelScale);
     ModelPlane model = (ModelPlane) type.model;
@@ -117,6 +118,7 @@ public class RenderPlane extends Render implements IItemRenderer {
         }
       }
     }
+    GL11.glPopMatrix();
 
     if (FlansMod.DEBUG) {
       GL11.glDisable(GL11.GL_TEXTURE_2D);

@@ -1393,7 +1393,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
       if (hit != null) {
         //calculate the correct hit point
         Vector3f motionScaled = new Vector3f(motion);
-        motion.scale(hit.intersectTime);
+        motionScaled.scale(hit.intersectTime);
         hit.hitPos = Vector3f.add(origin, motionScaled, null);
         hits.add(hit);
       }

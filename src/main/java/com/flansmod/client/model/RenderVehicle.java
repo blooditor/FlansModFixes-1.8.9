@@ -168,6 +168,7 @@ public class RenderVehicle extends Render implements IItemRenderer {
             continue;
           }
 
+          GL11.glColor4f(1F, vehicle.isPartIntact(part.type) ? 1F : 0F, 0F, 0.3F);
           renderOffsetAABB(
               new AxisAlignedBB(part.box.x, part.box.y, part.box.z, (part.box.x + part.box.w),
                   (part.box.y + part.box.h), (part.box.z + part.box.d)), 0, 0, 0);
