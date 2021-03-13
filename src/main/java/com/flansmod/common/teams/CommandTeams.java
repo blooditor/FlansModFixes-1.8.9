@@ -3,18 +3,14 @@ package com.flansmod.common.teams;
 import com.flansmod.apocalypse.common.entity.EntityFlansModShooter;
 import com.flansmod.apocalypse.common.entity.EntityFlyByPlane;
 import com.flansmod.apocalypse.common.entity.EntitySurvivor;
-import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.FlansModSounds;
 import com.flansmod.common.FlansModSounds.SoundType;
-import com.flansmod.common.driveables.DriveableData;
-import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EnumDriveablePart;
-import com.flansmod.common.driveables.PlaneType;
+import com.flansmod.common.driveables.*;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.guns.raytracing.FlansModRaytracer;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketSurvivorGunHeldState;
 import com.flansmod.common.types.EnumType;
@@ -29,6 +25,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
@@ -44,6 +41,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.Vec3;
 
 public class CommandTeams extends CommandBase {
 
@@ -70,6 +68,41 @@ public class CommandTeams extends CommandBase {
       return;
     }
 
+    if (split[0].equals("ray")) {
+      boolean live = split.length > 1;
+      EntityPlayerMP p = (EntityPlayerMP) sender;
+      Vector3f pos = live? new Vector3f(p.getPositionVector().add(new Vec3(0, p.getEyeHeight(), 0))) : new Vector3f(6, 6, -2);
+      Vector3f mot = live? (Vector3f) new Vector3f(p.getLookVec()).scale(4) : new Vector3f(-4, 0, 0);
+      EntityDriveable d = null;
+      for (Entity e : p.worldObj.loadedEntityList) {
+        if(e instanceof EntityDriveable)
+          d = (EntityDriveable) e;
+      }
+
+      ArrayList<FlansModRaytracer.BulletHit> b = d.attackFromBullet(pos, mot);
+      for (FlansModRaytracer.BulletHit h : b) {
+        String s = ((FlansModRaytracer.DriveableHit)h).hitPos + " " + ((FlansModRaytracer.DriveableHit)h).part;
+        p.addChatMessage(new ChatComponentText(s));
+      }
+   //   Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().theWorld.spawnEntityInWorld(new EntityDebugVector(Minecraft.getMinecraft().theWorld, pos, mot, 600, 0, 0, 1)));
+      return;
+    }
+
+    if (split[0].equals("boxdist")) {
+      boolean live = split.length > 1;
+      EntityPlayerMP p = (EntityPlayerMP) sender;
+      Vector3f pos = live? new Vector3f(p.getPositionVector().add(new Vec3(0, p.getEyeHeight(), 0))) : new Vector3f(6, 6, -2);
+      Vector3f mot = live? (Vector3f) new Vector3f(p.getLookVec()).scale(4) : new Vector3f(-4, 0, 0);
+      EntityDriveable d = null;
+      for (Entity e : p.worldObj.loadedEntityList) {
+        if(e instanceof EntityDriveable)
+          d = (EntityDriveable) e;
+      }
+      FlansModRaytracer.DriveableHit hit = (FlansModRaytracer.DriveableHit) d.getClosestPart(pos);
+      p.addChatMessage(new ChatComponentText(hit.intersectTime + " " + hit.part));
+   //   Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().theWorld.spawnEntityInWorld(new EntityDebugVector(Minecraft.getMinecraft().theWorld, pos, mot, 600, 0, 0, 1)));
+      return;
+    }
     if (split[0].equals("heal")) {
       ((EntityPlayer)sender).setHealth(20);
     }

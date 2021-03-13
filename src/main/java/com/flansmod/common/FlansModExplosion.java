@@ -1,14 +1,10 @@
 package com.flansmod.common;
 
 import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityWheel;
-import com.flansmod.common.guns.EntityAAGun;
-import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EntityDamageSourceGun;
-import com.flansmod.common.guns.EntityShootable;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.raytracing.FlansModRaytracer;
 import com.flansmod.common.guns.raytracing.PlayerHitbox;
 import com.flansmod.common.network.PacketHitmark.HitMarkType;
@@ -20,12 +16,9 @@ import com.flansmod.common.vector.Vector3f;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockState;
@@ -33,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -53,7 +47,7 @@ public class FlansModExplosion extends Explosion {
   /**
    * The type of Flan's Mod weapon that caused this explosion
    */
-  private InfoType type;
+  private ShootableType type;
   private double x, y, z;
   private float radius;
   private World world;
@@ -72,21 +66,8 @@ public class FlansModExplosion extends Explosion {
   private final Random explosionRNG;
   private final Map playerMap;
   private boolean breaksBlocks;
-  private float entityDamageModifier = 1;
-  private float driveableDamageModifier = 1;
-  private float armorPenetrationModifier = 1;
 
-  public FlansModExplosion(World world, Entity entity, EntityPlayer detonator, InfoType type,
-      double x, double y, double z, float radius, boolean flaming, boolean smoking,
-      boolean breaksBlocks, float entityDamageModifier, float driveableDamageModifier,
-      float armorPenetrationModifier) {
-    this(world, entity, detonator, type, x, y, z, radius, flaming, smoking, breaksBlocks);
-    this.entityDamageModifier = entityDamageModifier;
-    this.driveableDamageModifier = driveableDamageModifier;
-    this.armorPenetrationModifier = armorPenetrationModifier;
-  }
-
-  public FlansModExplosion(World world, Entity entity, EntityPlayer detonator, InfoType type,
+  public FlansModExplosion(World world, Entity entity, EntityPlayer detonator, ShootableType type,
       double x, double y, double z, float radius, boolean flaming, boolean smoking,
       boolean breaksBlocks) {
     super(world, entity, x, y, z, radius, flaming, smoking);
@@ -175,26 +156,26 @@ public class FlansModExplosion extends Explosion {
     }
 
     this.affectedBlockPositions.addAll(hashset);
-    float f3 = this.radius * 2.0F;
-    j = MathHelper.floor_double(this.x - (double) f3 - 1.0D);
-    k = MathHelper.floor_double(this.x + (double) f3 + 1.0D);
-    int j1 = MathHelper.floor_double(this.y - (double) f3 - 1.0D);
-    int l = MathHelper.floor_double(this.y + (double) f3 + 1.0D);
-    int k1 = MathHelper.floor_double(this.z - (double) f3 - 1.0D);
-    int i1 = MathHelper.floor_double(this.z + (double) f3 + 1.0D);
+    float diameter = this.radius * 2.0F;
+    j = MathHelper.floor_double(this.x - (double) diameter - 1.0D);
+    k = MathHelper.floor_double(this.x + (double) diameter + 1.0D);
+    int j1 = MathHelper.floor_double(this.y - (double) diameter - 1.0D);
+    int l = MathHelper.floor_double(this.y + (double) diameter + 1.0D);
+    int k1 = MathHelper.floor_double(this.z - (double) diameter - 1.0D);
+    int i1 = MathHelper.floor_double(this.z + (double) diameter + 1.0D);
     List list = this.world.getEntitiesWithinAABBExcludingEntity(explosive,
         new AxisAlignedBB(j, j1, k1, k, l,
             i1));
-    net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, list, f3);
+    net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, list, diameter);
     Vec3 vec3 = new Vec3(x, y, z);
 
     for (int l1 = 0; l1 < list.size(); ++l1) {
       Entity entity = (Entity) list.get(l1);
 
       if (!entity.isImmuneToExplosions()) {
-        double d12 = entity.getDistance(x, y, z) / (double) f3;
+        double relDist = entity.getDistance(x, y, z) / (double) diameter;
 
-        if (d12 <= 1.0D) {
+        if (relDist <= 1.0D || entity instanceof EntityDriveable && relDist <= 2) {
           double d5 = entity.posX - x;
           double d7 = entity.posY + (double) entity.getEyeHeight() - y;
           double d9 = entity.posZ - z;
@@ -205,10 +186,25 @@ public class FlansModExplosion extends Explosion {
             d7 /= d13;
             d9 /= d13;
             double exposure = getBlockDensity(vec3, entity.getEntityBoundingBox());
-            double d10 = (1.0D - d12) * exposure;
-            float dmg = (float) ((int) ((d10 * d10 + d10) / 2.0D * 8.0D * (double) f3 + 1.0D));
+            double d10 = (1.0D - relDist) * exposure;
+            float dmg = (float) ((int) ((d10 * d10 + d10) / 2.0D * 8.0D * (double) diameter + 1.0D));
             if (entity instanceof EntityDriveable) {
-              dmg *= driveableDamageModifier;
+              EntityDriveable driveable = (EntityDriveable) entity;
+              FlansModRaytracer.DriveableHit hit = (FlansModRaytracer.DriveableHit) driveable.getClosestPart(new Vector3f(position));
+              if (hit != null) {
+                float dist = hit.intersectTime;
+                relDist = dist/diameter;
+
+                if (relDist <= 1) {
+                  d10 = (float) (relDist);
+                  //-(x-1)^3
+                  d10 -= 1;
+                  dmg = (float) -(d10*d10*d10);
+                  dmg *= type.explosionDamageVsDriveable;
+                  driveable.attackPart(hit.part, new EntityDamageSourceGun(type.shortName, explosive, detonator, type, false), dmg);
+                }
+              }
+
             } else {
                            /* dmg *= 1.2f;
                             dmg *= entityDamageModifier;
@@ -217,14 +213,16 @@ public class FlansModExplosion extends Explosion {
                                 //   System.out.println("Red: " + red);
                                 dmg *= red;
                             }*/
+              dmg *= type.explosionDamageVsLiving;
+              entity.attackEntityFrom(
+                      new EntityDamageSourceGun(type.shortName, explosive, detonator, type, false), dmg);
             }
             //   System.out.println("Damgage: " + dmg);
-            entity.attackEntityFrom(
-                new EntityDamageSourceGun(type.shortName, explosive, detonator, type, false), dmg);
+
             double d11 = EnchantmentProtection.func_92092_a(entity, d10);
             sendHitmarker = sendHitmarker || entity != detonator && dmg > 0.1 && (entity instanceof EntityLivingBase || entity instanceof EntityDriveable || entity instanceof EntityAAGun);
 
-            if (!(entity instanceof EntityDriveable || entity instanceof EntitySeat || entity instanceof EntityWheel)) {
+            if (!(entity instanceof EntityDriveable || entity instanceof EntitySeat || entity instanceof EntityWheel || entity instanceof EntityItem)) {
               d11 /= 2;
 
               entity.motionX = Math.min(1, entity.motionX + d5 * d11);
@@ -332,7 +330,6 @@ public class FlansModExplosion extends Explosion {
     //    armorPower *= 0.08f;
     armorPower *= 0.02f;
 
-    armorPower *= armorPenetrationModifier;
 
     armorPower = Math.max(1, armorPower);
 

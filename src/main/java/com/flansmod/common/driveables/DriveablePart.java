@@ -254,4 +254,18 @@ public class DriveablePart {
     }
     return health <= 0;
   }
+
+  public float getDistanceSqToPoint(EntityDriveable driveable, Vector3f pos) {
+    if (box == null || health <= 0 || dead) {
+      return Float.NaN;
+    }
+    if (!driveable.canHitPart(type)) {
+      return Float.NaN;
+    }
+    float dx = Math.max(Math.abs(pos.x-(box.x+box.w/2))-box.w/2, 0);
+    float dy = Math.max(Math.abs(pos.y-(box.y+box.h/2))-box.h/2, 0);
+    float dz = Math.max(Math.abs(pos.z-(box.z+box.d/2))-box.d/2, 0);
+    float dist = dx * dx + dy * dy + dz * dz;
+    return dist;
+  }
 }

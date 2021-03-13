@@ -1185,7 +1185,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
    */
   public boolean attackPart(EnumDriveablePart ep, DamageSource source, float damage) {
     DriveablePart part = driveableData.parts.get(ep);
-    return part.attack(damage, source.isFireDamage());
+
+    boolean b = part.attack(damage, source.isFireDamage());
+    FlansMod.getPacketHandler()
+            .sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100, dimension);
+    return b;
   }
 
   /**
@@ -1374,6 +1378,22 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     return false;
   }
 
+  public BulletHit getClosestPart(Vector3f origin) {
+    Vector3f relativePosVector = Vector3f
+            .sub(origin, new Vector3f((float) posX, (float) posY, (float) posZ), null);
+    Vector3f rotatedPosVector = axes.findGlobalVectorLocally(relativePosVector);
+    DriveablePart min = null;
+    float minD = Float.MAX_VALUE;
+    for (DriveablePart part : getDriveableData().parts.values()) {
+      float dist = part.getDistanceSqToPoint(this, rotatedPosVector);
+      if (!Float.isNaN(dist) && dist < minD) {
+        minD = dist;
+        min = part;
+      }
+    }
+    return min == null? null : new DriveableHit(this, min.type, (float) Math.sqrt(minD), null);
+  }
+
   /**
    * Attack method called by bullets hitting the plane. Does advanced raytracing to detect which
    * part of the plane is hit
@@ -1396,6 +1416,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         motionScaled.scale(hit.intersectTime);
         hit.hitPos = Vector3f.add(origin, motionScaled, null);
         hits.add(hit);
+        //for debugging:
+        //Minecraft.getMinecraft().addScheduledTask(()->Minecraft.getMinecraft().theWorld.spawnEntityInWorld(new EntityDebugDot(Minecraft.getMinecraft().theWorld, hit.hitPos, 600, 1,0,0)));
+
       }
     }
     return hits;

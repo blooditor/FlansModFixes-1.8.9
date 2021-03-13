@@ -108,6 +108,12 @@ public abstract class ShootableType extends InfoType {
    */
   public String detonateSound = "";
 
+  //Detonation
+  /**
+   * Explosion damage vs various classes of entities
+   */
+  public float explosionDamageVsLiving = 0F, explosionDamageVsDriveable = 0F;
+
   /**
    * The static list of all shootable types
    */
@@ -177,6 +183,10 @@ public abstract class ShootableType extends InfoType {
         despawnTime = Integer.parseInt(split[1]);
       } else if (split[0].equals("ExplodeOnImpact") || split[0].equals("DetonateOnImpact")) {
         explodeOnImpact = Boolean.parseBoolean(split[1].toLowerCase());
+      } else if (split[0].equals("ExplosionDamageVsLiving")) {
+        explosionDamageVsLiving = Float.parseFloat(split[1]);
+      } else if (split[0].equals("ExplosionDamageVsDrivable")) {
+        explosionDamageVsDriveable = Float.parseFloat(split[1]);
       }
 
       //Detonation

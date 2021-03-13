@@ -82,12 +82,6 @@ public class GrenadeType extends ShootableType {
    */
   public float damageToTriggerer = 0F;
 
-  //Detonation
-  /**
-   * Explosion damage vs various classes of entities
-   */
-  public float explosionDamageVsLiving = 0F, explosionDamageVsDriveable = 0F;
-  public float explosionArmorPenetration = 1;
   /**
    * Detonation will not occur until after this time
    */
@@ -202,10 +196,6 @@ public class GrenadeType extends ShootableType {
         primeDelay = Integer.parseInt(split[1]);
       } else if (split[0].equals("StickToThrower")) {
         stickToThrower = Boolean.parseBoolean(split[1]);
-      } else if (split[0].equals("ExplosionDamageVsLiving")) {
-        explosionDamageVsLiving = Float.parseFloat(split[1]);
-      } else if (split[0].equals("ExplosionDamageVsDrivable")) {
-        explosionDamageVsDriveable = Float.parseFloat(split[1]);
       } else if (split[0].equals("NumExplodeParticles")) {
         explodeParticles = Integer.parseInt(split[1]);
       } else if (split[0].equals("ExplodeParticles")) {
@@ -235,8 +225,6 @@ public class GrenadeType extends ShootableType {
         potionEffects.add(getPotionEffect(split));
       } else if (split[0].equals("NumClips")) {
         numClips = Integer.parseInt(split[1]);
-      } else if (split[0].equals("explosionArmorPenetration")) {
-        explosionArmorPenetration = Float.parseFloat(split[1]);
       }
     } catch (Exception e) {
       System.out.println("Reading grenade file failed.");
