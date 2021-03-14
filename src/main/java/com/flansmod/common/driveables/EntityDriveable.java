@@ -1537,7 +1537,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 part.box.z / 16F + part.box.d / 32F));
       }
 
-      ArrayList<ItemStack> drops = type.getItemsRequired(part, getDriveableData().engine);
+   /*   ArrayList<ItemStack> drops = type.getItemsRequired(part, getDriveableData().engine);
       if (drops != null) {
         //Drop each itemstack
         for (ItemStack stack : drops) {
@@ -1545,7 +1545,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
               new EntityItem(worldObj, posX + pos.x, posY + pos.y, posZ + pos.z, stack.copy()));
         }
       }
-      dropItemsOnPartDeath(pos, part);
+      dropItemsOnPartDeath(pos, part);*/
 
       //Inventory is in the core, so drop it if the core is broken
       if (part.type == EnumDriveablePart.core) {
