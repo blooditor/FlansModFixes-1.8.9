@@ -507,9 +507,14 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
       dPos = (Vector3f) dPos.scale(getVehicleType().wheelSpringStrength);
 
       if (dPos.length() > 0.001F) {
-        wheel.moveEntity(dPos.x, dPos.y, dPos.z);
-        dPos.scale(0.5F);
-        Vector3f.sub(amountToMoveCar, dPos, amountToMoveCar);
+        if (dPos.length() < 20f) {
+          wheel.moveEntity(dPos.x, dPos.y, dPos.z);
+          dPos.scale(0.5F);
+          Vector3f.sub(amountToMoveCar, dPos, amountToMoveCar);
+        } else {
+          //the wheels are glitched. Bring them here
+          wheel.setPosition(targetWheelPos.x, targetWheelPos.y, targetWheelPos.z);
+        }
       }
     }
 
