@@ -515,12 +515,14 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
       setDead();
     }
   }
+/*
 
   @Override
   public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int i,
       boolean b) {
 
   }
+*/
 
   private DamageSource getGrenadeDamage() {
     if (thrower instanceof EntityPlayer) {

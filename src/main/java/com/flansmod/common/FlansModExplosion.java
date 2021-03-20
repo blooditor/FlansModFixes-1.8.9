@@ -222,7 +222,7 @@ public class FlansModExplosion extends Explosion {
             double d11 = EnchantmentProtection.func_92092_a(entity, d10);
             sendHitmarker = sendHitmarker || entity != detonator && dmg > 0.1 && (entity instanceof EntityLivingBase || entity instanceof EntityDriveable || entity instanceof EntityAAGun);
 
-            if (!(entity instanceof EntityDriveable || entity instanceof EntitySeat || entity instanceof EntityWheel || entity instanceof EntityItem)) {
+            if (!(entity instanceof EntityDriveable || entity instanceof EntitySeat || entity instanceof EntityWheel || entity instanceof EntityItem || entity instanceof EntityGrenade)) {
               d11 /= 2;
 
               entity.motionX = Math.min(1, entity.motionX + d5 * d11);
