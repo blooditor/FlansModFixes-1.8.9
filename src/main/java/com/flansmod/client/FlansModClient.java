@@ -393,7 +393,8 @@ public class FlansModClient extends FlansMod {
         currentScope = null;
         gameSettings.mouseSensitivity = originalMouseSensitivity;
         gameSettings.thirdPersonView = originalThirdPerson;
-        gameSettings.fovSetting = originalFOV;
+        if(!(minecraft.currentScreen instanceof GuiDriveableController))
+          gameSettings.fovSetting = originalFOV;
       }
       if (scope != null) {
         scopeTime = 4;
@@ -403,6 +404,8 @@ public class FlansModClient extends FlansMod {
 
   public static void UpdateCameraZoom(float smoothing) {
     //If the zoom has changed sufficiently, update it
+    if(minecraft.currentScreen instanceof GuiDriveableController)
+      return;
     if (Math.abs(zoomProgress - lastZoomProgress) > 0F) {
       float actualZoomProgress = lastZoomProgress + (zoomProgress - lastZoomProgress) * smoothing;
       float botchedZoomProgress = zoomProgress > 0.8F ? 1F : 0F;

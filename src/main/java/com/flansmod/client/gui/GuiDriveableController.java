@@ -147,6 +147,10 @@ public class GuiDriveableController extends GuiScreen {
   public void initGui() {
     if (mc.gameSettings.thirdPersonView == 1)
       mc.setRenderViewEntity((plane.getCamera() == null ? mc.thePlayer : plane.getCamera()));
+
+    if (FlansModClient.zoomProgress != 0) {
+      mc.gameSettings.fovSetting = FlansModClient.originalFOV;
+    }
     FlansModClient.originalFOV = mc.gameSettings.fovSetting;
     if (isHeliGunner(plane) || isTankScreen(plane)) {
       if (mc.gameSettings.thirdPersonView != 0) {
@@ -154,9 +158,7 @@ public class GuiDriveableController extends GuiScreen {
         mc.setRenderViewEntity(mc.thePlayer);
       }
       loadShader();
-      if (FlansModClient.currentScope == null) {
-        mc.gameSettings.fovSetting = 60;
-      }
+      mc.gameSettings.fovSetting = 60;
     }
 
     if (plane instanceof EntitySeat && ((EntitySeat) plane).driveable != null) {
