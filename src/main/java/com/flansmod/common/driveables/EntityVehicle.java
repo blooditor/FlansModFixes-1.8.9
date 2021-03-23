@@ -499,8 +499,8 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
       Vector3f dPos = Vector3f.sub(targetWheelPos, currentWheelPos, null);
       //the wheel might be stuck and desynced. Just teleport it.
-      if (!thePlayerIsDrivingThis && Math.abs(dPos.length()) > 5) {
-        wheel.setPosition(targetWheelPos.x, targetWheelPos.y, targetWheelPos.z);
+      if (!thePlayerIsDrivingThis && Math.abs(dPos.length()) > 5 && ticksExisted > 50) {
+        wheel.setPosition(posX+targetWheelPos.x, posY+targetWheelPos.y, posZ+targetWheelPos.z);
         continue;
       }
 
@@ -513,7 +513,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
           Vector3f.sub(amountToMoveCar, dPos, amountToMoveCar);
         } else {
           //the wheels are glitched. Bring them here
-          wheel.setPosition(targetWheelPos.x, targetWheelPos.y, targetWheelPos.z);
+          wheel.setPosition(posX+targetWheelPos.x, posY+targetWheelPos.y, posZ+targetWheelPos.z);
         }
       }
     }
