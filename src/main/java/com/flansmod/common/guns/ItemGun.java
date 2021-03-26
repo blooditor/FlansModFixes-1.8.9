@@ -353,6 +353,10 @@ public class ItemGun extends Item implements IPaintableItem {
       return;
     }
 
+    if (data.mountingGun != null) {
+      return;
+    }
+
     // Play idle sounds
     if (soundDelay <= 0 && type.idleSound != null) {
       PacketPlaySound.sendAdvancedSound(entity, type.idleSound, 2);

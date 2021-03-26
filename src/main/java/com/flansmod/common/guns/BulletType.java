@@ -176,7 +176,7 @@ public class BulletType extends ShootableType {
 
   public enum AmmoType {
     MM9("9mm", "9mm", 353, 0.8f, 0.9f, 1.1f, 0.8f, 1.3f),
-    ACP45(".45 ACP", "acp", 294, 0.75f, 0.85f, 1.15f, 0.88f, 1.5f),
+    ACP45(".45 ACP", "acp", 294, 0.75f, 0.85f, 1.15f, 0.88f, 1.7f),
     MM556("5.56x45mm NATO", "5.56mm", 811, 0.8f, 1.3f, 1.1f), //m16 first before balance: 911, 0.9f, 1.3f, 1.1f
     MM762("7.62x51mm NATO", "7.62mm", 716, 0.9f, 1.55f, 0.85f, 1.1f), //sniper first before balance: 716, 0.8f, 1.5f, 0.9f
     MM762_39("7.62x39mm","7.62x39mm", 730, 0.77f, 1.35f, 1.1f, 1.05f), // 730, 0.8f, 1.3f, 1f
